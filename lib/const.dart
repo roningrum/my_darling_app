@@ -15,8 +15,8 @@ const Color greenOther = Color(0xff04AD58);
 const Color orangeOther = Color(0xffFF6B00);
 
 //Style Text
-TextStyle titleText = GoogleFonts.mulish(color: primaryColor, fontSize: 20.0, fontWeight: FontWeight.w600);
-TextStyle headingTextStyle = GoogleFonts.mulish(color: primaryColor, fontSize: 24, fontWeight: FontWeight.w700);
-TextStyle subtitleTextStyle = GoogleFonts.mulish(color: primaryColor, fontSize: 16, fontWeight: FontWeight.w500);
-TextStyle bodyTextStyle = GoogleFonts.mulish(color: primaryColor, fontSize: 14);
+TextStyle titleText = GoogleFonts.robotoSlab(color: primaryColor, fontSize: 20.0, fontWeight: FontWeight.w600);
+TextStyle headingTextStyle = GoogleFonts.robotoSlab(color: primaryColor, fontSize: 24, fontWeight: FontWeight.w700);
+TextStyle subtitleTextStyle = GoogleFonts.robotoSlab(color: primaryColor, fontSize: 16, fontWeight: FontWeight.w500);
+TextStyle bodyTextStyle = GoogleFonts.robotoSlab(color: primaryColor, fontSize: 14);
 
