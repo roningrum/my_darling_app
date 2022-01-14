@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_darling_app/home_screen.dart';
 
 import 'const.dart';
 
@@ -101,7 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 245,
                               height: 56,
                               child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                                  },
                                   child: Text('Masuk',
                                       style: bodyTextStyle.copyWith(
                                           fontSize: 14, color: whiteColor)),
