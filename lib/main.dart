@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'dart:ui';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:my_darling_app/const.dart';
 import 'package:my_darling_app/login_screen.dart';
 
@@ -20,6 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: primaryColor,
+        textTheme: GoogleFonts.robotoSlabTextTheme(Theme.of(context).textTheme),
         textSelectionTheme: const TextSelectionThemeData(
           cursorColor: redColor
         )

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/const.dart';
+import 'package:my_darling_app/profil_screen.dart';
 import 'package:my_darling_app/widget/home_menu_component.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,11 +17,14 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: whiteColor,
       appBar: AppBar(
         backgroundColor: whiteColor,
-        title: Text('MyDarling', style: titleText.copyWith(fontSize: 16, color: redColor)),
+        title: Container(
+          margin: const EdgeInsets.all(24.0),
+          child: Text('MyDarling', style: titleText.copyWith(fontSize: 16, color: redColor)),
+        ),
         automaticallyImplyLeading: false,
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            margin: const EdgeInsets.all(16.0),
             child: Image.asset('assets/images/user_pic.png', width: 32),
           ),
         ],
@@ -32,12 +36,21 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children:[
-            SizedBox(height: 48),
+            SizedBox(height: 32),
             Text('Hi, Slamet', style: titleText.copyWith(fontSize: 20, fontWeight: FontWeight.w700)),
             SizedBox(height: 8),
             Text('Selamat Pagi', style: titleText.copyWith(fontSize: 14, fontWeight: FontWeight.w700)),
             SizedBox(height: 32),
-            getHomeMenu()
+            getHomeMenu(),
+            SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Artikel Berita', style: titleText.copyWith(fontSize: 14, fontWeight: FontWeight.w700)),
+                Text('Lihat Semua', style: bodyTextStyle.copyWith(fontSize: 12)),
+              ],
+            )
+
           ],
         ),
       ),
@@ -49,8 +62,16 @@ class _HomeScreenState extends State<HomeScreen> {
       children:[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children:const [
-            HomeMenuComponent(nameMenu: 'Profil', iconMenu: 'assets/images/profil.png'),
+          children:[
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ProfilScreen())
+                  );
+                });
+              },
+                child: HomeMenuComponent(nameMenu: 'Profil', iconMenu: 'assets/images/profil.png')),
             HomeMenuComponent(nameMenu: 'Perfomaku', iconMenu: 'assets/images/performa.png'),
             HomeMenuComponent(nameMenu: 'GajiKu', iconMenu: 'assets/images/gajiku.png'),
           ],
