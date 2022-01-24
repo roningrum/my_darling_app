@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/const.dart';
-import 'package:my_darling_app/profil_screen.dart';
+import 'package:my_darling_app/profil_tab_screen.dart';
 import 'package:my_darling_app/widget/home_menu_component.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: (){
                 setState(() {
                   Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ProfilScreen())
+                  MaterialPageRoute(builder: (context) => ProfilTabScreen())
                   );
                 });
               },
