@@ -13,6 +13,7 @@ class DataDiriComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(top: 16.0, left: 24.0),
       child: Row(
         children: [
           SvgPicture.asset(iconData, width: 24),
@@ -22,6 +23,7 @@ class DataDiriComponent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(labelData, style: bodyTextStyle.copyWith(fontSize: 12, color: primaryColor)),
+              SizedBox(height: 4),
               Text(isiData, style: bodyTextStyle.copyWith(fontSize: 14, color: primaryColor, fontWeight: FontWeight.w600)),
             ],
           )
