@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       width: MediaQuery.of(context).size.width -16,
       margin: const EdgeInsets.only(top: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+      padding: const EdgeInsets.only(left: 16.0, top: 20.0, bottom: 20.0, right: 20.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         gradient: LinearGradient(
@@ -92,43 +92,83 @@ class _HomeScreenState extends State<HomeScreen> {
           ]
         ),
       ),
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment:MainAxisAlignment.spaceAround,
         children: [
-          Row(
-          children: [
-            SvgPicture.asset('assets/icons/walking.svg',width: 24.0, height: 24.0),
-            const SizedBox(width: 12.0),
-            Text('Langkah Hari Ini', style: regular.copyWith(fontSize: 14.0, color: white))
-          ],
-        ),
-          const SizedBox(height: 12.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              RichText(text: const TextSpan(
-                children: [
-                  TextSpan(text: '200', style: TextStyle(color: Colors.white, fontSize: 40.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.w600),),
-                  TextSpan(text: '/1000', style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.w500),),
-                ]
-              )),
+              Row(
+              children: [
+                SvgPicture.asset('assets/icons/walking.svg',width: 24.0, height: 24.0),
+                const SizedBox(width: 6.0),
+                Text('Langkah Hari Ini', style: regular.copyWith(fontSize: 12.0, color: white))
+              ],
+            ),
+              const SizedBox(height: 12.0),
               Column(
+               crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('20%', style: regular.copyWith(fontSize: 12.0, color: white)),
-                  LinearPercentIndicator(
-                    backgroundColor: Colors.white,
-                      animation: true,
-                      animationDuration: 1000,
-                      width: 160,
-                      lineHeight: 12.0,
-                      percent:20/100,
-                    progressColor: const Color(0xff0CB061),
-                    barRadius: const Radius.circular(8.0)
-                  ),
+                  const Text('200', style: TextStyle(color: Colors.white, fontSize: 40.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.w600),),
+                  Column(
+                    children: [
+                      Center(child: Text('20%', style: regular.copyWith(fontSize: 12.0, color: white), textAlign: TextAlign.center)),
+                      LinearPercentIndicator(
+                        backgroundColor: Colors.white,
+                          animation: true,
+                          animationDuration: 1000,
+                          width: 160,
+                          lineHeight: 12.0,
+                          percent:20/100,
+                        progressColor: const Color(0xff0CB061),
+                        barRadius: const Radius.circular(8.0)
+                      ),
+                      const SizedBox(height: 16.0),
+                    ],
+                  )
                 ],
-              )
+              ),
+
             ],
           ),
-
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  SvgPicture.asset('assets/icons/waktu.svg',width: 24.0, height: 24.0),
+                  const SizedBox(width:6.0),
+                  Text('00:01:05', style: regular.copyWith(fontSize: 14.0, color: white))
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Row(
+                children: [
+                  SvgPicture.asset('assets/icons/kalori.svg',width: 24.0, height: 24.0),
+                  const SizedBox(width: 6.0),
+                  Text('245 Kal', style: regular.copyWith(fontSize: 12.0, color: white))
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset('assets/icons/jalan.svg',width: 24.0, height: 24.0),
+                  const SizedBox(width: 6.0),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('Target', style: regular.copyWith(fontSize: 10.0, color: white)),
+                      const SizedBox(height: 4.0),
+                      Text('10000', style: regular.copyWith(fontSize: 14.0, color: white)),
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -168,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //Widget untuk Artikel Berita
 Widget homeArtikel(){
-    return Container(
+    return SizedBox(
       height: 300,
       child: ListView(
         scrollDirection: Axis.horizontal,
