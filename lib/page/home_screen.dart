@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:my_darling_app/pedometer_page/pedometer_screen.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/home_artikel_berita_item.dart';
 import 'package:my_darling_app/widget/home_menu_widget.dart';
@@ -40,7 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Selamat Pagi, Bambang Mulyanto', style:title.copyWith(fontSize: 16.0, color: primaryBlueBlack)),
-                  bannerWalking(),
+                  InkWell(child: bannerWalking(), onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PedometerScreen()));
+                  }),
                   const SizedBox(
                     height: 24.0,
                   ),
@@ -93,8 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment:MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
