@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_darling_app/network_provider/NetworkRepository.dart';
 
 import '../theme/theme.dart';
 
@@ -10,6 +11,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  final _networkRepo = NetworkRepository();
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,25 +44,45 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 1.4),
                     textAlign: TextAlign.center),
                 const SizedBox(height: 50),
-                TextFormField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    labelText: 'NIP',
-                    labelStyle: regular.copyWith(color: secondaryBlueBlack),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8.0)),
-                        borderSide:
-                            BorderSide(color: secondaryBlueBlack, width: 2.0)),
-                    border: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                      borderSide: BorderSide(color: greyColor, width: 2.0),
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: emailController,
+                    validator: (value){
+                      if(value!.isEmpty){
+                        return 'email is required';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      labelText: 'email',
+                      labelStyle: regular.copyWith(color: secondaryBlueBlack),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8.0)),
+                          borderSide:
+                              BorderSide(color: secondaryBlueBlack, width: 2.0)),
+                      border: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                        borderSide: BorderSide(color: greyColor, width: 2.0),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
                 TextFormField(
+                  controller: passwordController,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
+                  validator: (value){
+                    if(value!.isEmpty){
+                      return 'password is required';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
@@ -76,7 +104,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: 250,
                   height: 56,
                   child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if(_formKey.currentState!.validate()){
+                          String email = emailController.text;
+                          String password = passwordController.text;
+                          _networkRepo.doLogin(email, password);
+                          print('Email : $email Password : $password');
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryRed,
                         padding: const EdgeInsets.all(8.0),
