@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:my_darling_app/helper/session_manager.dart';
+import 'package:my_darling_app/page/login_screen.dart';
 import 'package:my_darling_app/pedometer_page/pedometer_screen.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/home_artikel_berita_item.dart';
 import 'package:my_darling_app/widget/home_menu_widget.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+
+import '../network_provider/NetworkRepository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,6 +19,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _networkRepo = NetworkRepository();
+  final _sessionManager = SessionManager();
+  late String token;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: Image.asset('assets/image/user-photo.png', width: 40.0, height: 40.0,),
+            child: GestureDetector(
+                onTap: (){
+                  setState(() {
+                    logout();
+                  });
+                },
+                child: Image.asset('assets/image/user-photo.png', width: 40.0, height: 40.0,)),
           )
         ],
       ),
@@ -210,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   //Widget untuk Artikel Berita
-Widget homeArtikel(){
+  Widget homeArtikel(){
     return SizedBox(
       height: 300,
       child: ListView(
@@ -225,4 +240,21 @@ Widget homeArtikel(){
     );
 
 }
+
+  void logout() async{
+    var token = await _sessionManager.readToken('token');
+    print('token saat ini: $token');
+    var response = await _networkRepo.doLogout(token!);
+    setState(() {
+      if(response.status == 'sukses'){
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>const LoginScreen()), (_)=>false);
+        Fluttertoast.showToast(msg: response.pesan!, toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+    });
+  }
 }

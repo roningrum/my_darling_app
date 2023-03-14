@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/network_provider/NetworkRepository.dart';
 
 import '../theme/theme.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -16,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _formKey = GlobalKey<FormState>();
   final _networkRepo = NetworkRepository();
-
+  final _sessionManager = SessionManager();
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +111,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         if(_formKey.currentState!.validate()){
                           String email = emailController.text;
                           String password = passwordController.text;
-                          _networkRepo.doLogin(email, password);
+                          doLogin(email, password);
+                          // _networkRepo.doLogin(email, password);
                           print('Email : $email Password : $password');
                         }
                       },
@@ -136,5 +140,29 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  void doLogin(String email, String password) async {
+    var response = await _networkRepo.doLogin(email, password);
+    setState(() {
+      if(response.status == "sukses"){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const HomeScreen()));
+        _sessionManager.saveUserToken('token', response.accessToken!);
+        Fluttertoast.showToast(msg: response.pesan!, toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+      else{
+        Fluttertoast.showToast(msg: "Silakan Cek Username dan password", toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.SNACKBAR,
+            timeInSecForIosWeb: 1,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+    });
   }
 }

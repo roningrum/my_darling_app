@@ -39,6 +39,8 @@ dependencies:
   percent_indicator: ^4.2.3
   fl_chart: ^0.61.0
   http: ^0.13.5
+  fluttertoast: ^8.2.1
+  shared_preferences: ^2.0.18
 
 dev_dependencies:
   flutter_test:

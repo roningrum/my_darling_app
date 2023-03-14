@@ -1,8 +1,8 @@
 class LoginResponse {
-  late String status;
-  late String pesan;
-  late String accessToken;
-  late String tokenType;
+  String? status;
+  String? pesan;
+  String? accessToken;
+  String? tokenType;
 
   LoginResponse(
       this.status, 
