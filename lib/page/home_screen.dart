@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
+import 'package:my_darling_app/page/home/edispo/edispo_page.dart';
 import 'package:my_darling_app/page/login_screen.dart';
 import 'package:my_darling_app/pedometer_page/pedometer_screen.dart';
 import 'package:my_darling_app/theme/theme.dart';
@@ -50,22 +52,27 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Selamat Pagi, Bambang Mulyanto', style:title.copyWith(fontSize: 16.0, color: primaryBlueBlack)),
-                  InkWell(child: bannerWalking(), onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PedometerScreen()));
-                  }),
-                  const SizedBox(
-                    height: 24.0,
-                  ),
-                  homeMenu()
+            child: FutureBuilder(
+              future: _sessionManager.readNama('nama'),
+              builder: (context, snapshot) {
+                return Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Selamat Pagi, ${snapshot.data}', style:title.copyWith(fontSize: 16.0, color: primaryBlueBlack)),
+                      InkWell(child: bannerWalking(), onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const PedometerScreen()));
+                      }),
+                      const SizedBox(
+                        height: 24.0,
+                      ),
+                      homeMenu()
 
-                ],
-              ),
+                    ],
+                  ),
+                );
+              }
             ),
           ),
           SliverToBoxAdapter(
@@ -198,10 +205,14 @@ class _HomeScreenState extends State<HomeScreen> {
       children:[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            HomeMenuWidget('E-Dispo', 'assets/icons/edispo_menu.png'),
-            HomeMenuWidget('PerfomaKu','assets/icons/performance_menu.png'),
-            HomeMenuWidget('GajiKu', 'assets/icons/gajiku_menu.png'),
+          children:[
+            GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> const Edispo()));
+                },
+                child: const HomeMenuWidget('E-Dispo', 'assets/icons/edispo_menu.png')),
+            const HomeMenuWidget('PerfomaKu','assets/icons/performance_menu.png'),
+            const HomeMenuWidget('GajiKu', 'assets/icons/gajiku_menu.png'),
           ],
         ),
         Row(
@@ -243,7 +254,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void logout() async{
     var token = await _sessionManager.readToken('token');
-    print('token saat ini: $token');
+    if (kDebugMode) {
+      print('token saat ini: $token');
+    }
     var response = await _networkRepo.doLogout(token!);
     setState(() {
       if(response.status == 'sukses'){
