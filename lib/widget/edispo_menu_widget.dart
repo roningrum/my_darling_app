@@ -9,26 +9,31 @@ class EdispoMenuWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        Container(
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(
-            color: white,
-            border: Border.all(
-              width: 1,
-              color: greyColor
+    return SizedBox(
+      width:110,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 8),
+          Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(
+                color:  Colors.black12,
+                width: 1
+              ),
+                borderRadius: BorderRadius.circular(8)
             ),
-            borderRadius: const BorderRadius.all(Radius.circular(16.0))
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Image.asset(logoMenu, width: 32.0, height: 32.0, fit: BoxFit.cover,),
+            ),
           ),
-          child: Center(child: Image.asset(logoMenu, width: 40.0, height: 40.0, fit: BoxFit.cover,)),
-        ),
-        const SizedBox(height: 4),
-        Text(namaMenu, style: regular.copyWith(fontSize: 12, color: secondaryBlueBlack),),
-        const SizedBox(height: 8),
-      ],
+          const SizedBox(height: 4),
+          Text(namaMenu, style: regular.copyWith(fontSize: 12.0, color: secondaryBlueBlack), textAlign: TextAlign.center,),
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 }
