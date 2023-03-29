@@ -1,15 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/home/edispo/edispo_page.dart';
+import 'package:my_darling_app/page/home_banner_walking.dart';
 import 'package:my_darling_app/page/login_screen.dart';
 import 'package:my_darling_app/pedometer_page/pedometer_screen.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/home_artikel_berita_item.dart';
 import 'package:my_darling_app/widget/home_menu_widget.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../network_provider/NetworkRepository.dart';
 
@@ -61,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Selamat Pagi, ${snapshot.data}', style:title.copyWith(fontSize: 16.0, color: primaryBlueBlack)),
-                      InkWell(child: bannerWalking(), onTap: (){
+                      InkWell(child: const HomeBannerWalking(), onTap: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context) => const PedometerScreen()));
                       }),
                       const SizedBox(
@@ -99,106 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  //Widget untuk step walking
-  Widget bannerWalking(){
-    return Container(
-      width: MediaQuery.of(context).size.width -16,
-      margin: const EdgeInsets.only(top: 20),
-      padding: const EdgeInsets.only(left: 16.0, top: 20.0, bottom: 20.0, right: 20.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            primaryRed,
-            primaryBlueBlack
-          ]
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment:MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-              children: [
-                SvgPicture.asset('assets/icons/walking.svg',width: 24.0, height: 24.0),
-                const SizedBox(width: 6.0),
-                Text('Langkah Hari Ini', style: regular.copyWith(fontSize: 12.0, color: white))
-              ],
-            ),
-              const SizedBox(height: 12.0),
-              Column(
-               crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text('200', style: TextStyle(color: Colors.white, fontSize: 40.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.w600),),
-                  Column(
-                    children: [
-                      Center(child: Text('20%', style: regular.copyWith(fontSize: 12.0, color: white), textAlign: TextAlign.center)),
-                      LinearPercentIndicator(
-                        backgroundColor: Colors.white,
-                          animation: true,
-                          animationDuration: 1000,
-                          width: 160,
-                          lineHeight: 12.0,
-                          percent:20/100,
-                        progressColor: const Color(0xff0CB061),
-                        barRadius: const Radius.circular(8.0)
-                      ),
-                      const SizedBox(height: 16.0),
-                    ],
-                  )
-                ],
-              ),
-
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  SvgPicture.asset('assets/icons/waktu.svg',width: 24.0, height: 24.0),
-                  const SizedBox(width:6.0),
-                  Text('00:01:05', style: regular.copyWith(fontSize: 14.0, color: white))
-                ],
-              ),
-              const SizedBox(height: 12.0),
-              Row(
-                children: [
-                  SvgPicture.asset('assets/icons/kalori.svg',width: 24.0, height: 24.0),
-                  const SizedBox(width: 6.0),
-                  Text('245 Kal', style: regular.copyWith(fontSize: 12.0, color: white))
-                ],
-              ),
-              const SizedBox(height: 12.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SvgPicture.asset('assets/icons/jalan.svg',width: 24.0, height: 24.0),
-                  const SizedBox(width: 6.0),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('Target', style: regular.copyWith(fontSize: 10.0, color: white)),
-                      const SizedBox(height: 4.0),
-                      Text('10000', style: regular.copyWith(fontSize: 14.0, color: white)),
-                    ],
-                  )
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   //Widget untuk HomeMenu
   Widget homeMenu(){
     return Wrap(

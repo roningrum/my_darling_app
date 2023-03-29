@@ -37,18 +37,21 @@ class LoginResponse {
 class User {
   int? id;
   String? nama;
+  int? nik;
 
-  User({this.id, this.nama});
+  User({this.id, this.nama, this.nik});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     nama = json['nama'];
+    nik = json['nik'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['id'] = id;
     data['nama'] = nama;
+    data['nik'] = nik;
     return data;
   }
 }

@@ -41,6 +41,10 @@ dependencies:
   http: ^0.13.5
   fluttertoast: ^8.2.1
   shared_preferences: ^2.0.18
+  sensors_plus: ^2.0.2
+  intl: ^0.18.0
+  sqflite: ^2.2.6
+  path: ^1.8.2
 
 dev_dependencies:
   flutter_test:

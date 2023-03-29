@@ -149,6 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const HomeScreen()));
         _sessionManager.saveUserToken('token', response.accessToken!);
         _sessionManager.saveNama('nama', response.user!.nama!);
+        _sessionManager.saveNikUser('nik', response.user!.nik!);
         Fluttertoast.showToast(msg: response.pesan!, toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,

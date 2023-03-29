@@ -12,6 +12,16 @@ class SessionManager{
     return prefs.getString(key);
   }
 
+  Future<void>saveNikUser(String key, int nik) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(key, nik);
+  }
+
+  Future<int?>getNikUser(String key) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(key);
+  }
+
   Future<void> saveNama(String key, String nama) async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(key, nama);
