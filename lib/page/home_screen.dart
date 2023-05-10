@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/home/edispo/edispo_page.dart';
 import 'package:my_darling_app/page/home_banner_walking.dart';
@@ -33,54 +32,54 @@ class _HomeScreenState extends State<HomeScreen> {
         toolbarHeight: 56.0,
         title: Padding(
           padding: const EdgeInsets.only(left: 16.0),
-          child: Text('MyDarling', style: title.copyWith(color: primaryRed, fontSize: 18)),
+          child: Text('MyDarling',
+              style: title.copyWith(color: primaryRed, fontSize: 18)),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   setState(() {
                     logout();
                   });
                 },
-                child: Image.asset('assets/image/user-photo.png', width: 40.0, height: 40.0,)),
+                child: Image.asset(
+                  'assets/image/user-photo.png',
+                  width: 40.0,
+                  height: 40.0,
+                )),
           )
         ],
       ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: FutureBuilder(
-              future: _sessionManager.readNama('nama'),
-              builder: (context, snapshot) {
-                return Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Selamat Pagi, ${snapshot.data}', style:title.copyWith(fontSize: 16.0, color: primaryBlueBlack)),
-                      InkWell(child: const HomeBannerWalking(), onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const PedometerScreen()));
-                      }),
-                      const SizedBox(
-                        height: 24.0,
-                      ),
-                      homeMenu()
-
-                    ],
-                  ),
-                );
-              }
+              child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Selamat Pagi, user',
+                    style: title.copyWith(
+                        fontSize: 16.0, color: primaryBlueBlack)),
+                const HomeBannerWalking(),
+                const SizedBox(
+                  height: 24.0,
+                ),
+                homeMenu()
+              ],
             ),
-          ),
+          )),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Artikel Berita', style:title.copyWith(fontSize: 16.0, color: primaryBlueBlack)),
+                  Text('Artikel Berita',
+                      style: title.copyWith(
+                          fontSize: 16.0, color: primaryBlueBlack)),
                   const SizedBox(
                     height: 24.0,
                   ),
@@ -88,29 +87,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: 24.0,
                   ),
-
                 ],
               ),
             ),
           ),
-
         ],
       ),
     );
   }
+
   //Widget untuk HomeMenu
-  Widget homeMenu(){
+  Widget homeMenu() {
     return Wrap(
-      children:[
+      children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children:[
+          children: [
             GestureDetector(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> const Edispo()));
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Edispo()));
                 },
-                child: const HomeMenuWidget('E-Dispo', 'assets/icons/edispo_menu.png')),
-            const HomeMenuWidget('PerfomaKu','assets/icons/performance_menu.png'),
+                child: const HomeMenuWidget(
+                    'E-Dispo', 'assets/icons/edispo_menu.png')),
+            const HomeMenuWidget(
+                'PerfomaKu', 'assets/icons/performance_menu.png'),
             const HomeMenuWidget('GajiKu', 'assets/icons/gajiku_menu.png'),
           ],
         ),
@@ -118,7 +119,8 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: const [
             HomeMenuWidget('Pengajuan\nCuti', 'assets/icons/cuti_menu.png'),
-            HomeMenuWidget('CekKesehatan', 'assets/icons/cek_kesehatan_menu.png'),
+            HomeMenuWidget(
+                'CekKesehatan', 'assets/icons/cek_kesehatan_menu.png'),
             HomeMenuWidget('Keluhan', 'assets/icons/keluhan_menu.png'),
           ],
         ),
@@ -135,37 +137,51 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   //Widget untuk Artikel Berita
-  Widget homeArtikel(){
+  Widget homeArtikel() {
     return SizedBox(
       height: 300,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          HomeArtikelBeritaItem('Peleburan Eijkman ke BRIN, Birokratis', 'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..', 'assets/image/dummy-image.png'),
-          HomeArtikelBeritaItem('Peleburan Eijkman ke BRIN, Birokratis', 'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..', 'assets/image/dummy-image.png'),
-          HomeArtikelBeritaItem('Peleburan Eijkman ke BRIN, Birokratis', 'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..', 'assets/image/dummy-image.png'),
-          HomeArtikelBeritaItem('Peleburan Eijkman ke BRIN, Birokratis', 'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..', 'assets/image/dummy-image.png'),
+          HomeArtikelBeritaItem(
+              'Peleburan Eijkman ke BRIN, Birokratis',
+              'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
+              'assets/image/dummy-image.png'),
+          HomeArtikelBeritaItem(
+              'Peleburan Eijkman ke BRIN, Birokratis',
+              'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
+              'assets/image/dummy-image.png'),
+          HomeArtikelBeritaItem(
+              'Peleburan Eijkman ke BRIN, Birokratis',
+              'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
+              'assets/image/dummy-image.png'),
+          HomeArtikelBeritaItem(
+              'Peleburan Eijkman ke BRIN, Birokratis',
+              'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
+              'assets/image/dummy-image.png'),
         ],
       ),
     );
+  }
 
-}
-
-  void logout() async{
+  void logout() async {
     var token = await _sessionManager.readToken('token');
     if (kDebugMode) {
       print('token saat ini: $token');
     }
     var response = await _networkRepo.doLogout(token!);
     setState(() {
-      if(response.status == 'sukses'){
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>const LoginScreen()), (_)=>false);
-        Fluttertoast.showToast(msg: response.pesan!, toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
+      if (response.status == 'sukses') {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            (_) => false);
+        // Fluttertoast.showToast(
+        //     msg: response.pesan!,
+        //     toastLength: Toast.LENGTH_SHORT,
+        //     gravity: ToastGravity.CENTER,
+        //     timeInSecForIosWeb: 1,
+        //     textColor: Colors.white,
+        //     fontSize: 16.0);
       }
     });
   }

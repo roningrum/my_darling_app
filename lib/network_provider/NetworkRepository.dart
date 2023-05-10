@@ -8,9 +8,11 @@ import 'package:my_darling_app/model/record_jalan_response.dart';
 
 class NetworkRepository{
 
+  static const String urlApi = 'http://172.17.19.235:8000';
+
   // Login
   Future<LoginResponse>doLogin(String email, String password) async{
-    var url = 'http://172.17.19.179:8000/api/login';
+    var url = '$urlApi/api/login';
     var response = await http.post(Uri.parse(url), body: {'email':email, 'password': password});
     // print(response.body);
     var jsonResponse = jsonDecode(response.body);
@@ -24,24 +26,28 @@ class NetworkRepository{
   //Send Data Walking
 
   Future<RecordJalanResponse> sendWalkRecord(String nik, String langkah, String token) async{
-    var url = 'http://172.17.19.179:8000/api/submit-jalan';
+    var url = '$urlApi/api/submit-jalan';
     final msg = jsonEncode({'nik': nik, 'langkah_terekam': langkah});
-    var response = await http.post(Uri.parse(url), headers:{'Authorization':'Bearer $token', 'Content-Type': 'application/json'}, body: msg );
-    var jsonResponse = jsonDecode(response.body);
+    var response = await http.post(Uri.parse(url), headers:{'Authorization':'Bearer $token','Content-Type': 'application/json'}, body: msg );
+    var jsonResponse = await jsonDecode(response.body);
+    RecordJalanResponse recordResponse = RecordJalanResponse.fromJson(jsonResponse);
     if(response.statusCode == 200){
-      print('response:${jsonResponse}');
+      if (kDebugMode) {
+        print('response:${response.body}');
+      }
     }
     else{
-      print('response: not found');
+      if (kDebugMode) {
+        print('response: not found');
+      }
     }
-    RecordJalanResponse recordResponse = RecordJalanResponse.fromJson(jsonResponse);
     return recordResponse;
   }
 
 
   //logout
   Future<LogoutResponse>doLogout(String token) async{
-    var url = 'http://172.17.19.179:8000/api/logout';
+    var url = '$urlApi/api/logout';
     var response = await http.post(Uri.parse(url),headers:{'Authorization':'Bearer $token'});
     var jsonResponse = jsonDecode(response.body);
     LogoutResponse responseLogout = LogoutResponse.fromJson(jsonResponse);

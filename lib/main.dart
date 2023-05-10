@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_darling_app/page/home_screen.dart';
-import 'package:my_darling_app/page/login_screen.dart';
-import 'package:my_darling_app/page/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,7 +8,8 @@ void main() {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light
   ));
-  runApp(const MyApp());
+  runApp(
+      const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const LoginScreen(),
+      home: const HomeScreen(),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/network_provider/NetworkRepository.dart';
 
@@ -150,21 +149,26 @@ class _LoginScreenState extends State<LoginScreen> {
         _sessionManager.saveUserToken('token', response.accessToken!);
         _sessionManager.saveNama('nama', response.user!.nama!);
         _sessionManager.saveNikUser('nik', response.user!.nik!);
-        Fluttertoast.showToast(msg: response.pesan!, toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
+        // Fluttertoast.showToast(msg: response.pesan!, toastLength: Toast.LENGTH_SHORT,
+        //     gravity: ToastGravity.CENTER,
+        //     timeInSecForIosWeb: 1,
+        //     textColor: Colors.white,
+        //     fontSize: 16.0
+        // );
       }
       else{
-        Fluttertoast.showToast(msg: "Silakan Cek Username dan password", toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.SNACKBAR,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
+        // Fluttertoast.showToast(msg: "Silakan Cek Username dan password", toastLength: Toast.LENGTH_SHORT,
+        //     gravity: ToastGravity.SNACKBAR,
+        //     timeInSecForIosWeb: 1,
+        //     textColor: Colors.white,
+        //     fontSize: 16.0
+        // );
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

@@ -37,11 +37,12 @@ class Data {
         this.id});
 
   Data.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     nik = json['nik'];
     langkahTerekam = json['langkah_terekam'];
     updatedAt = json['updated_at'];
     createdAt = json['created_at'];
-    id = json['id'];
+
   }
 
   Map<String, dynamic> toJson() {

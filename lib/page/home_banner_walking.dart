@@ -1,13 +1,18 @@
 import 'dart:async';
-import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foreground_service/flutter_foreground_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:my_darling_app/helper/session_manager.dart';
-import 'package:my_darling_app/network_provider/NetworkRepository.dart';
+import 'package:hive/hive.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:my_darling_app/theme/theme.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pedometer/pedometer.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:sensors_plus/sensors_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../network_provider/NetworkRepository.dart';
 
 class HomeBannerWalking extends StatefulWidget {
   const HomeBannerWalking({Key? key}) : super(key: key);
@@ -17,37 +22,47 @@ class HomeBannerWalking extends StatefulWidget {
 }
 
 class _HomeBannerWalkingState extends State<HomeBannerWalking> {
-  var _accel = 0.0;
-  var _currentAcc = 0.0;
-  var lastAccel = 0.0;
-  var stepCount = 0;
-  double x= 0.0, y=0.0, z=0.0;
 
-  final _streamSubscriptions = <StreamSubscription<dynamic>>[];
-  final _networkRepo = NetworkRepository();
-  final sessionManager = SessionManager();
+  int todaySteps = 0;
+  String _status = '?';
+  late Box<int> stepsBox;
 
+  late StreamSubscription<StepCount> _subscription;
+  late Stream<PedestrianStatus> _pedestrianStatusStream;
 
+  final NetworkRepository _networkRepository = NetworkRepository();
+
+  Future<void> initialize() async{
+    final appDocumentDirectory = await getApplicationDocumentsDirectory();
+    Hive.init(appDocumentDirectory.path);
+    stepsBox = await Hive.openBox('steps');
+    checkPermission();
+  }
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    start();
+    initialize();
   }
 
-  void start() {
-    _streamSubscriptions.add(
-        userAccelerometerEvents.listen((UserAccelerometerEvent event) {
-          setState(() {
-            x = event.x;
-            y = event.y;
-            z = event.z;
-            hitungStep(x, y, z);
-          });
-
-        })
-    );
+  Future<void> checkPermission() async{
+    await Permission.activityRecognition.request();
+    if(await Permission.activityRecognition.isDenied){
+      await Permission.activityRecognition.request().then((value){
+        if(value != PermissionStatus.denied){
+          startListening();
+        }
+        else{
+          checkPermission();
+        }
+      });
+    }
+    else{
+      startListening();
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +98,8 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
               const SizedBox(height: 12.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(stepCount.toString(), style: const TextStyle(color: Colors.white, fontSize: 40.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.w600),),
+                children:[
+                  const Text('0', style: TextStyle(color: Colors.white, fontSize: 40.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.w600)),
                   Column(
                     children: [
                       Center(child: Text(getPrecentageWalk().toString(), style: regular.copyWith(fontSize: 12.0, color: white), textAlign: TextAlign.center)),
@@ -150,71 +165,114 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
 
 
 
-  void hitungStep(double x, double y, double z) {
-    _accel = 10;
-    // _currentAcc = 9.8;
-    lastAccel = 9.8;
-    lastAccel = _currentAcc;
-
-    _currentAcc = sqrt((x*x)+(y*y)+(z*z));
-    var delta = _currentAcc - lastAccel;
-    _accel = delta.abs();
-    if(_accel > 1){
-      stepCount++;
-    }
-    if(stepCount>=1){
-      Timer.periodic(const Duration(minutes: 2), (timer) {
-        sendRecordWalk(stepCount);
-      });
-    }
-    else{
-      print('Jalan Lagi');
-    }
-
-    // print(stepCount);
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    ForegroundService().stop();
+    Hive.box('steps').compact();
+    Hive.close();
+    _subscription.cancel();
   }
 
+  void startListening() {
+    _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
+    _pedestrianStatusStream
+        .listen(onPedestrianStatusChanged)
+        .onError(onPedestrianStatusError);
+    _subscription = Pedometer.stepCountStream.listen(
+        getTodayStep, onError: _onError, onDone: _onDone
+    );
+  }
+
+  void onPedestrianStatusChanged(PedestrianStatus event) {
+    if (kDebugMode) {
+      print(event);
+    }
+    setState(() {
+      _status = event.status;
+      // var today = Jiffy.now();
+      // var midnight = Jiffy.now().subtract(days: 1).startOf(Unit.day);
+      // // if(_status == 'stopped' && today == midnight ){
+      // //   sendResponse(stepsBox.get('today steps')!);
+      // // }
+    });
+  }
+
+  void onPedestrianStatusError(error) {
+    if (kDebugMode) {
+      print('onPedestrianStatusError: $error');
+    }
+    setState(() {
+      _status = 'Pedestrian Status not available';
+    });
+    if (kDebugMode) {
+      print(_status);
+    }
+  }
+
+  void _onDone() {
+    if (kDebugMode) {
+      print("Finished Tracking");
+    }
+  }
+  void _onError(error)=> print("Flutter Pedometer Error");
+
+  Future<void>getTodayStep(StepCount value) async{
+    int savedStepCountKey = 999999;
+    int savedStepsCount = stepsBox.get(savedStepCountKey, defaultValue: 0)!;
+    int todayDayNo = Jiffy.now().dayOfYear;
+
+
+    if (kDebugMode) {
+      print('Last Day $todayDayNo');
+    }
+
+    if(value.steps <savedStepsCount){
+      savedStepsCount = 0;
+      stepsBox.put(savedStepCountKey, savedStepsCount);
+    }
+
+    int lastSavedDayKey = 888888;
+    int lastSavedDay = stepsBox.get(lastSavedDayKey, defaultValue: 0)!;
+
+    if(lastSavedDay < todayDayNo){
+      lastSavedDay = todayDayNo;
+      savedStepsCount = value.steps;
+
+      stepsBox
+        ..put(lastSavedDayKey, lastSavedDay)
+        ..put(savedStepCountKey, savedStepsCount);
+    }
+    setState(() {
+      todaySteps = value.steps - savedStepsCount;
+
+      if (kDebugMode) {
+        print(todaySteps);
+        print('last step $lastSavedDay');
+        print('stepCount $savedStepsCount');
+      }
+    });
+    stepsBox.put('today steps', todaySteps);
+
+    print('Today Steps: ${stepsBox.get('today steps')}');
+  }
+
+
   double getPrecentageWalk(){
-    var stepNow = stepCount;
-    var percent = ((stepNow/1000)*100);
+    var percent = ((todaySteps/1000)*100);
     return double.parse(percent.toStringAsFixed(2));
   }
 
-  void sendRecordWalk(int step) async{
-    var nik = await sessionManager.getNikUser('nik');
-    var token = await sessionManager.readToken('token');
-    var langkah = step;
-    // var uploadTime = getDateToday();
-    // print(nik.toString());
-    // print(nik);
-    if(nik != null){
-      var response = await _networkRepo.sendWalkRecord(nik.toString(), langkah.toString(), token!);
-      setState(() {
-        if(response.status == "sukses"){
-          if(stepCount >=1){
-            print('${response.data}');
-            stepCount = 0;
-          }
-          else{
-            print('stop');
-          }
+  //buat ngirim
 
-          // stepCount = 0;
-        }
-        else{
-          print('${response.pesan}');
-        }
-      });
+  void sendResponse(int steps) async{
+    var token = '13|b07CsBFNsLSs2TS7nKtwjszMarhF6CtBLiZ67fSq';
+    var response = await _networkRepository.sendWalkRecord('3374165019600076', steps.toString(), token);
+    if(response.status == 'Sukses'){
+
     }
-  }
 
-  @override
-  void dispose() {
-    super.dispose();
-    for (final subscription in _streamSubscriptions) {
-
-      subscription.cancel();
-    }
   }
 }
 

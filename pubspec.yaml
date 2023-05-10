@@ -39,12 +39,17 @@ dependencies:
   percent_indicator: ^4.2.3
   fl_chart: ^0.61.0
   http: ^0.13.5
-  fluttertoast: ^8.2.1
   shared_preferences: ^2.0.18
   sensors_plus: ^2.0.2
   intl: ^0.18.0
   sqflite: ^2.2.6
   path: ^1.8.2
+  pedometer: ^3.0.0
+  hive: ^2.2.3
+  flutter_foreground_service: ^0.3.0
+  jiffy: ^6.1.0
+  path_provider: ^2.0.15
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
