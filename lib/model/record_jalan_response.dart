@@ -24,7 +24,7 @@ class RecordJalanResponse {
 
 class Data {
   String? nik;
-  String? langkahTerekam;
+  int? langkahTerekam;
   String? updatedAt;
   String? createdAt;
   int? id;

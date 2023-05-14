@@ -98,41 +98,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //Widget untuk HomeMenu
   Widget homeMenu() {
-    return Wrap(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Center(
+      child:
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          spacing: 2.5,
           children: [
             GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Edispo()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const Edispo()));
                 },
-                child: const HomeMenuWidget(
-                    'E-Dispo', 'assets/icons/edispo_menu.png')),
-            const HomeMenuWidget(
-                'PerfomaKu', 'assets/icons/performance_menu.png'),
-            const HomeMenuWidget('GajiKu', 'assets/icons/gajiku_menu.png'),
+                child: const HomeMenuWidget('E-Dispo','assets/icons/e-dispo.png')),
+            const HomeMenuWidget('Navara','assets/icons/navara.png'),
+            const HomeMenuWidget('Ambulance\nHebat','assets/icons/ambulanceHebat.png'),
+            const HomeMenuWidget('Kesehatan','assets/icons/cek_kesehatan_menu.png'),
+            const HomeMenuWidget('Kepegawaian','assets/icons/keluhan_menu.png'),
+            const HomeMenuWidget('SIMPATIK','assets/icons/simpatik_menu.png'),
+            const HomeMenuWidget('DinkesApp','assets/icons/dinkesapp_menu.png'),
+            const HomeMenuWidget('Hiburan','assets/icons/hiburan_app.png'),
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            HomeMenuWidget('Pengajuan\nCuti', 'assets/icons/cuti_menu.png'),
-            HomeMenuWidget(
-                'CekKesehatan', 'assets/icons/cek_kesehatan_menu.png'),
-            HomeMenuWidget('Keluhan', 'assets/icons/keluhan_menu.png'),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            HomeMenuWidget('SIMPATIK', 'assets/icons/simpatik_menu.png'),
-            HomeMenuWidget('DinkesApp', 'assets/icons/dinkesapp_menu.png'),
-            HomeMenuWidget('Hiburan', 'assets/icons/hiburan_app.png'),
-          ],
-        ),
-      ],
     );
   }
 
@@ -175,13 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const LoginScreen()),
             (_) => false);
-        // Fluttertoast.showToast(
-        //     msg: response.pesan!,
-        //     toastLength: Toast.LENGTH_SHORT,
-        //     gravity: ToastGravity.CENTER,
-        //     timeInSecForIosWeb: 1,
-        //     textColor: Colors.white,
-        //     fontSize: 16.0);
       }
     });
   }

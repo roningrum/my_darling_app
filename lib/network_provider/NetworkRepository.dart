@@ -8,7 +8,7 @@ import 'package:my_darling_app/model/record_jalan_response.dart';
 
 class NetworkRepository{
 
-  static const String urlApi = 'http://172.17.19.235:8000';
+  static const String urlApi = 'http://172.17.19.214:8000';
 
   // Login
   Future<LoginResponse>doLogin(String email, String password) async{
@@ -25,7 +25,7 @@ class NetworkRepository{
 
   //Send Data Walking
 
-  Future<RecordJalanResponse> sendWalkRecord(String nik, String langkah, String token) async{
+  Future<RecordJalanResponse> sendWalkRecord(String nik, int langkah, String token) async{
     var url = '$urlApi/api/submit-jalan';
     final msg = jsonEncode({'nik': nik, 'langkah_terekam': langkah});
     var response = await http.post(Uri.parse(url), headers:{'Authorization':'Bearer $token','Content-Type': 'application/json'}, body: msg );

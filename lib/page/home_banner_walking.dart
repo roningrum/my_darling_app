@@ -25,7 +25,12 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
 
   int todaySteps = 0;
   String _status = '?';
+
+  double km =0.0;
+  int calorie = 0;
   late Box<int> stepsBox;
+
+  late Timer _timer;
 
   late StreamSubscription<StepCount> _subscription;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
@@ -99,7 +104,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children:[
-                  const Text('0', style: TextStyle(color: Colors.white, fontSize: 40.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.w600)),
+                  Text('$todaySteps', style: TextStyle(color: Colors.white, fontSize: 40.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.w600)),
                   Column(
                     children: [
                       Center(child: Text(getPrecentageWalk().toString(), style: regular.copyWith(fontSize: 12.0, color: white), textAlign: TextAlign.center)),
@@ -149,9 +154,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('Target', style: regular.copyWith(fontSize: 10.0, color: white)),
-                      const SizedBox(height: 4.0),
-                      Text('10000', style: regular.copyWith(fontSize: 14.0, color: white)),
+                      Text('10000 km', style: regular.copyWith(fontSize: 14.0, color: white)),
                     ],
                   )
                 ],
@@ -191,11 +194,12 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     }
     setState(() {
       _status = event.status;
-      // var today = Jiffy.now();
-      // var midnight = Jiffy.now().subtract(days: 1).startOf(Unit.day);
-      // // if(_status == 'stopped' && today == midnight ){
-      // //   sendResponse(stepsBox.get('today steps')!);
-      // // }
+
+      if(_status == "stopped"){
+        sendResponse(todaySteps);
+        // sendDataAtMidnight();
+        // _timer.cancel();
+      }
     });
   }
 
@@ -267,11 +271,21 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   //buat ngirim
 
   void sendResponse(int steps) async{
-    var token = '13|b07CsBFNsLSs2TS7nKtwjszMarhF6CtBLiZ67fSq';
-    var response = await _networkRepository.sendWalkRecord('3374165019600076', steps.toString(), token);
+    var token = '2|LAt4yZL4ZwSFihGNu1Ek2lKKfafo4UHB65DoPF4K';
+    var response = await _networkRepository.sendWalkRecord('3374165019600076', steps, token);
     if(response.status == 'Sukses'){
-
+      print('Sukses Ke kirim');
     }
+
+  }
+
+  void sendDataAtMidnight() {
+    final now = DateTime.now();
+    final midnight = DateTime(now.year, now.month, now.day + 1); // Assumes scheduling for the next midnight
+    final duration = midnight.difference(now);
+    _timer = Timer(duration, () {
+        sendResponse(todaySteps);
+    });
 
   }
 }
