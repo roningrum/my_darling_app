@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
-import 'package:my_darling_app/network_provider/NetworkRepository.dart';
+import 'package:my_darling_app/repository/network_repo.dart';
 
 import '../theme/theme.dart';
 import 'home_screen.dart';
@@ -13,11 +13,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  final _networkRepo = NetworkRepository();
+  final _networkRepo = NetworkRepo();
   final _sessionManager = SessionManager();
 
   @override
@@ -49,18 +49,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 Form(
                   key: _formKey,
                   child: TextFormField(
-                    controller: emailController,
+                    controller: usernameController,
                     validator: (value){
                       if(value!.isEmpty){
-                        return 'email is required';
+                        return 'username is required';
                       }
                       return null;
                     },
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: TextInputType.name,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
-                      labelText: 'email',
+                      labelText: 'username',
                       labelStyle: regular.copyWith(color: secondaryBlueBlack),
                       focusedBorder: OutlineInputBorder(
                           borderRadius:
@@ -108,11 +108,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ElevatedButton(
                       onPressed: () {
                         if(_formKey.currentState!.validate()){
-                          String email = emailController.text;
+                          String username = usernameController.text;
                           String password = passwordController.text;
-                          doLogin(email, password);
+                          doLogin(username, password, context);
                           // _networkRepo.doLogin(email, password);
-                          print('Email : $email Password : $password');
+                          print('username : $username Password : $password');
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -141,30 +141,14 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void doLogin(String email, String password) async {
-    var response = await _networkRepo.doLogin(email, password);
-    setState(() {
-      if(response.status == "sukses"){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const HomeScreen()));
-        _sessionManager.saveUserToken('token', response.accessToken!);
-        _sessionManager.saveNama('nama', response.user!.nama!);
-        _sessionManager.saveNikUser('nik', response.user!.nik!);
-        // Fluttertoast.showToast(msg: response.pesan!, toastLength: Toast.LENGTH_SHORT,
-        //     gravity: ToastGravity.CENTER,
-        //     timeInSecForIosWeb: 1,
-        //     textColor: Colors.white,
-        //     fontSize: 16.0
-        // );
-      }
-      else{
-        // Fluttertoast.showToast(msg: "Silakan Cek Username dan password", toastLength: Toast.LENGTH_SHORT,
-        //     gravity: ToastGravity.SNACKBAR,
-        //     timeInSecForIosWeb: 1,
-        //     textColor: Colors.white,
-        //     fontSize: 16.0
-        // );
-      }
-    });
+  void doLogin(String username, String password, BuildContext context) async{
+    var response = await _networkRepo.getLogin(username, password);
+    if(response.isNotEmpty){
+      Navigator.pop(context);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> HomeScreen(nama: response[0].nama!,)));
+      _sessionManager.saveUserToken('token', response[0].token!);
+      _sessionManager.saveIdUser('userId', response[0].userId!);
+    }
   }
 
   @override

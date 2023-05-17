@@ -26,7 +26,7 @@ class HomeMenuWidget extends StatelessWidget {
           child: Center(child: Image.asset(logoMenu, width: 40.0, height: 40.0, fit: BoxFit.contain,)),
         ),
         const SizedBox(height: 4),
-        Text(namaMenu, style: regular.copyWith(fontSize: 12, color: secondaryBlueBlack),),
+        Text(namaMenu, style: regular.copyWith(fontSize: 12, color: secondaryBlueBlack), textAlign: TextAlign.center,),
         const SizedBox(height: 4),
       ],
     );
