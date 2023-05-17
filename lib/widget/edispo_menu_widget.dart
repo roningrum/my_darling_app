@@ -10,11 +10,10 @@ class EdispoMenuWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width:110,
+      width:105,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: 8),
           Card(
             elevation: 0,
             shape: RoundedRectangleBorder(
@@ -31,7 +30,7 @@ class EdispoMenuWidget extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(namaMenu, style: regular.copyWith(fontSize: 12.0, color: secondaryBlueBlack), textAlign: TextAlign.center,),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
         ],
       ),
     );

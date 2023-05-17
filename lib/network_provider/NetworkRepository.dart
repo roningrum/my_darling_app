@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_darling_app/model/login_response.dart';
 import 'package:my_darling_app/model/logout_response.dart';
-import 'package:my_darling_app/model/record_jalan_response.dart';
 
 class NetworkRepository{
 
@@ -25,24 +24,24 @@ class NetworkRepository{
 
   //Send Data Walking
 
-  Future<RecordJalanResponse> sendWalkRecord(String nik, int langkah, String token) async{
-    var url = '$urlApi/api/submit-jalan';
-    final msg = jsonEncode({'nik': nik, 'langkah_terekam': langkah});
-    var response = await http.post(Uri.parse(url), headers:{'Authorization':'Bearer $token','Content-Type': 'application/json'}, body: msg );
-    var jsonResponse = await jsonDecode(response.body);
-    RecordJalanResponse recordResponse = RecordJalanResponse.fromJson(jsonResponse);
-    if(response.statusCode == 200){
-      if (kDebugMode) {
-        print('response:${response.body}');
-      }
-    }
-    else{
-      if (kDebugMode) {
-        print('response: not found');
-      }
-    }
-    return recordResponse;
-  }
+  // Future<RecordJalanResponse> sendWalkRecord(String nik, int langkah, String token) async{
+  //   var url = '$urlApi/api/submit-jalan';
+  //   final msg = jsonEncode({'nik': nik, 'langkah_terekam': langkah});
+  //   var response = await http.post(Uri.parse(url), headers:{'Authorization':'Bearer $token','Content-Type': 'application/json'}, body: msg );
+  //   var jsonResponse = await jsonDecode(response.body);
+  //   RecordJalanResponse recordResponse = RecordJalanResponse.fromJson(jsonResponse);
+  //   if(response.statusCode == 200){
+  //     if (kDebugMode) {
+  //       print('response:${response.body}');
+  //     }
+  //   }
+  //   else{
+  //     if (kDebugMode) {
+  //       print('response: not found');
+  //     }
+  //   }
+  //   return recordResponse;
+  // }
 
 
   //logout

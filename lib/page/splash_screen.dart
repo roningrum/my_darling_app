@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:my_darling_app/page/login_screen.dart';
 
 import '../theme/theme.dart';
 
-class SplashScreen extends StatelessWidget {
+
+class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(const Duration(seconds: 3), ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen())));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +41,12 @@ class SplashScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Align(
-                alignment: AlignmentDirectional.bottomCenter,
-                child:Text('©Dinas Kesehatan Kota Semarang 2023', style: regular.copyWith(color: Colors.white, fontSize: 13)),),
+              alignment: AlignmentDirectional.bottomCenter,
+              child:Text('©Dinas Kesehatan Kota Semarang 2023', style: regular.copyWith(color: Colors.white, fontSize: 13)),),
           ),
         ],
       ),
     );
   }
 }
+

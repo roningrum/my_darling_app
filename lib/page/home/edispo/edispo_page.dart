@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_darling_app/page/home/edispo/kegiatan_external_bidang.dart';
+import 'package:my_darling_app/page/home/edispo/kegiatan_internal_bidang.dart';
+import 'package:my_darling_app/page/home/edispo/kegiatan_pppk.dart';
+import 'package:my_darling_app/page/home/edispo/notulen.dart';
+import 'package:my_darling_app/page/home/edispo/surat_dispo_page.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/edispo/agenda_today_item.dart';
 import 'package:my_darling_app/widget/edispo_menu_widget.dart';
@@ -48,25 +53,52 @@ class _EdispoState extends State<Edispo> {
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  EdispoMenuWidget('Surat Undangan','assets/icons/edispo/ic_undangan.png'),
-                  EdispoMenuWidget('Surat Umum','assets/icons/edispo/ic_surat_umum.png'),
-                  EdispoMenuWidget('Dispo Balik','assets/icons/edispo/ic_dispo_balik.png'),
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children:[
+                GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SuratDispo(jenisSurat: "undangan")));
+                    },
+                    child: const EdispoMenuWidget('Surat Undangan','assets/icons/edispo/ic_undangan.png')),
+                GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SuratDispo(jenisSurat: "umum")));
+                    },
+                    child: const EdispoMenuWidget('Surat Umum','assets/icons/edispo/ic_surat_umum.png')),
+                GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SuratDispo(jenisSurat: "dispo balik")));
+                    },
+                    child: const EdispoMenuWidget('Dispo Balik','assets/icons/edispo/ic_dispo_balik.png'),
+                ),
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                EdispoMenuWidget('Kegiatan\nInternal','assets/icons/edispo/ic_agenda_internal.png'),
-                EdispoMenuWidget('Kegiatan\nLuar','assets/icons/edispo/ic_agenda_luar.png'),
-                EdispoMenuWidget('Kegiatan\nPPPK','assets/icons/edispo/ic_pppk.png'),
+              children: [
+                GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const KegiatanInternalBidang()));
+                    },
+                    child: const EdispoMenuWidget('Kegiatan\nInternal','assets/icons/edispo/ic_agenda_internal.png')),
+                GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const KegiatanExternalBidang()));
+                    },
+                    child: EdispoMenuWidget('Kegiatan\nLuar','assets/icons/edispo/ic_agenda_luar.png')),
+                GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const KegiatanPPPK()));
+                    },
+                    child: const EdispoMenuWidget('Kegiatan\nPPPK','assets/icons/edispo/ic_pppk.png')),
               ],
             ),
-            const EdispoMenuWidget('Notulen', 'assets/icons/edispo/note.png'),
+            GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const Notulen()));
+                },
+                child: const EdispoMenuWidget('Notulen', 'assets/icons/edispo/note.png')),
 
           ],
         ),
