@@ -148,6 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> HomeScreen(nama: response[0].nama!,)));
       _sessionManager.saveUserToken('token', response[0].token!);
       _sessionManager.saveIdUser('userId', response[0].userId!);
+      _sessionManager.saveNikUser('nik', response[0].nik!);
     }
   }
 

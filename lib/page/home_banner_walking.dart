@@ -6,6 +6,8 @@ import 'package:flutter_foreground_service/flutter_foreground_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:my_darling_app/helper/session_manager.dart';
+import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pedometer/pedometer.dart';
@@ -34,7 +36,8 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   late StreamSubscription<StepCount> _subscription;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
 
-  final NetworkRepository _networkRepository = NetworkRepository();
+  final networkRepo = NetworkRepo();
+  final sessionManager = SessionManager();
 
   Future<void> initialize() async {
     final appDocumentDirectory = await getApplicationDocumentsDirectory();
@@ -198,11 +201,12 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     if (kDebugMode) {
       print(event);
     }
-    setState(() {
+    setState((){
       _status = event.status;
 
       if (_status == "stopped") {
-        // sendResponse(todaySteps);
+
+        sendResponse(todaySteps);
         // sendDataAtMidnight();
         // _timer.cancel();
       }
@@ -269,20 +273,22 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   }
 
   double getPrecentageWalk() {
-    var percent = ((todaySteps / 1000) * 100);
+    var percent = ((todaySteps /todaySteps) * 100);
     return double.parse(percent.toStringAsFixed(2));
   }
 
 //buat ngirim
 
-// void sendResponse(int steps) async{
-//   var token = '2|LAt4yZL4ZwSFihGNu1Ek2lKKfafo4UHB65DoPF4K';
-//   var response = await _networkRepository.sendWalkRecord('3374165019600076', steps, token);
-//   if(response.status == 'Sukses'){
-//     print('Sukses Ke kirim');
-//   }
-//
-// }
+void sendResponse(int steps) async{
+  var nik = await sessionManager.getUserId('nik');
+  networkRepo.sendRecordLangkah(nik!, todaySteps.toString());
+  // var token = '2|LAt4yZL4ZwSFihGNu1Ek2lKKfafo4UHB65DoPF4K';
+  // var response = await _networkRepository.sendWalkRecord('3374165019600076', steps, token);
+  // if(response.status == 'Sukses'){
+  //   print('Sukses Ke kirim');
+  // }
+
+}
 
 // void sendDataAtMidnight() {
 //   final now = DateTime.now();

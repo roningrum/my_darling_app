@@ -38,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: white,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: white,
         toolbarHeight: 56.0,
@@ -57,8 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   return CachedNetworkImage(
                     imageUrl: data,
                     imageBuilder: (context, imageProvider) => Container(
-                      width: 50.0,
-                      height: 50.0,
+                      width: 40.0,
+                      height: 40.0,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
@@ -67,21 +68,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     placeholder: (context, url) => Image.asset(
                       'assets/image/user-photo.png',
-                      width: 50.0,
-                      height: 50.0,
+                      width: 40.0,
+                      height: 40.0,
                     ),
                     errorWidget: (context, url, error) => Image.asset(
                       'assets/image/user-photo.png',
-                      width: 50.0,
-                      height: 50.0,
+                      width: 40.0,
+                      height: 40.0,
                     ) ,
                   );
                 }
                 else{
                  return Image.asset(
                     'assets/image/user-photo.png',
-                    width: 40.0,
-                    height: 40.0,
+                    width: 50.0,
+                    height: 50.0,
                   );
                 }
               },

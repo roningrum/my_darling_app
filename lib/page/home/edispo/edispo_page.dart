@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:my_darling_app/helper/date_helper.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_external_bidang.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_internal_bidang.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_pppk.dart';
 import 'package:my_darling_app/page/home/edispo/notulen.dart';
 import 'package:my_darling_app/page/home/edispo/surat_dispo_page.dart';
+import 'package:my_darling_app/repository/agenda_surat_response.dart';
+import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/edispo/agenda_today_item.dart';
 import 'package:my_darling_app/widget/edispo_menu_widget.dart';
@@ -15,6 +18,9 @@ class Edispo extends StatefulWidget {
 }
 
 class _EdispoState extends State<Edispo> {
+  
+  final networkRepo = NetworkRepo();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,20 +140,39 @@ class _EdispoState extends State<Edispo> {
               )
             ],
           ),
-          ListView(
-            scrollDirection: Axis.vertical,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            children: const [
-              AgendaTodayItem(),
-              AgendaTodayItem(),
-              AgendaTodayItem(),
-              AgendaTodayItem(),
-              AgendaTodayItem(),
-              AgendaTodayItem(),
-              AgendaTodayItem(),
-              AgendaTodayItem(),
-            ],
+          FutureBuilder<List<Data>>(
+            future: networkRepo.getAgenda(getTodayDate(), getTodayDate()),
+            builder: (context, snapshot){
+              if(snapshot.hasData && snapshot.connectionState == ConnectionState.done){
+                 return ListView.builder(
+                   scrollDirection: Axis.vertical,
+                   physics: const NeverScrollableScrollPhysics(),
+                   shrinkWrap: true,
+                   itemCount: snapshot.data!.length ,
+                   itemBuilder: (context, index){
+                     var data = snapshot.data?[index];
+                     return AgendaTodayItem(data: data!);
+                   },
+                 );
+              }
+              else{
+                return Container();
+              }
+              // return ListView(
+              //   scrollDirection: Axis.vertical,
+              //
+              //   children: const [
+              //     AgendaTodayItem(),
+              //     AgendaTodayItem(),
+              //     AgendaTodayItem(),
+              //     AgendaTodayItem(),
+              //     AgendaTodayItem(),
+              //     AgendaTodayItem(),
+              //     AgendaTodayItem(),
+              //     AgendaTodayItem(),
+              //   ],
+              // )
+            },
           )
 
         ],
