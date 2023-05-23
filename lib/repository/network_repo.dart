@@ -4,14 +4,17 @@ import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart'as http;
 import 'package:my_darling_app/repository/Record_Langkah.dart';
+import 'package:my_darling_app/repository/Token_response.dart';
 import 'package:my_darling_app/repository/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/bidang_response.dart';
+import 'package:my_darling_app/repository/catatan_kesehatan_response.dart';
 import 'package:my_darling_app/repository/login_response.dart';
 import 'package:my_darling_app/repository/user_response.dart';
 
 class NetworkRepo{
   final String url_dispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
   final String url_record = 'http://119.2.50.170:9094/record_langkah/api';
+  final String url_yohSehat = 'http://119.2.50.170:7773/db_lb1/api';
 
   //getLogin
   Future<List<Login>> getLogin(String username, String password) async{
@@ -81,6 +84,41 @@ class NetworkRepo{
     }
   }
 
+  //login Yoh Sehat
+  Future<String?> getToken()async{
+    final requestBody = {
+      'name':'yohsehat',
+      'email': 'yohsehat@gmail.com',
+      'password':'yohsehat'
+    };
+    final responseYohSehat = await http.post(Uri.parse('$url_yohSehat/login'), body: requestBody);
+    if(responseYohSehat.statusCode == 200){
+      var tokenResponse = jsonDecode(responseYohSehat.body);
+      final token = TokenResponse.fromJson(tokenResponse).accessToken;
+      return token;
+    }
+    else{
+      return throw responseYohSehat.statusCode;
+    }
+  }
+
+  Future<List<CatatanKesehatanResponse>> getCatatanKesehatan(String? nik) async{
+    final token = await getToken();
+    final response = await http.post(Uri.parse('$url_yohSehat/catatan_kesehatan'), body: {'nik': nik}, headers: {'Authorization':'Bearer $token'});
+    print("Data: ${response.body}");
+
+    if(response.statusCode == 200){
+      List<dynamic>catatanResponse = jsonDecode(response.body);
+      List<CatatanKesehatanResponse> record_kesehatan = [];
+      record_kesehatan = catatanResponse.map((catatanResponse) => CatatanKesehatanResponse.fromJson(catatanResponse)).toList();
+      return record_kesehatan;
+    }
+    else{
+      return throw response.statusCode;
+    }
+
+  }
+
   //get Bidang
   Future<List<Bidang>> getBidang() async{
     var response = await http.get(Uri.parse('$url_dispo/get_bidang'));
@@ -94,6 +132,5 @@ class NetworkRepo{
     else{
       throw response.statusCode;
     }
-
   }
 }

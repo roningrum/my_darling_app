@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
+import 'package:my_darling_app/page/cek_kesehatan.dart';
 import 'package:my_darling_app/page/home/edispo/edispo_page.dart';
 import 'package:my_darling_app/page/home_banner_walking.dart';
+import 'package:my_darling_app/page/pekunden_page.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/home_artikel_berita_item.dart';
@@ -36,100 +38,101 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: white,
-        toolbarHeight: 56.0,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Text('MyDarling',
-              style: title.copyWith(color: primaryRed, fontSize: 18)),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 24.0, top: 8.0),
-            child: FutureBuilder<String>(
-              future: getUrlPhotoUser(),
-              builder: (context, snapshot){
-                var data = snapshot.data!;
-                if(snapshot.hasData){
-                  return CachedNetworkImage(
-                    imageUrl: data,
-                    imageBuilder: (context, imageProvider) => Container(
-                      width: 40.0,
-                      height: 40.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.cover),
+        appBar: AppBar(
+          backgroundColor: white,
+          toolbarHeight: 56.0,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Text('MyDarling',
+                style: title.copyWith(color: primaryRed, fontSize: 18)),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 24.0),
+              child: FutureBuilder<String>(
+                future: getUrlPhotoUser(),
+                builder: (context, snapshot){
+                  var data = snapshot.data!;
+                  if(snapshot.hasData){
+                    return CachedNetworkImage(
+                      imageUrl: data,
+                      imageBuilder: (context, imageProvider) => Container(
+                        width: 40.0,
+                        height: 40.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
+                        ),
                       ),
-                    ),
-                    placeholder: (context, url) => Image.asset(
+                      placeholder: (context, url) => Image.asset(
+                        'assets/image/user-photo.png',
+                        width: 40.0,
+                        height: 40.0,
+                      ),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'assets/image/user-photo.png',
+                        width: 40.0,
+                        height: 40.0,
+                      ) ,
+                    );
+                  }
+                  else{
+                   return Image.asset(
                       'assets/image/user-photo.png',
                       width: 40.0,
                       height: 40.0,
-                    ),
-                    errorWidget: (context, url, error) => Image.asset(
-                      'assets/image/user-photo.png',
-                      width: 40.0,
-                      height: 40.0,
-                    ) ,
-                  );
-                }
-                else{
-                 return Image.asset(
-                    'assets/image/user-photo.png',
-                    width: 50.0,
-                    height: 50.0,
-                  );
-                }
-              },
+                    );
+                  }
+                },
 
-            ))
-        ],
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-              child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Selamat Pagi, ${widget.nama}',
-                    style: title.copyWith(
-                        fontSize: 16.0, color: primaryBlueBlack)),
-                const HomeBannerWalking(),
-                const SizedBox(
-                  height: 24.0,
-                ),
-                homeMenu()
-              ],
-            ),
-          )),
-          SliverToBoxAdapter(
-            child: Padding(
+              ))
+          ],
+        ),
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+                child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Artikel Berita',
+                  Text('Selamat Pagi, ${widget.nama}',
                       style: title.copyWith(
                           fontSize: 16.0, color: primaryBlueBlack)),
+                  const HomeBannerWalking(),
                   const SizedBox(
                     height: 24.0,
                   ),
-                  homeArtikel(),
-                  const SizedBox(
-                    height: 24.0,
-                  ),
+                  homeMenu()
                 ],
               ),
+            )),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Artikel Berita',
+                        style: title.copyWith(
+                            fontSize: 16.0, color: primaryBlueBlack)),
+                    const SizedBox(
+                      height: 24.0,
+                    ),
+                    homeArtikel(),
+                    const SizedBox(
+                      height: 24.0,
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -159,10 +162,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   whatsAppAmbulance();
                 },
                 child: const HomeMenuWidget('Ambulance\nHebat','assets/icons/ambulanceHebat.png')),
-            const HomeMenuWidget('Kesehatan','assets/icons/cek_kesehatan_menu.png'),
             GestureDetector(
                 onTap: (){
-                  whatsAppKepegawaian();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CekKesehatan()));
+                },
+                child: const HomeMenuWidget('Kesehatan','assets/icons/cek_kesehatan_menu.png')),
+            GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PekundenPage()));
                 },
                 child: const HomeMenuWidget('Kepegawaian','assets/icons/keluhan_menu.png')),
             GestureDetector(

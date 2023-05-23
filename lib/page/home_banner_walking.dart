@@ -131,48 +131,48 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
               ),
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  SvgPicture.asset('assets/icons/waktu.svg',
-                      width: 24.0, height: 24.0),
-                  const SizedBox(width: 6.0),
-                  Text('00:01:05',
-                      style: regular.copyWith(fontSize: 14.0, color: white))
-                ],
-              ),
-              const SizedBox(height: 12.0),
-              Row(
-                children: [
-                  SvgPicture.asset('assets/icons/kalori.svg',
-                      width: 24.0, height: 24.0),
-                  const SizedBox(width: 6.0),
-                  Text('245 Kal',
-                      style: regular.copyWith(fontSize: 12.0, color: white))
-                ],
-              ),
-              const SizedBox(height: 12.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SvgPicture.asset('assets/icons/jalan.svg',
-                      width: 24.0, height: 24.0),
-                  const SizedBox(width: 6.0),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('10000 km',
-                          style:
-                              regular.copyWith(fontSize: 14.0, color: white)),
-                    ],
-                  )
-                ],
-              ),
-            ],
-          ),
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   children: [
+          //     Row(
+          //       children: [
+          //         SvgPicture.asset('assets/icons/waktu.svg',
+          //             width: 24.0, height: 24.0),
+          //         const SizedBox(width: 6.0),
+          //         Text('00:01:05',
+          //             style: regular.copyWith(fontSize: 14.0, color: white))
+          //       ],
+          //     ),
+          //     const SizedBox(height: 12.0),
+          //     Row(
+          //       children: [
+          //         SvgPicture.asset('assets/icons/kalori.svg',
+          //             width: 24.0, height: 24.0),
+          //         const SizedBox(width: 6.0),
+          //         Text('245 Kal',
+          //             style: regular.copyWith(fontSize: 12.0, color: white))
+          //       ],
+          //     ),
+          //     const SizedBox(height: 12.0),
+          //     Row(
+          //       mainAxisAlignment: MainAxisAlignment.start,
+          //       children: [
+          //         SvgPicture.asset('assets/icons/jalan.svg',
+          //             width: 24.0, height: 24.0),
+          //         const SizedBox(width: 6.0),
+          //         Column(
+          //           mainAxisAlignment: MainAxisAlignment.start,
+          //           children: [
+          //             Text('10000 km',
+          //                 style:
+          //                     regular.copyWith(fontSize: 14.0, color: white)),
+          //           ],
+          //         )
+          //       ],
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );
@@ -273,7 +273,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   }
 
   double getPrecentageWalk() {
-    var percent = ((todaySteps /todaySteps) * 100);
+    var percent = ((todaySteps/1000) * 100);
     return double.parse(percent.toStringAsFixed(2));
   }
 

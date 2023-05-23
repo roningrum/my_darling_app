@@ -10,7 +10,7 @@ class EdispoMenuWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width:105,
+      width: 105,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

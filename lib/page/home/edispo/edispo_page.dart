@@ -60,7 +60,7 @@ class _EdispoState extends State<Edispo> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children:[
                 GestureDetector(
                     onTap: (){
@@ -81,7 +81,7 @@ class _EdispoState extends State<Edispo> {
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 GestureDetector(
                     onTap: (){
@@ -92,7 +92,7 @@ class _EdispoState extends State<Edispo> {
                     onTap: (){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const KegiatanExternalBidang()));
                     },
-                    child: EdispoMenuWidget('Kegiatan\nLuar','assets/icons/edispo/ic_agenda_luar.png')),
+                    child: const EdispoMenuWidget('Kegiatan\nLuar','assets/icons/edispo/ic_agenda_luar.png')),
                 GestureDetector(
                     onTap: (){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const KegiatanPPPK()));
@@ -144,19 +144,35 @@ class _EdispoState extends State<Edispo> {
             future: networkRepo.getAgenda(getTodayDate(), getTodayDate()),
             builder: (context, snapshot){
               if(snapshot.hasData && snapshot.connectionState == ConnectionState.done){
-                 return ListView.builder(
-                   scrollDirection: Axis.vertical,
-                   physics: const NeverScrollableScrollPhysics(),
-                   shrinkWrap: true,
-                   itemCount: snapshot.data!.length ,
-                   itemBuilder: (context, index){
-                     var data = snapshot.data?[index];
-                     return AgendaTodayItem(data: data!);
-                   },
-                 );
+                if(snapshot.data!.isNotEmpty){
+                  return ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length ,
+                    itemBuilder: (context, index){
+                      var data = snapshot.data?[index];
+                      return AgendaTodayItem(data: data!);
+                    },
+                  );
+                }
+                else{
+                  return Center(
+                    child: Text("Tidak ada Agenda hari ini",
+                        style: regular.copyWith(
+                            fontSize: 14.0, color: secondaryBlueBlack)),
+                  );
+                }
+              }
+              else if(snapshot.hasError && snapshot.connectionState == ConnectionState.none){
+                return Center(
+                  child: Text("Cek Koneksi Kembali",
+                      style: regular.copyWith(
+                          fontSize: 14.0, color: secondaryBlueBlack)),
+                );
               }
               else{
-                return Container();
+                return Center(child: CircularProgressIndicator(color: primaryRed));
               }
               // return ListView(
               //   scrollDirection: Axis.vertical,
