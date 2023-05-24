@@ -14,8 +14,6 @@ import 'package:pedometer/pedometer.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../network_provider/NetworkRepository.dart';
-
 class HomeBannerWalking extends StatefulWidget {
   const HomeBannerWalking({Key? key}) : super(key: key);
 
@@ -30,9 +28,6 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   double km = 0.0;
   int calorie = 0;
   late Box<int> stepsBox;
-
-  late Timer _timer;
-
   late StreamSubscription<StepCount> _subscription;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
 

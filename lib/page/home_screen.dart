@@ -220,7 +220,6 @@ class _HomeScreenState extends State<HomeScreen> {
   
   //launch Navara
   Future<void> launchNavara() async {
-    final theme = Theme.of(context);
     try{
       await launch('http://119.2.50.170:9094/navara/',
        customTabsOption: CustomTabsOption(
