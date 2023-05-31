@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_darling_app/repository/kegiatan_internal_response.dart';
 import 'package:my_darling_app/repository/kegiatan_luar_response.dart';
 import 'package:my_darling_app/theme/theme.dart';
 

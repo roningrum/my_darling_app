@@ -60,7 +60,7 @@ class _EdispoAgendaPageState extends State<EdispoAgendaPage> {
                     itemCount: snapshot.data!.length ,
                     itemBuilder: (context, index){
                       var data = snapshot.data![index];
-                      return AgendaTodayItem(data: data!);
+                      return AgendaTodayItem(data: data);
                     },
                   );
                 }
