@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //get Url_Photo
   Future<String> getUrlPhotoUser() async{
     userId = await _sessionManager.getUserId('userId');
-    var response = await _networkRepo.getUserProfile(userId!);
+    var response = await _networkRepo.getUserProfile(userId);
     final user_photo = response[0].foto;
     urlPhoto = 'http://119.2.50.170:9095/e_dispo/assets/temp/foto/${user_photo}';
     return urlPhoto;
@@ -55,10 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: FutureBuilder<String>(
                 future: getUrlPhotoUser(),
                 builder: (context, snapshot){
-                  var data = snapshot.data!;
-                  if(snapshot.hasData){
+                  if(snapshot.hasData && snapshot.data!= null){
                     return CachedNetworkImage(
-                      imageUrl: data,
+                      imageUrl: snapshot.data!,
                       imageBuilder: (context, imageProvider) => Container(
                         width: 40.0,
                         height: 40.0,

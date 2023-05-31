@@ -11,3 +11,10 @@ String getTodayDate(){
   var todayDay = dateFormat.format(date);
   return todayDay;
 }
+
+String dateParameter(){
+  var date = getDateToday();
+  var dateFormat = DateFormat('yyyy-MM-dd');
+  var todayDay = dateFormat.format(date);
+  return todayDay;
+}

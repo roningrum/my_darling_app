@@ -20,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _networkRepo = NetworkRepo();
   final _sessionManager = SessionManager();
 
+  bool _isloading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,10 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                SizedBox(
+            !_isloading ? SizedBox(
                   width: 250,
                   height: 56,
-                  child: ElevatedButton(
+                  child:  ElevatedButton(
                       onPressed: () {
                         if(_formKey.currentState!.validate()){
                           String username = usernameController.text;
@@ -113,6 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           doLogin(username, password, context);
                           // _networkRepo.doLogin(email, password);
                           print('username : $username Password : $password');
+                          setState(() => _isloading = true);
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -124,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       child: Text('Masuk', style: regular.copyWith(fontSize: 14, color: white))),
-                )
+                ) : CircularProgressIndicator(color: primaryRed)
               ],
             ),
           ),

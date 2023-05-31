@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
+import 'package:my_darling_app/page/home/edispo/edispo_agenda/edispo_agenda_page.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_external_bidang.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_internal_bidang.dart';
-import 'package:my_darling_app/page/home/edispo/kegiatan_pppk.dart';
+import 'package:my_darling_app/page/home/edispo/kegiatan_pppk_page.dart';
 import 'package:my_darling_app/page/home/edispo/notulen.dart';
 import 'package:my_darling_app/page/home/edispo/surat_dispo_page.dart';
 import 'package:my_darling_app/repository/agenda_surat_response.dart';
@@ -10,6 +11,7 @@ import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/edispo/agenda_today_item.dart';
 import 'package:my_darling_app/widget/edispo_menu_widget.dart';
+
 class Edispo extends StatefulWidget {
   const Edispo({Key? key}) : super(key: key);
 
@@ -34,8 +36,8 @@ class _EdispoState extends State<Edispo> {
           SliverToBoxAdapter(
             child: edispoMenu(),
           ),
-          SliverToBoxAdapter(
-              child: edispoAgendaToday()
+          const SliverToBoxAdapter(
+              child: EdispoAgendaPage()
           ),
 
         ],
@@ -95,7 +97,7 @@ class _EdispoState extends State<Edispo> {
                     child: const EdispoMenuWidget('Kegiatan\nLuar','assets/icons/edispo/ic_agenda_luar.png')),
                 GestureDetector(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const KegiatanPPPK()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const KegiatanPPPKPage()));
                     },
                     child: const EdispoMenuWidget('Kegiatan\nPPPK','assets/icons/edispo/ic_pppk.png')),
               ],
@@ -113,7 +115,7 @@ class _EdispoState extends State<Edispo> {
   }
 
   Widget edispoAgendaToday(){
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       child: Column(
         children: [
@@ -172,7 +174,7 @@ class _EdispoState extends State<Edispo> {
                 );
               }
               else{
-                return Center(child: CircularProgressIndicator(color: primaryRed));
+                return CircularProgressIndicator(color: primaryRed);
               }
               // return ListView(
               //   scrollDirection: Axis.vertical,

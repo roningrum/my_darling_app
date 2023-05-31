@@ -3,18 +3,21 @@ import 'dart:core';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart'as http;
+import 'package:my_darling_app/repository/Kegiatan_pppk_response.dart';
 import 'package:my_darling_app/repository/Record_Langkah.dart';
 import 'package:my_darling_app/repository/Token_response.dart';
 import 'package:my_darling_app/repository/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/bidang_response.dart';
 import 'package:my_darling_app/repository/catatan_kesehatan_response.dart';
+import 'package:my_darling_app/repository/kegiatan_internal_response.dart';
+import 'package:my_darling_app/repository/kegiatan_luar_response.dart';
 import 'package:my_darling_app/repository/login_response.dart';
 import 'package:my_darling_app/repository/user_response.dart';
 
 class NetworkRepo{
   final String url_dispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
-  final String url_record = 'http://119.2.50.170:9094/record_langkah/api';
-  final String url_yohSehat = 'http://119.2.50.170:7773/db_lb1/api';
+  final String url_record = 'http://119.2.50.170:9094/mydarling/api';
+  final String url_yohSehat = 'http://119.2.50.170:7773/db_ lb1/api';
 
   //getLogin
   Future<List<Login>> getLogin(String username, String password) async{
@@ -32,7 +35,7 @@ class NetworkRepo{
     }
   }
   //get Detail User
-  Future<List<User>> getUserProfile(String userId)async{
+  Future<List<User>> getUserProfile(String? userId)async{
     final queryParameters={'user_id': userId};
     var response = await http.get(Uri.parse('$url_dispo/get_detail_userbyid').replace(queryParameters: queryParameters));
     List<User> userDetailList =[];
@@ -132,5 +135,64 @@ class NetworkRepo{
     else{
       throw response.statusCode;
     }
+  }
+
+  //get kegiatan Internal bidang
+  Future<List<KegiatanInternal>> getKegiatanInternal(String idBidang, String tglKegiatan) async{
+    final queryparameter = {"id_bidang":idBidang,"tgl_kegiatan":tglKegiatan};
+    var response = await http.get(Uri.parse('$url_dispo/get_kegiatan_internal_bybidang').replace(queryParameters: queryparameter));
+    List<KegiatanInternal> kegiatanList =[];
+    if(response.statusCode == 200){
+       var jsonData = json.decode(response.body);
+       List<dynamic> data = jsonData['kegiatan_internal'];
+       kegiatanList = data.map((data) => KegiatanInternal.fromJson(data)).toList();
+       if (kDebugMode) {
+         print("Data: $data");
+       }
+       return kegiatanList;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
+
+  //get kegiatan eksternal Bidang
+  Future<List<KegiatanLuar>> getKegiatanExternal(String idBidang, String tglKegiatan) async{
+    final queryparameter = {"id_bidang":idBidang,"tgl_kegiatan":tglKegiatan};
+    var response = await http.get(Uri.parse('$url_dispo/get_kegiatan_luar_bybidang').replace(queryParameters: queryparameter));
+    if (kDebugMode) {
+      print("Data Kegiatan: ${response.body}");
+    }
+    List<KegiatanLuar> kegiatanList =[];
+    if(response.statusCode == 200){
+      var jsonData = json.decode(response.body);
+      List<dynamic> data = jsonData['kegiatan_luar'];
+      kegiatanList = data.map((data) => KegiatanLuar.fromJson(data)).toList();
+      return kegiatanList;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
+
+  //get kegiatan PPPK
+  Future<List<KegiatanPppk>> getKegiatanPPPK(String dari, String sampai) async{
+    final queryParameter ={"dari":dari, "sampai":sampai};
+    var response = await http.get(Uri.parse('$url_dispo/get_pppk').replace(queryParameters: queryParameter));
+    if(kDebugMode){
+      print("Data Kegiatan PPPK : ${response.body}");
+    }
+    List<KegiatanPppk> kegiatanList = [];
+    if(response.statusCode == 200){
+      var jsonData = json.decode(response.body);
+      List<dynamic> data = jsonData['kegiatan_pppk'];
+      kegiatanList = data.map((data) => KegiatanPppk.fromJson(data)).toList();
+      return kegiatanList;
+    }
+    else{
+      throw response.statusCode;
+    }
+
+
   }
 }

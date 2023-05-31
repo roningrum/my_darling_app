@@ -2,8 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:my_darling_app/repository/bidang_response.dart';
+import 'package:my_darling_app/repository/kegiatan_luar_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
+import 'package:my_darling_app/widget/edispo/kegiatan_luar_item.dart';
 
+import '../../../helper/date_helper.dart';
 import '../../../theme/theme.dart';
 
 class KegiatanExternalBidang extends StatefulWidget {
@@ -35,122 +38,62 @@ class _KegiatanExternalBidangState extends State<KegiatanExternalBidang> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                daftarBidang(),
-                searchByTanggal(),
-
-              ],
-            )
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 8.0),
+              daftarKegiatanLuar()
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget daftarBidang(){
-    return FutureBuilder<List<Bidang>>(
-      future: _networkRepo.getBidang(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          var data = snapshot.data!;
-          if (kDebugMode) {
-            print("Data $data");
-          }
-          return Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 12.0, vertical: 4.0),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                    width: 2, color: secondaryBlueBlack)),
-            alignment: Alignment.topLeft,
-            child: DropdownButton(
-                hint: const Text('Pilih Bidang'),
-                value: selectedBidang,
-                icon: const Icon(Icons.arrow_drop_down_rounded),
-                iconSize: 32,
-                underline: Container(),
-                items: data.map((items) {
-                  if (kDebugMode) {
-                    print("Daftar Items $items");
-                  }
-                  return DropdownMenuItem(
-                    value: items.alias,
-                    child: Text('${items.alias}'),
+  Widget daftarKegiatanLuar() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(height: 16.0),
+        Text('Kegiatan Luar Bidang pada ${getTodayDate()}',
+          style: title.copyWith(
+              fontSize: 14.0, fontWeight: FontWeight.w500), textAlign: TextAlign.center,),
+        const SizedBox(height: 16.0),
+        FutureBuilder<List<KegiatanLuar>>(
+            future: _networkRepo.getKegiatanExternal("4",dateParameter()),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.data!=null) {
+                  return ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: ((context, index) {
+                        return KegiatanLuarItem(kegiatanLuar: snapshot.data![index]);
+                      }));
+                } else {
+                  return Center(
+                    child: Text("Tidak ada kegiatan hari ini",
+                        style: regular.copyWith(
+                            fontSize: 14.0, color: secondaryBlueBlack)),
                   );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedBidang = newValue.toString();
-                  });
-                }),
-          );
-        } else {
-          return IgnorePointer(
-            ignoring: true,
-            child: DropdownButton(
-                hint: const Text('Pilih Bidang'),
-                icon: const Icon(Icons.arrow_drop_down_rounded),
-                iconSize: 32,
-                isExpanded: false,
-                underline: Container(),
-                items:[],
-                onChanged: (newValue) {}),
-          );
-        }
-      },
-    );
-
-  }
-  Widget searchByTanggal(){
-    return SizedBox(
-      width: MediaQuery.of(context).size.width/2,
-      child: TextField(
-          controller: datePickerController,
-          readOnly: true,
-          decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1.5, color: secondaryBlueBlack)),
-              focusedBorder: OutlineInputBorder(
-                  borderSide:
-                  BorderSide(width: 1.5, color: primaryRed)),
-              prefixIcon: Icon(Icons.search, color: primaryRed),
-              label: Text(
-                'Cari tanggal',
-                style: regular.copyWith(color: secondaryBlueBlack),
-              )),
-          onTap: () async {
-            DateTime? pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100));
-            if (pickedDate != null) {
-              print(
-                  pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-              String formattedDate =
-              DateFormat('dd-MM-yyyy').format(pickedDate);
-              print(
-                  formattedDate); //formatted date output using intl package =>  2021-03-16
-              //you can implement different kind of Date Format here according to your requirement
-
-              setState(() {
-                datePickerController.text =
-                    formattedDate; //set output date to TextField value.
-              });
-            } else {
-              print("Date is not selected");
-            }
-          }),
+                }
+              } else if(snapshot.hasError) {
+                return Center(
+                  child: Text("Tidak ada kegiatan hari ini",
+                      style: regular.copyWith(
+                          fontSize: 14.0, color: secondaryBlueBlack)),
+                );
+              }
+              else{
+                return Center(child: CircularProgressIndicator(color: primaryRed));
+              }
+            }),
+      ],
     );
   }
+
 }

@@ -4,14 +4,14 @@ import 'package:intl/intl.dart';
 
 import '../../../theme/theme.dart';
 
-class KegiatanPPPK extends StatefulWidget {
-  const KegiatanPPPK({Key? key}) : super(key: key);
+class KegiatanPPPKPage extends StatefulWidget {
+  const KegiatanPPPKPage({Key? key}) : super(key: key);
 
   @override
-  State<KegiatanPPPK> createState() => _KegiatanPPPKState();
+  State<KegiatanPPPKPage> createState() => _KegiatanPPPKPageState();
 }
 
-class _KegiatanPPPKState extends State<KegiatanPPPK> {
+class _KegiatanPPPKPageState extends State<KegiatanPPPKPage> {
   TextEditingController datePickerController = TextEditingController();
 
   @override

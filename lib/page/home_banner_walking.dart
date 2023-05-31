@@ -11,7 +11,6 @@ import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pedometer/pedometer.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class HomeBannerWalking extends StatefulWidget {
@@ -25,8 +24,8 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   int todaySteps = 0;
   String _status = '?';
 
-  double km = 0.0;
-  int calorie = 0;
+  String calorie = "0";
+  String distanceKm ="0";
   late Box<int> stepsBox;
   late StreamSubscription<StepCount> _subscription;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
@@ -103,71 +102,52 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
                           fontSize: 40.0,
                           fontFamily: 'Roboto Slab',
                           fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  SvgPicture.asset('assets/icons/waktu.svg',
+                      width: 24.0, height: 24.0),
+                  const SizedBox(width: 6.0),
+                  Text('00:01:05',
+                      style: regular.copyWith(fontSize: 14.0, color: white))
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Row(
+                children: [
+                  SvgPicture.asset('assets/icons/kalori.svg',
+                      width: 24.0, height: 24.0),
+                  const SizedBox(width: 6.0),
+                  Text(getCalorieTerbakar(todaySteps),
+                      style: regular.copyWith(fontSize: 12.0, color: white))
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset('assets/icons/jalan.svg',
+                      width: 24.0, height: 24.0),
+                  const SizedBox(width: 6.0),
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Center(
-                          child: Text(getPrecentageWalk().toString(),
-                              style: regular.copyWith(
-                                  fontSize: 12.0, color: white),
-                              textAlign: TextAlign.center)),
-                      LinearPercentIndicator(
-                          backgroundColor: Colors.white,
-                          animation: true,
-                          animationDuration: 1000,
-                          width: 160,
-                          lineHeight: 12.0,
-                          percent: getPrecentageWalk() / 100,
-                          progressColor: const Color(0xff0CB061),
-                          barRadius: const Radius.circular(8.0)),
-                      const SizedBox(height: 16.0),
+                      Text(getDistance(todaySteps),
+                          style:
+                              regular.copyWith(fontSize: 14.0, color: white)),
                     ],
                   )
                 ],
               ),
             ],
           ),
-          // Column(
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   mainAxisAlignment: MainAxisAlignment.start,
-          //   children: [
-          //     Row(
-          //       children: [
-          //         SvgPicture.asset('assets/icons/waktu.svg',
-          //             width: 24.0, height: 24.0),
-          //         const SizedBox(width: 6.0),
-          //         Text('00:01:05',
-          //             style: regular.copyWith(fontSize: 14.0, color: white))
-          //       ],
-          //     ),
-          //     const SizedBox(height: 12.0),
-          //     Row(
-          //       children: [
-          //         SvgPicture.asset('assets/icons/kalori.svg',
-          //             width: 24.0, height: 24.0),
-          //         const SizedBox(width: 6.0),
-          //         Text('245 Kal',
-          //             style: regular.copyWith(fontSize: 12.0, color: white))
-          //       ],
-          //     ),
-          //     const SizedBox(height: 12.0),
-          //     Row(
-          //       mainAxisAlignment: MainAxisAlignment.start,
-          //       children: [
-          //         SvgPicture.asset('assets/icons/jalan.svg',
-          //             width: 24.0, height: 24.0),
-          //         const SizedBox(width: 6.0),
-          //         Column(
-          //           mainAxisAlignment: MainAxisAlignment.start,
-          //           children: [
-          //             Text('10000 km',
-          //                 style:
-          //                     regular.copyWith(fontSize: 14.0, color: white)),
-          //           ],
-          //         )
-          //       ],
-          //     ),
-          //   ],
-          // ),
         ],
       ),
     );
@@ -200,10 +180,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
       _status = event.status;
 
       if (_status == "stopped") {
-
         sendResponse(todaySteps);
-        // sendDataAtMidnight();
-        // _timer.cancel();
       }
     });
   }
@@ -264,34 +241,28 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     });
     stepsBox.put('today steps', todaySteps);
 
-    print('Today Steps: ${stepsBox.get('today steps')}');
   }
 
-  double getPrecentageWalk() {
-    var percent = ((todaySteps/1000) * 100);
-    return double.parse(percent.toStringAsFixed(2));
+
+  //dapat kalori terbakar
+  String getCalorieTerbakar (int steps){
+    num cal = steps *0.04;
+    cal = num.parse(cal.toStringAsFixed(2));
+    calorie = "$cal Cal";
+    return calorie;
   }
 
-//buat ngirim
+  //dapat kalkulasi jarak langkah
+  String getDistance(int steps){
+    num distance = ((steps * 0.762)/1000);
+    distance = num.parse(distance.toStringAsFixed(2));
+    distanceKm = "$distance km";
+    return distanceKm;
+  }
 
 void sendResponse(int steps) async{
   var nik = await sessionManager.getUserId('nik');
   networkRepo.sendRecordLangkah(nik!, todaySteps.toString());
-  // var token = '2|LAt4yZL4ZwSFihGNu1Ek2lKKfafo4UHB65DoPF4K';
-  // var response = await _networkRepository.sendWalkRecord('3374165019600076', steps, token);
-  // if(response.status == 'Sukses'){
-  //   print('Sukses Ke kirim');
-  // }
 
 }
-
-// void sendDataAtMidnight() {
-//   final now = DateTime.now();
-//   final midnight = DateTime(now.year, now.month, now.day + 1); // Assumes scheduling for the next midnight
-//   final duration = midnight.difference(now);
-//   _timer = Timer(duration, () {
-//       sendResponse(todaySteps);
-//   });
-//
-// }
 }

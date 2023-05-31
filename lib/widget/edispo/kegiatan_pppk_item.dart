@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:my_darling_app/repository/agenda_surat_response.dart';
+import 'package:my_darling_app/repository/Kegiatan_pppk_response.dart';
 import 'package:my_darling_app/theme/theme.dart';
-import 'package:whatsapp_share/whatsapp_share.dart';
 
-class AgendaTodayItem extends StatefulWidget {
-  final Data data;
+class KegiatanPPPKItem extends StatelessWidget {
+  final KegiatanPppk kegiatanPppk;
+  const KegiatanPPPKItem({Key? key, required this.kegiatanPppk}) : super(key: key);
 
-  const AgendaTodayItem({required this.data, Key? key}) : super(key: key);
-
-  @override
-  State<AgendaTodayItem> createState() => _AgendaTodayItemState();
-}
-
-class _AgendaTodayItemState extends State<AgendaTodayItem> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return  Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       margin: const EdgeInsets.only(bottom: 16.0),
       decoration: BoxDecoration(
@@ -37,9 +30,9 @@ class _AgendaTodayItemState extends State<AgendaTodayItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text('${widget.data.acara}',
+                      Text('${kegiatanPppk.kegiatan}',
                           style: title.copyWith(
-                              color: primaryBlueBlack, fontSize: 14.0)),
+                              color: primaryBlueBlack, fontSize: 16.0)),
                       const SizedBox(height: 8.0),
                       RichText(
                         text: TextSpan(children: [
@@ -51,7 +44,7 @@ class _AgendaTodayItemState extends State<AgendaTodayItem> {
                               baseline: TextBaseline.alphabetic,
                               child: SizedBox(width: 10)),
                           TextSpan(
-                              text: "${widget.data.tempat}",
+                              text: "${kegiatanPppk.lokasi}",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -68,7 +61,7 @@ class _AgendaTodayItemState extends State<AgendaTodayItem> {
                               child: SizedBox(width: 10)),
                           TextSpan(
                               text:
-                                  "${widget.data.tanggal}(${widget.data.jam})",
+                              "${kegiatanPppk.tglKegiatan1}-${kegiatanPppk.tglKegiatan2}(${kegiatanPppk.jam})",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -83,13 +76,13 @@ class _AgendaTodayItemState extends State<AgendaTodayItem> {
             children: [
               SizedBox(
                 width: 64,
-                child: Text('Bidang',
+                child: Text('Penanggung Jawab',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text('${widget.data.disposisi1}',
+                child: Text('${kegiatanPppk.penanggungJawab}',
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
@@ -103,13 +96,13 @@ class _AgendaTodayItemState extends State<AgendaTodayItem> {
             children: [
               SizedBox(
                 width: 64,
-                child: Text('Seksi',
+                child: Text('Pelaksana',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text('${widget.data.disposisi2}',
+                child: Text('${kegiatanPppk.pelaksana}',
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
@@ -123,33 +116,13 @@ class _AgendaTodayItemState extends State<AgendaTodayItem> {
             children: [
               SizedBox(
                 width: 64,
-                child: Text('Staff',
+                child: Text('Keterangan',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text('${widget.data.disposisi3}',
-                    style: regular.copyWith(
-                      fontSize: 14.0,
-                    ),
-                    textAlign: TextAlign.start),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16.0),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 64,
-                child: Text('Hadir',
-                    style: title.copyWith(
-                        fontSize: 14.0, fontWeight: FontWeight.w500)),
-              ),
-              const SizedBox(width: 8.0),
-              Flexible(
-                child: Text('${widget.data.semuaPenerima}',
+                child: Text('${kegiatanPppk.deskripsi}',
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
@@ -161,9 +134,7 @@ class _AgendaTodayItemState extends State<AgendaTodayItem> {
           Align(
               alignment: Alignment.bottomRight,
               child: ElevatedButton.icon(
-                onPressed: () {
-                  shareAgenda(widget.data);
-                },
+                onPressed: () {},
                 icon: Image.asset('assets/icons/edispo/whatsapp-share.png',
                     width: 24),
                 label: Text(
@@ -180,12 +151,5 @@ class _AgendaTodayItemState extends State<AgendaTodayItem> {
         ],
       ),
     );
-  }
-
-  Future<void> shareAgenda(Data data) async {
-    await WhatsappShare.share(
-        phone: '62XXXXXXXXXX',
-        text:
-            "Agenda Tanggal : *${data.tglTerima}* \nAcara : *${data.acara}* \nLokasi : *${data.tempat}* \nDari : *${data.dari}* \nBidang : ${data.disposisi1} \nSeksi : ${data.disposisi2} \nStaff : ${data.disposisi3} \nHadir : ${data.semuaPenerima} \n\n(Data ini diambil dari aplikasi Mobile E-Disposisi)");
   }
 }
