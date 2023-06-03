@@ -1,6 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:my_darling_app/helper/date_helper.dart';
+import 'package:my_darling_app/repository/Kegiatan_pppk_response.dart';
+import 'package:my_darling_app/repository/network_repo.dart';
+import 'package:my_darling_app/widget/edispo/kegiatan_pppk_item.dart';
 
 import '../../../theme/theme.dart';
 
@@ -12,13 +14,14 @@ class KegiatanPPPKPage extends StatefulWidget {
 }
 
 class _KegiatanPPPKPageState extends State<KegiatanPPPKPage> {
-  TextEditingController datePickerController = TextEditingController();
+  // TextEditingController datePickerController = TextEditingController();
+  final _networkRepo = NetworkRepo();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    datePickerController.text = "";
+    // datePickerController.text = "";
   }
   @override
   Widget build(BuildContext context) {
@@ -30,54 +33,62 @@ class _KegiatanPPPKPageState extends State<KegiatanPPPKPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 8.0),
-            searchByTanggal(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 8.0),
+              // searchByTanggal(),
+              daftarPPPK()
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget searchByTanggal() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width / 2,
-      child: TextField(
-          controller: datePickerController,
-          readOnly: true,
-          decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              enabledBorder: OutlineInputBorder(
-                  borderSide:
-                  BorderSide(width: 1.5, color: secondaryBlueBlack)),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1.5, color: primaryRed)),
-              prefixIcon: Icon(Icons.search, color: primaryRed),
-              label: Text(
-                'Cari tanggal',
-                style: regular.copyWith(color: secondaryBlueBlack),
-              )),
-          onTap: () async {
-            DateTime? pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100));
-            if (pickedDate != null) {
-              print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-              String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-              print(formattedDate);
-              setState(() {
-                datePickerController.text = formattedDate;
-              });
-            } else {
-              if (kDebugMode) {
-                print("Date is not selected");
+  Widget daftarPPPK() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(height: 16.0),
+        Text('Kegiatan PPPK pada ${getTodayDate()}',
+          style: title.copyWith(
+              fontSize: 14.0, fontWeight: FontWeight.w500), textAlign: TextAlign.center,),
+        const SizedBox(height: 16.0),
+        FutureBuilder<List<KegiatanPppk>>(
+            future: _networkRepo.getKegiatanPPPK("2020-03-14", dateParameter()),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.data!=null) {
+                  return ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: ((context, index) {
+                        return KegiatanPPPKItem(kegiatanPppk: snapshot.data![index]);
+                      }));
+                } else {
+                  return Center(
+                    child: Text("Tidak ada kegiatan hari ini",
+                        style: regular.copyWith(
+                            fontSize: 14.0, color: secondaryBlueBlack)),
+                  );
+                }
+              } else if(snapshot.hasError) {
+                return Center(
+                  child: Text("Tidak ada kegiatan hari ini",
+                      style: regular.copyWith(
+                          fontSize: 14.0, color: secondaryBlueBlack)),
+                );
               }
-            }
-          }),
+              else{
+                return Center(child: CircularProgressIndicator(color: primaryRed));
+              }
+            }),
+      ],
     );
   }
 }
