@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_darling_app/repository/agenda_surat_response.dart';
+import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:whatsapp_share/whatsapp_share.dart';
 

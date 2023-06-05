@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:my_darling_app/repository/catatan_kesehatan_response.dart';
 import 'package:my_darling_app/theme/theme.dart';
+
+import '../repository/model/catatan_kesehatan_response.dart';
 
 class CekKesehatanWidget extends StatelessWidget {
   final CatatanKesehatanResponse catatanKesehatanResponse;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
-import 'package:my_darling_app/repository/Kegiatan_pppk_response.dart';
+import 'package:my_darling_app/repository/model/Kegiatan_pppk_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/widget/edispo/kegiatan_pppk_item.dart';
 

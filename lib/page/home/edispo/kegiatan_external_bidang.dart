@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:my_darling_app/repository/kegiatan_luar_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/widget/edispo/kegiatan_luar_item.dart';
 
 import '../../../helper/date_helper.dart';
+import '../../../repository/model/kegiatan_luar_response.dart';
 import '../../../theme/theme.dart';
 
 class KegiatanExternalBidang extends StatefulWidget {

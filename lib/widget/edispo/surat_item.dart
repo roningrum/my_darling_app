@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:my_darling_app/theme/theme.dart';
+import 'package:my_darling_app/repository/model/surat_response.dart';
 
-import '../../repository/model/Kegiatan_pppk_response.dart';
+import '../../theme/theme.dart';
 
-class KegiatanPPPKItem extends StatelessWidget {
-  final KegiatanPppk kegiatanPppk;
-  const KegiatanPPPKItem({Key? key, required this.kegiatanPppk}) : super(key: key);
+class SuratItem extends StatelessWidget {
+  final Surat surat;
+  const SuratItem({Key? key, required this.surat}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       margin: const EdgeInsets.only(bottom: 16.0),
       decoration: BoxDecoration(
@@ -31,7 +31,7 @@ class KegiatanPPPKItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text('${kegiatanPppk.kegiatan}',
+                      Text('${surat.acara}',
                           style: title.copyWith(
                               color: primaryBlueBlack, fontSize: 16.0)),
                       const SizedBox(height: 8.0),
@@ -45,7 +45,7 @@ class KegiatanPPPKItem extends StatelessWidget {
                               baseline: TextBaseline.alphabetic,
                               child: SizedBox(width: 10)),
                           TextSpan(
-                              text: "${kegiatanPppk.lokasi}",
+                              text: "${surat.tempat}",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -62,7 +62,7 @@ class KegiatanPPPKItem extends StatelessWidget {
                               child: SizedBox(width: 10)),
                           TextSpan(
                               text:
-                              "${kegiatanPppk.tglKegiatan1}-${kegiatanPppk.tglKegiatan2}(${kegiatanPppk.jam})",
+                              "${surat.tempat} (${surat.jam})",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -77,13 +77,13 @@ class KegiatanPPPKItem extends StatelessWidget {
             children: [
               SizedBox(
                 width: 64,
-                child: Text('Penanggung Jawab',
+                child: Text('Bidang',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text('${kegiatanPppk.penanggungJawab}',
+                child: Text('${surat.disposisi1}',
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
@@ -97,13 +97,13 @@ class KegiatanPPPKItem extends StatelessWidget {
             children: [
               SizedBox(
                 width: 64,
-                child: Text('Pelaksana',
+                child: Text('Seksi',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text('${kegiatanPppk.pelaksana}',
+                child: Text('${surat.disposisi2}',
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
@@ -117,13 +117,33 @@ class KegiatanPPPKItem extends StatelessWidget {
             children: [
               SizedBox(
                 width: 64,
+                child: Text('Staff',
+                    style: title.copyWith(
+                        fontSize: 14.0, fontWeight: FontWeight.w500)),
+              ),
+              const SizedBox(width: 8.0),
+              Flexible(
+                child: Text('${surat.disposisi2}',
+                    style: regular.copyWith(
+                      fontSize: 14.0,
+                    ),
+                    textAlign: TextAlign.start),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 100,
                 child: Text('Keterangan',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text('${kegiatanPppk.deskripsi}',
+                child: Text('${surat.isiSurat}',
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
@@ -132,25 +152,28 @@ class KegiatanPPPKItem extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16.0),
-          Align(
-              alignment: Alignment.bottomRight,
-              child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: Image.asset('assets/icons/edispo/whatsapp-share.png',
-                    width: 24),
-                label: Text(
-                  "Bagikan",
-                  style: regular.copyWith(color: white),
-                ),
-                style: ElevatedButton.styleFrom(
-                    elevation: 0.0,
-                    fixedSize: const Size(120, 48),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    backgroundColor: const Color(0xff25D366)),
-              ))
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 100,
+                child: Text('Keterangan DispoBalik',
+                    style: title.copyWith(
+                        fontSize: 14.0, fontWeight: FontWeight.w500)),
+              ),
+              const SizedBox(width: 8.0),
+              Flexible(
+                child: Text('${surat.isiDp}',
+                    style: regular.copyWith(
+                      fontSize: 14.0,
+                    ),
+                    textAlign: TextAlign.start),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
         ],
       ),
-    );
+    );;
   }
 }

@@ -3,16 +3,18 @@ import 'dart:core';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart'as http;
-import 'package:my_darling_app/repository/Kegiatan_pppk_response.dart';
-import 'package:my_darling_app/repository/Record_Langkah.dart';
-import 'package:my_darling_app/repository/Token_response.dart';
-import 'package:my_darling_app/repository/agenda_surat_response.dart';
-import 'package:my_darling_app/repository/bidang_response.dart';
-import 'package:my_darling_app/repository/catatan_kesehatan_response.dart';
-import 'package:my_darling_app/repository/kegiatan_internal_response.dart';
-import 'package:my_darling_app/repository/kegiatan_luar_response.dart';
-import 'package:my_darling_app/repository/login_response.dart';
-import 'package:my_darling_app/repository/user_response.dart';
+import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
+import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
+import 'package:my_darling_app/repository/model/record_langkah.dart';
+import 'package:my_darling_app/repository/model/token_response.dart';
+import 'package:my_darling_app/repository/model/user_response.dart';
+
+import 'model/Kegiatan_pppk_response.dart';
+import 'model/bidang_response.dart';
+import 'model/kegiatan_internal_response.dart';
+import 'model/kegiatan_luar_response.dart';
+import 'model/login_response.dart';
+import 'model/surat_response.dart';
 
 class NetworkRepo{
   final String url_dispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
@@ -48,6 +50,26 @@ class NetworkRepo{
     else{
       throw response.statusCode;
     }
+  }
+
+  //get Surat Sudah Diproses
+  Future<List<Surat>> getSuratDiproses(String jenis, String? rule, String? bidang, String? seksi, String? userId) async{
+    final queryParameter = {'jenis' : jenis, 'rule':rule, 'bidang': bidang, 'seksi':seksi, 'user_id': userId, 'status1':'disposisi', 'status2':'proses'};
+    var response = await http.get(Uri.parse('$url_dispo/surat_dp').replace(queryParameters: queryParameter));
+    if (kDebugMode) {
+      print('Response data : ${response.body}');
+    }
+    List<Surat> suratDispo=[];
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      List<dynamic>data = jsonData['surat'];
+      suratDispo = data.map((data) => Surat.fromJson(data)).toList();
+      return suratDispo;
+    }
+    else{
+      throw response.statusCode;
+    }
+
   }
 
   //get Agenda
@@ -108,13 +130,15 @@ class NetworkRepo{
   Future<List<CatatanKesehatanResponse>> getCatatanKesehatan(String? nik) async{
     final token = await getToken();
     final response = await http.post(Uri.parse('$url_yohSehat/catatan_kesehatan'), body: {'nik': nik}, headers: {'Authorization':'Bearer $token'});
-    print("Data: ${response.body}");
+    if (kDebugMode) {
+      print("Data: ${response.body}");
+    }
 
     if(response.statusCode == 200){
       List<dynamic>catatanResponse = jsonDecode(response.body);
-      List<CatatanKesehatanResponse> record_kesehatan = [];
-      record_kesehatan = catatanResponse.map((catatanResponse) => CatatanKesehatanResponse.fromJson(catatanResponse)).toList();
-      return record_kesehatan;
+      List<CatatanKesehatanResponse> recordKesehatan = [];
+      recordKesehatan = catatanResponse.map((catatanResponse) => CatatanKesehatanResponse.fromJson(catatanResponse)).toList();
+      return recordKesehatan;
     }
     else{
       return throw response.statusCode;

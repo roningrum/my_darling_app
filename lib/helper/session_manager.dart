@@ -7,11 +7,6 @@ class SessionManager{
     prefs.setString(key, authToken);
   }
 
-  Future<String?> readToken(String key) async{
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(key);
-  }
-
   Future<void>saveNikUser(String key, String nik) async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(key, nik);
@@ -22,12 +17,43 @@ class SessionManager{
     prefs.setString(key, userId);
   }
 
+  Future<void> setBidang(String key, String bidang) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, bidang);
+  }
+
+  Future<void> setSeksi(String key, String seksi) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, seksi);
+  }
+
+  Future<void>setRule(String key, String rule) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, rule);
+  }
+
+
   Future<String?>getUserId(String key) async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(key);
   }
 
   Future<String?>getNikUser(String key) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  Future<String?>getBidang(String key) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  Future<String?>getSeksi(String key) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  Future<String?>getRule(String key) async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(key);
   }
@@ -41,4 +67,11 @@ class SessionManager{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(key);
   }
+
+  Future<String?>readToken(String key) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+
 }

@@ -6,7 +6,7 @@ import 'package:my_darling_app/page/home/edispo/kegiatan_internal_bidang.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_pppk_page.dart';
 import 'package:my_darling_app/page/home/edispo/notulen.dart';
 import 'package:my_darling_app/page/home/edispo/surat_dispo_page.dart';
-import 'package:my_darling_app/repository/agenda_surat_response.dart';
+import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/edispo/agenda_today_item.dart';

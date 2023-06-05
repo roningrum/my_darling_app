@@ -52,8 +52,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   key: _formKey,
                   child: TextFormField(
                     controller: usernameController,
-                    validator: (value){
-                      if(value!.isEmpty){
+                    validator: (value) {
+                      if (value!.isEmpty) {
                         return 'username is required';
                       }
                       return null;
@@ -67,10 +67,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       focusedBorder: OutlineInputBorder(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(8.0)),
-                          borderSide:
-                              BorderSide(color: secondaryBlueBlack, width: 2.0)),
+                          borderSide: BorderSide(
+                              color: secondaryBlueBlack, width: 2.0)),
                       border: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8.0)),
                         borderSide: BorderSide(color: greyColor, width: 2.0),
                       ),
                     ),
@@ -81,8 +82,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: passwordController,
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: true,
-                  validator: (value){
-                    if(value!.isEmpty){
+                  validator: (value) {
+                    if (value!.isEmpty) {
                       return 'password is required';
                     }
                     return null;
@@ -94,40 +95,46 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelStyle: regular.copyWith(color: secondaryBlueBlack),
                     focusedBorder: OutlineInputBorder(
                         borderRadius:
-                        const BorderRadius.all(Radius.circular(8.0)),
+                            const BorderRadius.all(Radius.circular(8.0)),
                         borderSide:
-                        BorderSide(color: secondaryBlueBlack, width: 2.0)),
+                            BorderSide(color: secondaryBlueBlack, width: 2.0)),
                     border: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(8.0)),
                       borderSide: BorderSide(color: greyColor, width: 2.0),
                     ),
                   ),
                 ),
                 const SizedBox(height: 32),
-            !_isloading ? SizedBox(
-                  width: 250,
-                  height: 56,
-                  child:  ElevatedButton(
-                      onPressed: () {
-                        if(_formKey.currentState!.validate()){
-                          String username = usernameController.text;
-                          String password = passwordController.text;
-                          doLogin(username, password, context);
-                          // _networkRepo.doLogin(email, password);
-                          print('username : $username Password : $password');
-                          setState(() => _isloading = true);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryRed,
-                        padding: const EdgeInsets.all(8.0),
-                        textStyle: regular,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      child: Text('Masuk', style: regular.copyWith(fontSize: 14, color: white))),
-                ) : CircularProgressIndicator(color: primaryRed)
+                !_isloading
+                    ? SizedBox(
+                        width: 250,
+                        height: 56,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                String username = usernameController.text;
+                                String password = passwordController.text;
+                                doLogin(username, password, context);
+                                // _networkRepo.doLogin(email, password);
+                                print(
+                                    'username : $username Password : $password');
+                                setState(() => _isloading = true);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryRed,
+                              padding: const EdgeInsets.all(8.0),
+                              textStyle: regular,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: Text('Masuk',
+                                style: regular.copyWith(
+                                    fontSize: 14, color: white))),
+                      )
+                    : CircularProgressIndicator(color: primaryRed)
               ],
             ),
           ),
@@ -144,14 +151,21 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void doLogin(String username, String password, BuildContext context) async{
+  void doLogin(String username, String password, BuildContext context) async {
     var response = await _networkRepo.getLogin(username, password);
-    if(response.isNotEmpty){
-      Navigator.pop(context);
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> HomeScreen(nama: response[0].nama!,)));
+    if (response.isNotEmpty) {
       _sessionManager.saveUserToken('token', response[0].token!);
       _sessionManager.saveIdUser('userId', response[0].userId!);
       _sessionManager.saveNikUser('nik', response[0].nik!);
+      _sessionManager.setBidang('bidang', response[0].bidang!);
+      _sessionManager.setSeksi('seksi', response[0].seksi!);
+      _sessionManager.setRule('rule', response[0].rule!);
+      // if (mounted) return;
+      Navigator.pop(context);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => HomeScreen(
+                nama: response[0].nama!,
+              )));
     }
   }
 

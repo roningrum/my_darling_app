@@ -30,10 +30,10 @@ class _SuratDispoState extends State<SuratDispo> {
               ],
             ),
           ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            SuratDispoDiproses(keteranganProses:"Sudah Diproses"),
-            SuratDispoDiproses(keteranganProses:"Belum Diproses"),
+            SuratDispoDiproses(keteranganProses:"Sudah Diproses", jenisSurat: widget.jenisSurat),
+            SuratDispoDiproses(keteranganProses:"Belum Diproses", jenisSurat: widget.jenisSurat),
           ],
         ),
       ),

@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
-import 'package:my_darling_app/repository/kegiatan_internal_response.dart';
 import 'package:my_darling_app/widget/edispo/kegiatan_internal_item.dart';
+import '../../../repository/model/kegiatan_internal_response.dart';
 import '../../../repository/network_repo.dart';
 import '../../../theme/theme.dart';
 

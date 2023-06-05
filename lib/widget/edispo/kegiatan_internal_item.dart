@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_darling_app/repository/kegiatan_internal_response.dart';
+import 'package:my_darling_app/repository/model/kegiatan_internal_response.dart';
 import 'package:my_darling_app/theme/theme.dart';
 
 class KegiatanInternalItem extends StatelessWidget {

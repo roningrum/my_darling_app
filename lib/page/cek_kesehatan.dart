@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
-import 'package:my_darling_app/repository/catatan_kesehatan_response.dart';
+import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/widget/cekkesehatan_list.dart';
 
