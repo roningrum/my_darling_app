@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/repository/model/surat_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
@@ -10,9 +9,19 @@ import 'package:my_darling_app/widget/edispo/surat_item.dart';
 class SuratDispoDiproses extends StatefulWidget {
   final String keteranganProses;
   final String jenisSurat;
+  final String rule;
+  final String bidang;
+  final String userId;
+  final String seksi;
 
-  SuratDispoDiproses(
-      {Key? key, required this.keteranganProses, required this.jenisSurat})
+  const SuratDispoDiproses(
+      {Key? key,
+      required this.keteranganProses,
+      required this.jenisSurat,
+      required this.rule,
+      required this.bidang,
+      required this.userId,
+      required this.seksi})
       : super(key: key);
 
   @override
@@ -23,18 +32,15 @@ class _SuratDispoDiprosesState extends State<SuratDispoDiproses> {
   TextEditingController dateinput = TextEditingController();
 
   final _networkRepo = NetworkRepo();
-  final _sessionManager = SessionManager();
 
-  String rule ="";
-  String bidang="";
-  String seksi ="";
-  String userId = "";
 
   @override
   void initState() {
     // TODO: implement initState
-    iniateState();
     super.initState();
+    if (kDebugMode) {
+      print("nilai masuk, rule : ${widget.rule}");
+    }
   }
 
   @override
@@ -60,73 +66,40 @@ class _SuratDispoDiprosesState extends State<SuratDispoDiproses> {
     );
   }
 
-  Future<void> iniateState() async {
-    var ruleLocale = await _sessionManager.getRule('rule');
-    var bidangLocale = await _sessionManager.getBidang('bidang');
-    var seksiLocale = await _sessionManager.getSeksi('seksi');
-    var userIdLocale = await _sessionManager.getUserId('userId');
-
-    setState(() {
-      rule = ruleLocale!;
-      bidang = bidangLocale!;
-      seksi = seksiLocale!;
-      userId = userIdLocale!;
-
-      if (kDebugMode) {
-        print('Rule : $rule');
-      }
-    });
-  }
-
   Widget suratDiproses() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
-      children: [daftarSurat()],
+      children: [daftarSurat( widget.rule, widget.bidang, widget.seksi, widget.userId)],
     );
   }
 
-  Widget daftarSurat() {
+  Widget daftarSurat(String rule, String bidang, String seksi, String userId) {
     if (kDebugMode) {
-      print('Rule Sekarang : $rule');
+      print('Data rule $rule, bidang $bidang, seksi $seksi, userId $userId');
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16.0),
         FutureBuilder<List<Surat>>(
-            future: _networkRepo.getSuratDiproses(
-                widget.jenisSurat, bidang, rule, seksi, userId),
+            future: _networkRepo.getSuratDiproses(widget.jenisSurat, bidang, rule, seksi, userId),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                    child: CircularProgressIndicator(color: primaryRed));
-              } else if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text("Gagal Memuat",
-                        style: regular.copyWith(
-                            fontSize: 14.0, color: secondaryBlueBlack)),
-                  );
-                } else if (snapshot.hasData) {
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: ((context, index) {
-                        return SuratItem(surat: snapshot.data![index]);
-                      }));
-                } else {
-                  return Center(
-                    child: Text("Tidak ada Data",
-                        style: regular.copyWith(
-                            fontSize: 14.0, color: secondaryBlueBlack)),
-                  );
-                }
+              if (kDebugMode) {
+                print('data : ${snapshot.data}');
+              }
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: ((context, index) {
+                      return SuratItem(surat: snapshot.data![index]);
+                    }));
               } else {
                 return Center(
-                  child: Text("Koneksi bermasalah, Coba beberapa saat",
+                  child: Text("Tidak ada Data",
                       style: regular.copyWith(
                           fontSize: 14.0, color: secondaryBlueBlack)),
                 );

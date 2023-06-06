@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/home/edispo/surat_dispo_diproses_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../theme/theme.dart';
 
@@ -12,8 +14,38 @@ class SuratDispo extends StatefulWidget {
 }
 
 class _SuratDispoState extends State<SuratDispo> {
+  final _sessionManager = SessionManager();
+  String? rule;
+  String? bidang;
+  String? seksi;
+  String? userId;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    iniateState();
+    super.initState();
+
+  }
+
+  Future<void> iniateState() async {
+    var ruleLocale = await _sessionManager.getRule('rule');
+    var bidangLocale = await _sessionManager.getBidang('bidang');
+    var seksiLocale = await _sessionManager.getSeksi('seksi');
+    var userIdLocale = await _sessionManager.getUserId('userId');
+
+    setState(() {
+      rule = ruleLocale!;
+      bidang = bidangLocale!;
+      seksi = seksiLocale!;
+      userId = userIdLocale!;
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -32,8 +64,8 @@ class _SuratDispoState extends State<SuratDispo> {
           ),
         body: TabBarView(
           children: [
-            SuratDispoDiproses(keteranganProses:"Sudah Diproses", jenisSurat: widget.jenisSurat),
-            SuratDispoDiproses(keteranganProses:"Belum Diproses", jenisSurat: widget.jenisSurat),
+            SuratDispoDiproses(keteranganProses:"Sudah Diproses", jenisSurat: widget.jenisSurat, rule: rule!, bidang: bidang!, seksi: seksi!, userId: userId!),
+            SuratDispoDiproses(keteranganProses:"Belum Diproses", jenisSurat: widget.jenisSurat, rule: rule!, bidang: bidang!, seksi: seksi!, userId: userId!)
           ],
         ),
       ),
