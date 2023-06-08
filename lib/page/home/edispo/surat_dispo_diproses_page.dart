@@ -33,7 +33,6 @@ class _SuratDispoDiprosesState extends State<SuratDispoDiproses> {
 
   final _networkRepo = NetworkRepo();
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -70,7 +69,9 @@ class _SuratDispoDiprosesState extends State<SuratDispoDiproses> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
-      children: [daftarSurat( widget.rule, widget.bidang, widget.seksi, widget.userId)],
+      children: [
+        daftarSurat(widget.rule, widget.bidang, widget.seksi, widget.userId)
+      ],
     );
   }
 
@@ -83,27 +84,20 @@ class _SuratDispoDiprosesState extends State<SuratDispoDiproses> {
       children: [
         const SizedBox(height: 16.0),
         FutureBuilder<List<Surat>>(
-            future: _networkRepo.getSuratDiproses(widget.jenisSurat, bidang, rule, seksi, userId),
+            future: _networkRepo.getSuratDiproses(
+                widget.jenisSurat, bidang, rule, seksi, userId),
             builder: (context, snapshot) {
-              if (kDebugMode) {
-                print('data : ${snapshot.data}');
-              }
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: ((context, index) {
+              return ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: ((context, index) {
+                    if(snapshot.data != null){
                       return SuratItem(surat: snapshot.data![index]);
-                    }));
-              } else {
-                return Center(
-                  child: Text("Tidak ada Data",
-                      style: regular.copyWith(
-                          fontSize: 14.0, color: secondaryBlueBlack)),
-                );
-              }
+                    }
+
+                  }));
             })
       ],
     );

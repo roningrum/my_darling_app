@@ -54,7 +54,7 @@ class NetworkRepo{
 
   //get Surat Sudah Diproses
   Future<List<Surat>> getSuratDiproses(String jenis, String rule, String bidang, String seksi, String userId) async{
-    final queryParameter = {'jenis' : jenis, 'rule':rule, 'bidang': bidang, 'seksi':seksi, 'user_id': userId, 'status1':"disposisi", 'status2':"proses"};
+    final queryParameter = {'jenis' : jenis, 'rule':rule, 'bidang': bidang, 'seksi':seksi, 'user_id': userId, 'status1':"disposisi", 'status2':"diterima"};
     var response = await http.get(Uri.parse('$url_dispo/surat_dp').replace(queryParameters: queryParameter));
     if (kDebugMode) {
       print('Response data : ${response.body}');

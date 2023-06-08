@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
+import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/home/edispo/edispo_agenda/edispo_agenda_page.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_external_bidang.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_internal_bidang.dart';
@@ -22,6 +23,35 @@ class Edispo extends StatefulWidget {
 class _EdispoState extends State<Edispo> {
   
   final networkRepo = NetworkRepo();
+  final _sessionManager = SessionManager();
+
+  String rule ="";
+  String bidang = "";
+  String seksi ="";
+  String userId="";
+
+  Future<void> iniateState() async {
+    var ruleLocale = await _sessionManager.getRule('rule');
+    var bidangLocale = await _sessionManager.getBidang('bidang');
+    var seksiLocale = await _sessionManager.getSeksi('seksi');
+    var userIdLocale = await _sessionManager.getUserId('userId');
+
+    setState(() {
+      rule = ruleLocale!;
+      bidang = bidangLocale!;
+      seksi = seksiLocale!;
+      userId = userIdLocale!;
+    });
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    iniateState();
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -66,17 +96,17 @@ class _EdispoState extends State<Edispo> {
               children:[
                 GestureDetector(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SuratDispo(jenisSurat: "undangan")));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SuratDispo(jenisSurat: "undangan", rule: rule, bidang: bidang, seksi: seksi, userId: userId,)));
                     },
                     child: const EdispoMenuWidget('Surat Undangan','assets/icons/edispo/ic_undangan.png')),
                 GestureDetector(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SuratDispo(jenisSurat: "umum")));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>SuratDispo(jenisSurat: "umum", rule: rule, bidang: bidang, seksi: seksi, userId: userId,)));
                     },
                     child: const EdispoMenuWidget('Surat Umum','assets/icons/edispo/ic_surat_umum.png')),
                 GestureDetector(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SuratDispo(jenisSurat: "dispo balik")));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SuratDispo(jenisSurat: "dispobalik", rule: rule, bidang: bidang, seksi: seksi, userId: userId,)));
                     },
                     child: const EdispoMenuWidget('Dispo Balik','assets/icons/edispo/ic_dispo_balik.png'),
                 ),

@@ -7,45 +7,28 @@ import '../../../theme/theme.dart';
 
 class SuratDispo extends StatefulWidget {
   final String jenisSurat;
-  const SuratDispo({Key? key, required this.jenisSurat}) : super(key: key);
+  final String rule;
+  final String bidang;
+  final String userId;
+  final String seksi;
+
+  const SuratDispo({Key? key, required this.jenisSurat, required this.rule, required this.bidang, required this.userId, required this.seksi}) : super(key: key);
 
   @override
   State<SuratDispo> createState() => _SuratDispoState();
 }
 
 class _SuratDispoState extends State<SuratDispo> {
-  final _sessionManager = SessionManager();
-  String? rule;
-  String? bidang;
-  String? seksi;
-  String? userId;
 
   @override
   void initState() {
     // TODO: implement initState
-    iniateState();
     super.initState();
-
-  }
-
-  Future<void> iniateState() async {
-    var ruleLocale = await _sessionManager.getRule('rule');
-    var bidangLocale = await _sessionManager.getBidang('bidang');
-    var seksiLocale = await _sessionManager.getSeksi('seksi');
-    var userIdLocale = await _sessionManager.getUserId('userId');
-
-    setState(() {
-      rule = ruleLocale!;
-      bidang = bidangLocale!;
-      seksi = seksiLocale!;
-      userId = userIdLocale!;
-    });
 
   }
 
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -64,8 +47,8 @@ class _SuratDispoState extends State<SuratDispo> {
           ),
         body: TabBarView(
           children: [
-            SuratDispoDiproses(keteranganProses:"Sudah Diproses", jenisSurat: widget.jenisSurat, rule: rule!, bidang: bidang!, seksi: seksi!, userId: userId!),
-            SuratDispoDiproses(keteranganProses:"Belum Diproses", jenisSurat: widget.jenisSurat, rule: rule!, bidang: bidang!, seksi: seksi!, userId: userId!)
+            SuratDispoDiproses(keteranganProses:"Sudah Diproses", jenisSurat: widget.jenisSurat, rule: widget.rule, bidang: widget.bidang, seksi: widget.seksi, userId: widget.userId),
+            SuratDispoDiproses(keteranganProses:"Belum Diproses", jenisSurat: widget.jenisSurat, rule: widget.rule, bidang: widget.bidang, seksi: widget.seksi, userId: widget.userId),
           ],
         ),
       ),
