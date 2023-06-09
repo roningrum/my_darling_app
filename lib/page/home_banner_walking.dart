@@ -112,16 +112,6 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
             children: [
               Row(
                 children: [
-                  SvgPicture.asset('assets/icons/waktu.svg',
-                      width: 24.0, height: 24.0),
-                  const SizedBox(width: 6.0),
-                  Text('00:01:05',
-                      style: regular.copyWith(fontSize: 14.0, color: white))
-                ],
-              ),
-              const SizedBox(height: 12.0),
-              Row(
-                children: [
                   SvgPicture.asset('assets/icons/kalori.svg',
                       width: 24.0, height: 24.0),
                   const SizedBox(width: 6.0),
@@ -158,8 +148,8 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     // TODO: implement dispose
     super.dispose();
     ForegroundService().stop();
-    Hive.box('steps').compact();
-    Hive.close();
+    // Hive.box('steps').compact();
+    // Hive.close();
     _subscription.cancel();
   }
 
@@ -176,9 +166,10 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     if (kDebugMode) {
       print(event);
     }
+
+    if(!mounted) return;
     setState((){
       _status = event.status;
-
       if (_status == "stopped") {
         sendResponse(todaySteps);
       }
@@ -263,6 +254,5 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
 void sendResponse(int steps) async{
   var nik = await sessionManager.getUserId('nik');
   networkRepo.sendRecordLangkah(nik!, todaySteps.toString());
-
 }
 }

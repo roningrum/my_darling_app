@@ -2,6 +2,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionManager{
 
+
+  Future<void>createLoginStatus() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("login_status", true);
+  }
+
   Future<void> saveUserToken(String key, String authToken) async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(key, authToken);
@@ -72,6 +78,16 @@ class SessionManager{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(key);
   }
+  
+  Future<bool?>isLogin() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("login_status");
+  }
 
+  //Hapus Semua Shared Pref
+  Future<void>clear() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
 
 }

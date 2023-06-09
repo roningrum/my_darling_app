@@ -52,26 +52,65 @@ class NetworkRepo{
     }
   }
 
-  //get Surat Sudah Diproses
-  Future<List<Surat>> getSuratDiproses(String jenis, String rule, String bidang, String seksi, String userId) async{
-    final queryParameter = {'jenis' : jenis, 'rule':rule, 'bidang': bidang, 'seksi':seksi, 'user_id': userId, 'status1':"disposisi", 'status2':"diterima"};
-    var response = await http.get(Uri.parse('$url_dispo/surat_dp').replace(queryParameters: queryParameter));
-    if (kDebugMode) {
-      print('Response data : ${response.body}');
+  //get Surat Proses
+  Future<List<Surat>> getSuratProses(String jenis, String rule, String bidang, String seksi, String userId) async{
+    final queryParameters = {'jenis':jenis, 'rule':rule, 'bidang':bidang, 'seksi':seksi, 'user_id':userId, 'status1': 'disposisi', 'status2':'diterima'};
+    var response = await http.get(Uri.parse('$url_dispo/surat_dp').replace(queryParameters: queryParameters));
+    if(kDebugMode){
+      print('response url ${response.request}');
+      print('Data Response ${response.body}');
     }
-    List<Surat> suratDispo=[];
+    List<Surat> suratDPList = [];
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
       List<dynamic>data = jsonData['surat'];
-      suratDispo = data.map((data) => Surat.fromJson(data)).toList();
-      return suratDispo;
+      suratDPList = data.map((data) => Surat.fromJson(data)).toList();
+      return suratDPList;
     }
     else{
       throw response.statusCode;
     }
-
   }
 
+  //get Surat Proses
+  Future<List<Surat>> getSuratProsesKadin(String jenis) async{
+    final queryParameters = {'jenis':jenis};
+    var response = await http.get(Uri.parse('$url_dispo/get_surat_dp_kadin_sudah_diproses').replace(queryParameters: queryParameters));
+    if(kDebugMode){
+      print('response url ${response.request}');
+      print('Data Response ${response.body}');
+    }
+    List<Surat> suratDPList = [];
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      List<dynamic>data = jsonData['surat'];
+      suratDPList = data.map((data) => Surat.fromJson(data)).toList();
+      return suratDPList;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
+
+  //get Surat belum diproses
+  Future<List<Surat>> getSuratBelumProses(String jenis, String rule, String bidang, String seksi, String userId) async{
+    final queryParameters = {'jenis':jenis, 'rule':rule, 'bidang':bidang, 'seksi':seksi, 'user_id':userId, 'status1': 'proses', 'status2':'proses'};
+    var response = await http.get(Uri.parse('$url_dispo/surat_dp').replace(queryParameters: queryParameters));
+    if(kDebugMode){
+      print('response url ${response.request}');
+      print('Data Response ${response.body}');
+    }
+    List<Surat> suratDPList = [];
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      List<dynamic>data = jsonData['surat'];
+      suratDPList = data.map((data) => Surat.fromJson(data)).toList();
+      return suratDPList;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
   //get Agenda
   Future<List<Data>> getAgenda(String dari, String sampai) async{
     final queryParameters={'dari': dari, 'sampai': sampai};

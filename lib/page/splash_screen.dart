@@ -16,7 +16,12 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(const Duration(seconds: 3), ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen())));
+    Future.delayed(const Duration(seconds: 3), ()=> Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+            const LoginScreen()),
+            (Route<dynamic> route) => false));
   }
   @override
   Widget build(BuildContext context) {

@@ -1,21 +1,20 @@
 class SuratResponse {
-  SuratResponse({
-      this.surat,});
+  SuratResponse({this.suratList});
 
   SuratResponse.fromJson(dynamic json) {
     if (json['surat'] != null) {
-      surat = [];
+      suratList = [];
       json['surat'].forEach((v) {
-        surat?.add(Surat.fromJson(v));
+        suratList?.add(Surat.fromJson(v));
       });
     }
   }
-  List<Surat>? surat;
+  List<Surat>? suratList;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    if (surat != null) {
-      map['surat'] = surat?.map((v) => v.toJson()).toList();
+    if (suratList != null) {
+      map['surat'] = suratList?.map((v) => v.toJson()).toList();
     }
     return map;
   }
@@ -140,7 +139,7 @@ class Surat {
   String? dpBalikStaff;
   String? dpBalikKasi;
   String? statusNotif;
-  String?  isiSurat;
+  String? isiSurat;
   String? jenisSurat;
   String? notifSuara;
   String? createdAt;

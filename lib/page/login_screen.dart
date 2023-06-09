@@ -19,8 +19,32 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _networkRepo = NetworkRepo();
   final _sessionManager = SessionManager();
+  bool checkLogin = false;
 
   bool _isloading = false;
+  String name ='';
+
+ Future<void> checkLoginSession() async{
+    checkLogin = (await _sessionManager.isLogin())!;
+    name = (await _sessionManager.readNama('nama'))!;
+    if(checkLogin){
+      if(!mounted) return;
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  const HomeScreen()),
+              (Route<dynamic> route) => false);
+    }
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkLoginSession();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,6 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void doLogin(String username, String password, BuildContext context) async {
     var response = await _networkRepo.getLogin(username, password);
     if (response.isNotEmpty) {
+      _sessionManager.createLoginStatus();
+      _sessionManager.saveNama('name', response[0].nama!);
       _sessionManager.saveUserToken('token', response[0].token!);
       _sessionManager.saveIdUser('userId', response[0].userId!);
       _sessionManager.saveNikUser('nik', response[0].nik!);
@@ -161,11 +187,23 @@ class _LoginScreenState extends State<LoginScreen> {
       _sessionManager.setSeksi('seksi', response[0].seksi!);
       _sessionManager.setRule('rule', response[0].rule!);
       // if (mounted) return;
-      Navigator.pop(context);
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => HomeScreen(
-                nama: response[0].nama!,
-              )));
+      if(!mounted) return;
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+              const HomeScreen()),
+              (Route<dynamic> route) => false);
+    }
+    else{
+      final snackBar = SnackBar(
+        backgroundColor: Colors.redAccent,
+        content: Text('Username / Password Salah silakan check kembali', style: regular.copyWith(fontSize: 14)),
+      );
+      if(!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      _isloading = false;
+
     }
   }
 
