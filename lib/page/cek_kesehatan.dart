@@ -55,9 +55,11 @@ class _CekKesehatanState extends State<CekKesehatan> {
                     });
               }
             } else if (snapshot.hasError) {
-              return Text("Tidak ada Riwayat yg terekam",
-                  style: regular.copyWith(
-                      fontSize: 14.0, color: secondaryBlueBlack));
+              return Center(
+                child: Text("Tidak ada Riwayat yg terekam",
+                    style: regular.copyWith(
+                        fontSize: 14.0, color: secondaryBlueBlack)),
+              );
             }
             else{
             return Center(child: CircularProgressIndicator(color: primaryRed));

@@ -168,7 +168,7 @@ class NetworkRepo{
 
   Future<List<CatatanKesehatanResponse>> getCatatanKesehatan(String? nik) async{
     final token = await getToken();
-    final response = await http.post(Uri.parse('$url_yohSehat/catatan_kesehatan'), body: {'nik': nik}, headers: {'Authorization':'Bearer $token'});
+    final response = await http.post(Uri.parse('$url_yohSehat/catatan_kesehatan'), body: {'nik':"9202125312940001"}, headers: {'Authorization':'Bearer $token'});
     if (kDebugMode) {
       print("Data: ${response.body}");
     }

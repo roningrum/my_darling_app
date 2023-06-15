@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/login_screen.dart';
 
 import '../theme/theme.dart';
+import 'home_screen.dart';
 
 
 class SplashScreen extends StatefulWidget {
@@ -12,16 +14,15 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final _sessionManager = SessionManager();
   @override
   void initState() {
     // TODO: implement initState
+    Future.delayed(const Duration(seconds: 3), (){
+      checkLoginSession();
+    });
     super.initState();
-    Future.delayed(const Duration(seconds: 3), ()=> Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-            builder: (BuildContext context) =>
-            const LoginScreen()),
-            (Route<dynamic> route) => false));
+
   }
   @override
   Widget build(BuildContext context) {
@@ -52,6 +53,30 @@ class _SplashScreenState extends State<SplashScreen> {
         ],
       ),
     );
+  }
+
+  Future<bool> checkLoginSession() async{
+    var checkLogin = await _sessionManager.isLogin();
+    if(checkLogin!=null && checkLogin == true){
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+              const HomeScreen()),
+              (Route<dynamic> route) => false);
+      return checkLogin;
+    }
+    else{
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+              const LoginScreen()),
+              (Route<dynamic> route) => false);
+    }
+    return false;
   }
 }
 

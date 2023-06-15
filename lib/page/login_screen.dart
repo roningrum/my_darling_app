@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
@@ -24,28 +25,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isloading = false;
   String name ='';
 
- Future<void> checkLoginSession() async{
-    checkLogin = (await _sessionManager.isLogin())!;
-    name = (await _sessionManager.readNama('nama'))!;
-    if(checkLogin){
-      if(!mounted) return;
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  const HomeScreen()),
-              (Route<dynamic> route) => false);
-    }
-  }
-
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    checkLoginSession();
+    // checkLoginSession();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,8 +126,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 String password = passwordController.text;
                                 doLogin(username, password, context);
                                 // _networkRepo.doLogin(email, password);
-                                print(
+                                if (kDebugMode) {
+                                  print(
                                     'username : $username Password : $password');
+                                }
                                 setState(() => _isloading = true);
                               }
                             },
@@ -205,6 +192,22 @@ class _LoginScreenState extends State<LoginScreen> {
       _isloading = false;
 
     }
+
+  }
+
+  Future<bool> checkLoginSession() async{
+    var checkLogin = await _sessionManager.isLogin();
+    if(checkLogin!=null && checkLogin == true){
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+              const HomeScreen()),
+              (Route<dynamic> route) => false);
+      return checkLogin;
+    }
+    return false;
   }
 
   @override

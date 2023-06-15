@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
-import 'package:hive/hive.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/cek_kesehatan.dart';
 import 'package:my_darling_app/page/home/edispo/edispo_page.dart';
+import 'package:my_darling_app/page/home/user_profile.dart';
 import 'package:my_darling_app/page/home_banner_walking.dart';
-import 'package:my_darling_app/page/login_screen.dart';
 import 'package:my_darling_app/page/pekunden_page.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
@@ -34,6 +33,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return nama;
   }
 
+  Future<String?> getUserId() async {
+    userId = await _sessionManager.readNama("userId");
+    return userId;
+  }
+
   Future<String> getUrlPhotoUser() async {
     userId = await _sessionManager.getUserId('userId');
     var response = await _networkRepo.getUserProfile(userId);
@@ -42,11 +46,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return urlPhoto;
   }
 
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getNama();
+    getUserId();
   }
 
   @override
@@ -71,9 +78,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (snapshot.hasData && snapshot.data != null) {
                       return GestureDetector(
                         onTap: () {
-                          // Navigator.of(context).push((MaterialPageRoute(
-                          //     builder: (context) => const UserProfile())));
-                          logout();
+                          if(userId !=null){
+                            Navigator.of(context).push((MaterialPageRoute(
+                                builder: (context) => UserProfile(userId: userId!))));
+                          }
+
+                          // logout();
                         },
                         child: CachedNetworkImage(
                           imageUrl: snapshot.data!,
@@ -294,11 +304,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   //logout
-  Future<void> logout() async{
-    if(!mounted) return;
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
-    _sessionManager.clear();
-    // Hive.box('steps').compact();
-    Hive.close();
-  }
+  // Future<void> logout() async{
+  //   if(!mounted) return;
+  //   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
+  //   _sessionManager.clear();
+  //   // Hive.box('steps').compact();
+  //   Hive.close();
+  // }
 }
