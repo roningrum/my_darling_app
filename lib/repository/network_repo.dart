@@ -19,7 +19,7 @@ import 'model/surat_response.dart';
 class NetworkRepo{
   final String url_dispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
   final String url_record = 'http://119.2.50.170:9094/mydarling/api';
-  final String url_yohSehat = 'http://119.2.50.170:7773/db_ lb1/api';
+  final String url_yohSehat = 'http://119.2.50.170:7773/db_lb1/api';
 
   //getLogin
   Future<List<Login>> getLogin(String username, String password) async{
@@ -168,15 +168,15 @@ class NetworkRepo{
 
   Future<List<CatatanKesehatanResponse>> getCatatanKesehatan(String? nik) async{
     final token = await getToken();
-    final response = await http.post(Uri.parse('$url_yohSehat/catatan_kesehatan'), body: {'nik':"9202125312940001"}, headers: {'Authorization':'Bearer $token'});
-    if (kDebugMode) {
-      print("Data: ${response.body}");
-    }
+    final response = await http.post(Uri.parse('$url_yohSehat/catatan_kesehatan'), body: {'nik':nik}, headers: {'Authorization':'Bearer $token'});
 
     if(response.statusCode == 200){
       List<dynamic>catatanResponse = jsonDecode(response.body);
       List<CatatanKesehatanResponse> recordKesehatan = [];
       recordKesehatan = catatanResponse.map((catatanResponse) => CatatanKesehatanResponse.fromJson(catatanResponse)).toList();
+      if (kDebugMode) {
+        print("Data: $recordKesehatan");
+      }
       return recordKesehatan;
     }
     else{

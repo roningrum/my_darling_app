@@ -7,7 +7,8 @@ import 'package:my_darling_app/widget/cekkesehatan_list.dart';
 import '../theme/theme.dart';
 
 class CekKesehatan extends StatefulWidget {
-  const CekKesehatan({Key? key}) : super(key: key);
+  final String nama;
+  const CekKesehatan({Key? key, required this.nama}) : super(key: key);
 
   @override
   State<CekKesehatan> createState() => _CekKesehatanState();
@@ -19,7 +20,7 @@ class _CekKesehatanState extends State<CekKesehatan> {
   String? nik;
 
   Future<List<CatatanKesehatanResponse>> getCatatan() async {
-    nik = await sessionManager.getNikUser('nik');
+    nik = await sessionManager.getNikUser("nik");
     // nik = "9202125312940001";
     final response = await networkRepo.getCatatanKesehatan(nik);
     return response;
@@ -38,10 +39,23 @@ class _CekKesehatanState extends State<CekKesehatan> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text("Tidak ada Riwayat yg terekam",
-                      style: regular.copyWith(
-                          fontSize: 14.0, color: secondaryBlueBlack)),
+                return Container(
+                  margin: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Catatan Kesehatan ${widget.nama}",
+                        style: title.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 16.0),
+                      Center(
+                        child: Text("Saat ini belum ada catatan terekam",
+                            style: regular.copyWith(
+                                fontSize: 14.0, color: secondaryBlueBlack)),
+                      ),
+                    ],
+                  ),
                 );
               }
               else {
@@ -51,14 +65,23 @@ class _CekKesehatanState extends State<CekKesehatan> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return CekKesehatanWidget(
-                          catatanKesehatanResponse: snapshot.data![index]);
+                          catatanKesehatanResponse: snapshot.data![index], nama: widget.nama,);
                     });
               }
             } else if (snapshot.hasError) {
-              return Center(
-                child: Text("Tidak ada Riwayat yg terekam",
-                    style: regular.copyWith(
-                        fontSize: 14.0, color: secondaryBlueBlack)),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Catatan Kesehatan ${widget.nama}",
+                    style: title.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+                  ),
+                  Center(
+                    child: Text("Tidak ada Riwayat yg terekam",
+                        style: regular.copyWith(
+                            fontSize: 14.0, color: secondaryBlueBlack)),
+                  ),
+                ],
               );
             }
             else{

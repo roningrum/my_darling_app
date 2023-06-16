@@ -30,58 +30,62 @@ class _UserProfileState extends State<UserProfile> {
           if(data != null){
             return CustomScrollView(
               slivers:  [
-                SliverAppBar(
-                  pinned: true,
-                  actions: [
-                    IconButton(onPressed: (){
-                      logout();
-                    }, icon: const Icon(Icons.logout_rounded, color: Colors.white,))
-                  ],
-                  expandedHeight: 280.0,
-                  title: Text('Profil Pengguna', style: regular.copyWith(color: Colors.white, fontSize: 16.0)),
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Container(
-                        decoration: BoxDecoration(
-                            color: primaryBlueBlack
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 60.0),
-                            CachedNetworkImage(
-                              imageUrl: 'http://119.2.50.170:9095/e_dispo/assets/temp/foto/${data[0].foto}',
-                              imageBuilder: (context, imageProvider) => Container(
-                                width: 100.0,
-                                height: 100.0,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      image: imageProvider, fit: BoxFit.cover),
-                                ),
-                              ),
-                              placeholder: (context, url) => Image.asset(
-                                'assets/image/user-photo.png',
-                                width: 100.0,
-                                height: 1000.0,
-                              ),
-                              errorWidget: (context, url, error) => Image.asset(
-                                'assets/image/user-photo.png',
-                                width: 100.0,
-                                height: 100.0,
-                              ),
+                SliverLayoutBuilder(
+                  builder: (context, constraints){
+                    final scrolled = constraints.scrollOffset > 0;
+                    return SliverAppBar(
+                      backgroundColor: scrolled ? primaryBlueBlack : secondaryBlueBlack,
+                      pinned: true,
+                      actions: [
+                        IconButton(onPressed: (){
+                          logout();
+                        }, icon: const Icon(Icons.logout_rounded, color: Colors.white,))
+                      ],
+                      expandedHeight: 200.0,
+                      title: Text('Profil Pengguna', style: regular.copyWith(color: Colors.white, fontSize: 16.0)),
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Container(
+                           padding: const EdgeInsets.only(top: 66.0),
+                            decoration: BoxDecoration(
+                                color: primaryBlueBlack
                             ),
-                            const SizedBox(height: 8.0),
-                            Text('${data[0].nama}', style: title.copyWith(color: Colors.white, fontSize: 16.0)),
-                            const SizedBox(height: 8.0),
-                            Text('NIK ${data[0].nik}', style: regular.copyWith(color: Colors.white, fontSize: 16.0)),
-                          ],
-                        )
-                    ),
-                  ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: 'http://119.2.50.170:9095/e_dispo/assets/temp/foto/${data[0].foto}',
+                                  imageBuilder: (context, imageProvider) => Container(
+                                    width: 96.0,
+                                    height: 96.0,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                          image: imageProvider, fit: BoxFit.cover),
+                                    ),
+                                  ),
+                                  placeholder: (context, url) => Image.asset(
+                                    'assets/image/user-photo.png',
+                                    width: 96.0,
+                                    height: 96.0,
+                                  ),
+                                  errorWidget: (context, url, error) => Image.asset(
+                                    'assets/image/user-photo.png',
+                                    width: 96.0,
+                                    height: 96.0,
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+                                Text('${data[0].nama}', style: title.copyWith(color: Colors.white, fontSize: 16.0)),
+                              ],
+                            )
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 SliverToBoxAdapter(
-                  child: UserProfileWidget(userId: widget.userId),
+                  child: UserProfileWidget(userId: widget.userId, nik: data[0].nik!),
                 )
               ],
             );
@@ -94,6 +98,7 @@ class _UserProfileState extends State<UserProfile> {
                   expandedHeight: 280.0,
                   title: Text('Profil Pengguna', style: regular.copyWith(color: Colors.white, fontSize: 16.0)),
                   flexibleSpace: FlexibleSpaceBar(
+                    centerTitle: true,
                     background: Container(
                         decoration: BoxDecoration(
                             color: primaryBlueBlack
@@ -126,9 +131,6 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: UserProfileWidget(userId: widget.userId),
-                )
               ],
             );
           }
@@ -144,7 +146,7 @@ class _UserProfileState extends State<UserProfile> {
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
     var sessionManager = SessionManager();
     sessionManager.clear();
-    // Hive.box('steps').compact();
+    Hive.deleteBoxFromDisk('steps');
     Hive.close();
   }
 }

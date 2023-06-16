@@ -6,9 +6,10 @@ import '../repository/model/catatan_kesehatan_response.dart';
 
 class CekKesehatanWidget extends StatelessWidget {
   final CatatanKesehatanResponse catatanKesehatanResponse;
+  final String nama;
 
   const CekKesehatanWidget({
-    Key? key, required this.catatanKesehatanResponse,
+    Key? key, required this.catatanKesehatanResponse, required this.nama,
   }) : super(key: key);
 
   @override
@@ -27,7 +28,7 @@ class CekKesehatanWidget extends StatelessWidget {
             "Tanggal Periksa : ${catatanKesehatanResponse.tglPemeriksa}",
             style: title.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 16.0),
           Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(

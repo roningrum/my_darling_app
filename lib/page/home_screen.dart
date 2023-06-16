@@ -203,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CekKesehatan()));
+                        builder: (context) => CekKesehatan(nama: nama!)));
               },
               child: const HomeMenuWidget(
                   'Kesehatan', 'assets/icons/cek_kesehatan_menu.png')),
@@ -302,13 +302,4 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> launchDinkesApp() async {
     await launch('https://dinkes.semarangkota.go.id/aplikasi/');
   }
-
-  //logout
-  // Future<void> logout() async{
-  //   if(!mounted) return;
-  //   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
-  //   _sessionManager.clear();
-  //   // Hive.box('steps').compact();
-  //   Hive.close();
-  // }
 }
