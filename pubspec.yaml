@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_svg: ^2.0.2
   percent_indicator: ^4.2.3
-  fl_chart: ^0.61.0
+  fl_chart: ^0.62.0
   http: ^0.13.5
   shared_preferences: ^2.0.18
   sensors_plus: ^2.0.2

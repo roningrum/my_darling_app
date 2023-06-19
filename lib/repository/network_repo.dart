@@ -3,6 +3,7 @@ import 'dart:core';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart'as http;
+import 'package:my_darling_app/repository/model/Walking_data_response.dart';
 import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
 import 'package:my_darling_app/repository/model/record_langkah.dart';
@@ -255,7 +256,20 @@ class NetworkRepo{
     else{
       throw response.statusCode;
     }
+  }
 
-
+  //get semua langkah jalan based on nik
+  Future<List<WalkingDataResponse>> getRiwayatJalan(String nik) async{
+    var response = await http.post(Uri.parse('$url_record/semua_record_langkah'), body: {'nik':nik});
+    List<WalkingDataResponse> walkinList =[];
+    if(response.statusCode == 200){
+      var jsonData = json.decode(response.body);
+      List<dynamic> list = jsonData;
+      walkinList = list.map((data) => WalkingDataResponse.fromJson(data)).toList();
+      return walkinList;
+    }
+    else{
+      throw response.statusCode;
+    }
   }
 }

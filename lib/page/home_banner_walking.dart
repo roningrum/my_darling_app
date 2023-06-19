@@ -166,7 +166,6 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     if (kDebugMode) {
       print(event);
     }
-
     if(!mounted) return;
     setState((){
       _status = event.status;
