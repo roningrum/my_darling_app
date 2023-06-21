@@ -40,15 +40,15 @@ class _SuratDispoState extends State<SuratDispo> {
               indicatorColor: Colors.redAccent,
               indicatorWeight: 2,
               tabs: [
+                Tab(text: "Belum Diproses"),
                 Tab(text: "Sudah Diproses"),
-                Tab(text: "Belum Diproses")
               ],
             ),
           ),
         body: TabBarView(
           children: [
-            SuratDispoDiproses(keteranganProses:"Sudah Diproses", jenisSurat: widget.jenisSurat, rule: widget.rule, bidang: widget.bidang, seksi: widget.seksi, userId: widget.userId),
             SuratDispoDiproses(keteranganProses:"Belum Diproses", jenisSurat: widget.jenisSurat, rule: widget.rule, bidang: widget.bidang, seksi: widget.seksi, userId: widget.userId),
+            SuratDispoDiproses(keteranganProses:"Sudah Diproses", jenisSurat: widget.jenisSurat, rule: widget.rule, bidang: widget.bidang, seksi: widget.seksi, userId: widget.userId),
           ],
         ),
       ),

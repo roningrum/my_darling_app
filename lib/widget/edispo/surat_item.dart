@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_darling_app/helper/date_helper.dart';
 import 'package:my_darling_app/repository/model/surat_response.dart';
 
 import '../../theme/theme.dart';
@@ -33,7 +34,7 @@ class SuratItem extends StatelessWidget {
                     children: [
                       Text('${surat.acara}',
                           style: title.copyWith(
-                              color: primaryBlueBlack, fontSize: 16.0)),
+                              color: primaryBlueBlack, fontSize: 16.0), maxLines: 3,),
                       const SizedBox(height: 8.0),
                       RichText(
                         text: TextSpan(children: [
@@ -61,8 +62,7 @@ class SuratItem extends StatelessWidget {
                               baseline: TextBaseline.alphabetic,
                               child: SizedBox(width: 10)),
                           TextSpan(
-                              text:
-                              "${surat.tempat} (${surat.jam})",
+                              text: "${dateFormat(surat.tanggal ??'')} s/d ${dateFormat(surat.tanggal2 ??'')} (${surat.jam})",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -71,7 +71,7 @@ class SuratItem extends StatelessWidget {
               )
             ],
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 10.0),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -87,11 +87,11 @@ class SuratItem extends StatelessWidget {
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
-                    textAlign: TextAlign.start),
+                    textAlign: TextAlign.start, maxLines: 3),
               ),
             ],
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 10.0),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -107,11 +107,11 @@ class SuratItem extends StatelessWidget {
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
-                    textAlign: TextAlign.start),
+                    textAlign: TextAlign.start, maxLines: 3,),
               ),
             ],
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 10.0),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -127,11 +127,11 @@ class SuratItem extends StatelessWidget {
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
-                    textAlign: TextAlign.start),
+                    textAlign: TextAlign.start, maxLines: 2,),
               ),
             ],
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 10.0),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -174,6 +174,6 @@ class SuratItem extends StatelessWidget {
           const SizedBox(height: 16.0),
         ],
       ),
-    );;
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:my_darling_app/page/home/edispo/surat_detail_page.dart';
 import 'package:my_darling_app/repository/model/surat_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
@@ -142,7 +143,11 @@ class _SuratDispoDiprosesState extends State<SuratDispoDiproses> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: data.length,
                           itemBuilder: ((context, index) {
-                            return SuratItem(surat: data[index]);
+                            return GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => SuratDetailPage( surat: data[index],)));
+                                },
+                                child: SuratItem(surat: data[index]));
                           }));
                     }
                   }
@@ -185,7 +190,11 @@ class _SuratDispoDiprosesState extends State<SuratDispoDiproses> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: data.length,
                           itemBuilder: ((context, index) {
-                            return SuratItem(surat: data[index]);
+                            return GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => SuratDetailPage( surat: data[index],)));
+                                },
+                                child: SuratItem(surat: data[index]));
                           }));
                     }
                   }
@@ -234,8 +243,11 @@ class _SuratDispoDiprosesState extends State<SuratDispoDiproses> {
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: data.length,
                         itemBuilder: ((context, index) {
-                          return SuratItem(surat: data[index]);
-                        }));
+                          return GestureDetector(
+                              onTap: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => SuratDetailPage( surat: data[index],))),
+                              child: SuratItem(surat: data[index]));
+                        }),
+                    );
                   }
                 }
               }
