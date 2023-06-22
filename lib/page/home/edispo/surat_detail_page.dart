@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
+import 'package:my_darling_app/page/home/edispo/file_surat_dispo.dart';
 import 'package:my_darling_app/repository/model/surat_response.dart';
 import 'package:my_darling_app/theme/theme.dart';
 
@@ -36,21 +37,30 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                 textAlign: TextAlign.center),
             const SizedBox(height: 12.0),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Tgl Surat',
-                    style: regular.copyWith(
-                        color: secondaryBlueBlack, fontSize: 14.0),
-                    textAlign: TextAlign.start),
+                SizedBox(
+                  width: 100,
+                  child: Text('Tgl Surat',
+                      style: regular.copyWith(
+                          color: secondaryBlueBlack, fontSize: 14.0),
+                      textAlign: TextAlign.start),
+                ),
                 Text(dateFormat(widget.surat.tglSurat!),
                     style: regular.copyWith(
                         color: secondaryBlueBlack, fontSize: 14.0),
                     textAlign: TextAlign.start),
-                const SizedBox(width: 4),
-                Text('Tgl Terima',
-                    style: regular.copyWith(
-                        color: secondaryBlueBlack, fontSize: 14.0),
-                    textAlign: TextAlign.start),
+              ],
+            ),
+            const SizedBox(height: 8.0),
+            Row(
+              children: [
+                SizedBox(
+                  width: 100,
+                  child: Text('Tgl Terima',
+                      style: regular.copyWith(
+                          color: secondaryBlueBlack, fontSize: 14.0),
+                      textAlign: TextAlign.start),
+                ),
                 Text(dateFormat(widget.surat.tglTerima!),
                     style: regular.copyWith(
                         color: secondaryBlueBlack, fontSize: 14.0),
@@ -308,10 +318,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                         textAlign: TextAlign.start)),
                 ElevatedButton.icon(
                     onPressed: (){
-                      // final url = 'http://119.2.50.170:9095/e_dispo/assets/temp/file_surat/${widget.surat.fileSurat}';
-                      // //buat lihat pdf / file scanned
-                      // lihatFileSurat(widget.surat.fileSurat!);
-                      // launchPdfUrl(Uri.parse(url));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> FileSuratDispo(fileSurat: widget.surat.fileSurat!)));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryRed,
