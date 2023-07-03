@@ -138,12 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Text('Selamat Pagi, $nama',
                   //     style: title.copyWith(
                   //         fontSize: 16.0, color: primaryBlueBlack)),
-                  GestureDetector(
-                      onTap: (){
-                        Navigator.of(context).push((MaterialPageRoute(
-                            builder: (context) => const WalkingChartPage())));
-                      },
-                      child: const HomeBannerWalking()),
+                  const HomeBannerWalking(),
                   const SizedBox(
                     height: 24.0,
                   ),

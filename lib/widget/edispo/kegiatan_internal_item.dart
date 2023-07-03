@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/repository/model/kegiatan_internal_response.dart';
 import 'package:my_darling_app/theme/theme.dart';
+import 'package:whatsapp_share/whatsapp_share.dart';
 
 class KegiatanInternalItem extends StatelessWidget {
   final KegiatanInternal kegiatanInternal;
-  const KegiatanInternalItem({Key? key, required this.kegiatanInternal}) : super(key: key);
+
+  const KegiatanInternalItem({Key? key, required this.kegiatanInternal})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       margin: const EdgeInsets.only(bottom: 16.0),
       decoration: BoxDecoration(
@@ -61,7 +64,8 @@ class KegiatanInternalItem extends StatelessWidget {
                               child: SizedBox(width: 10)),
                           TextSpan(
                               text:
-                              "${kegiatanInternal.tglKegiatan} (${kegiatanInternal.jam})",
+                              "${kegiatanInternal
+                                  .tglKegiatan} (${kegiatanInternal.jam})",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -75,7 +79,7 @@ class KegiatanInternalItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 64,
+                width: 100,
                 child: Text('Bidang',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
@@ -95,7 +99,7 @@ class KegiatanInternalItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 64,
+                width: 100,
                 child: Text('Dihadiri',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
@@ -115,7 +119,7 @@ class KegiatanInternalItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 64,
+                width: 100,
                 child: Text('Keterangan',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
@@ -134,7 +138,9 @@ class KegiatanInternalItem extends StatelessWidget {
           Align(
               alignment: Alignment.bottomRight,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  shareWhatsApp(kegiatanInternal);
+                },
                 icon: Image.asset('assets/icons/edispo/whatsapp-share.png',
                     width: 24),
                 label: Text(
@@ -151,5 +157,16 @@ class KegiatanInternalItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void shareWhatsApp(KegiatanInternal data) async {
+    await WhatsappShare.share(
+        phone: '62XXXXXXXXXX',
+        text:
+        "Agenda Tanggal : *${data.tglKegiatan}* \nAcara : *${data
+            .kegiatan}* \nLokasi : *${data.lokasi}*  \nWaktu Acara : *${data
+            .hari} ${data.tglKegiatan}* \nBidang : ${data
+            .disposisi} \nHadir : ${data
+            .dihadiri}\n\n(Data ini diambil dari aplikasi Mobile E-Disposisi)");
   }
 }

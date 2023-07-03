@@ -164,7 +164,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                         textAlign: TextAlign.start)),
                 Expanded(
                     child: Text(
-                        '${dateFormat(widget.surat.tanggal!)} s/d ${dateFormat(widget.surat.tanggal2!)}',
+                        '${dateFormat(widget.surat.tanggal)} s/d ${dateFormat(widget.surat.tanggal2)}',
                         style: regular.copyWith(
                             color: secondaryBlueBlack, fontSize: 14.0),
                         textAlign: TextAlign.start)),

@@ -80,7 +80,11 @@ class _EdispoAgendaPageState extends State<EdispoAgendaPage> {
                 );
               }
               else{
-                return Container();
+                return Center(
+                  child: Text("Tidak ada Agenda hari ini",
+                      style: regular.copyWith(
+                          fontSize: 14.0, color: secondaryBlueBlack)),
+                );
               }
             },
           ),

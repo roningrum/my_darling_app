@@ -18,7 +18,9 @@ class _NotulenState extends State<Notulen> {
             style: title.copyWith(color: Colors.white, fontSize: 16)),
         backgroundColor: primaryBlueBlack,
       ),
-      body: Container()
+      body: Center(
+        child: Text('Tidak ada Notulen yg tersedia', style: regular.copyWith(color: secondaryBlueBlack),),
+      )
     );
   }
 }

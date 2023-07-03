@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_darling_app/helper/date_helper.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/home/edispo/edispo_agenda/edispo_agenda_page.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_external_bidang.dart';
@@ -7,10 +6,8 @@ import 'package:my_darling_app/page/home/edispo/kegiatan_internal_bidang.dart';
 import 'package:my_darling_app/page/home/edispo/kegiatan_pppk_page.dart';
 import 'package:my_darling_app/page/home/edispo/notulen.dart';
 import 'package:my_darling_app/page/home/edispo/surat_dispo_page.dart';
-import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
-import 'package:my_darling_app/widget/edispo/agenda_today_item.dart';
 import 'package:my_darling_app/widget/edispo_menu_widget.dart';
 
 class Edispo extends StatefulWidget {
@@ -144,88 +141,5 @@ class _EdispoState extends State<Edispo> {
     );
   }
 
-  Widget edispoAgendaToday(){
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Agenda Hari Ini', style: regular.copyWith(color: secondaryBlueBlack, fontWeight: FontWeight.w600),),
-              TextButton.icon(
-                  onPressed:(){},
-                style: ButtonStyle(
-                  overlayColor: MaterialStateProperty.resolveWith((Set<MaterialState> states){
-                    if(states.contains(MaterialState.pressed)){
-                    return const Color(0xffF5D2D2).withOpacity(0.25);
-                    }
-                    return null;
-                  })
-                ),
-                label: Text('Cari Agenda', style: regular.copyWith(color: primaryRed, fontWeight: FontWeight.w600)),
-                icon: const Icon(
-                  Icons.search,
-                  size: 24.0,
-                  color: Color(0xffD72323),
-                ),
-              )
-            ],
-          ),
-          FutureBuilder<List<Data>>(
-            future: networkRepo.getAgenda(getTodayDate(), getTodayDate()),
-            builder: (context, snapshot){
-              if(snapshot.hasData && snapshot.connectionState == ConnectionState.done){
-                if(snapshot.data!.isNotEmpty){
-                  return ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length ,
-                    itemBuilder: (context, index){
-                      var data = snapshot.data?[index];
-                      return AgendaTodayItem(data: data!);
-                    },
-                  );
-                }
-                else{
-                  return Center(
-                    child: Text("Tidak ada Agenda hari ini",
-                        style: regular.copyWith(
-                            fontSize: 14.0, color: secondaryBlueBlack)),
-                  );
-                }
-              }
-              else if(snapshot.hasError && snapshot.connectionState == ConnectionState.none){
-                return Center(
-                  child: Text("Cek Koneksi Kembali",
-                      style: regular.copyWith(
-                          fontSize: 14.0, color: secondaryBlueBlack)),
-                );
-              }
-              else{
-                return CircularProgressIndicator(color: primaryRed);
-              }
-              // return ListView(
-              //   scrollDirection: Axis.vertical,
-              //
-              //   children: const [
-              //     AgendaTodayItem(),
-              //     AgendaTodayItem(),
-              //     AgendaTodayItem(),
-              //     AgendaTodayItem(),
-              //     AgendaTodayItem(),
-              //     AgendaTodayItem(),
-              //     AgendaTodayItem(),
-              //     AgendaTodayItem(),
-              //   ],
-              // )
-            },
-          )
-
-        ],
-      ),
-    );
-  }
 
 }

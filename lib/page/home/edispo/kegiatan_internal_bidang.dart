@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
+import 'package:my_darling_app/page/home/edispo/kegiatan_page_detail.dart';
 import 'package:my_darling_app/widget/edispo/kegiatan_internal_item.dart';
 import '../../../repository/model/kegiatan_internal_response.dart';
 import '../../../repository/network_repo.dart';
@@ -108,17 +109,21 @@ class _KegiatanInternalBidangState extends State<KegiatanInternalBidang> {
         FutureBuilder<List<KegiatanInternal>>(
             future: _networkRepo.getKegiatanInternal("4", dateParameter()),
             builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.data!.isNotEmpty) {
+              if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                if(snapshot.data!=null) {
                   return ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: snapshot.data!.length,
                       itemBuilder: ((context, index) {
-                        return KegiatanInternalItem(
-                            kegiatanInternal: snapshot.data![index]);
+                        return GestureDetector(
+                          onTap: (){
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>KegiatanPage(kegiatanInternal: snapshot.data![index])));
+                          },
+                          child: KegiatanInternalItem(
+                              kegiatanInternal: snapshot.data![index]),
+                        );
                       }));
                 } else {
                   return Center(
@@ -127,6 +132,12 @@ class _KegiatanInternalBidangState extends State<KegiatanInternalBidang> {
                             fontSize: 14.0, color: secondaryBlueBlack)),
                   );
                 }
+              }else if(snapshot.hasError) {
+                return Center(
+                  child: Text("Tidak ada kegiatan hari ini",
+                      style: regular.copyWith(
+                          fontSize: 14.0, color: secondaryBlueBlack)),
+                );
               } else {
                 return Center(child: CircularProgressIndicator(color: primaryRed));
               }
