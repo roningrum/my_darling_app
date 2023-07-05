@@ -36,7 +36,7 @@ class _NotulenState extends State<Notulen> {
               Text('Daftar Notulen Saat ini', style: title.copyWith(color: secondaryBlueBlack, fontSize: 16.0)),
               const SizedBox(height: 10.0),
               FutureBuilder<List<ItemNotulen>>(
-                  future: networkRepo.getNotulen("191"),
+                  future: networkRepo.getNotulen(widget.userId),
                   builder: (context, snapshot) {
                     var data = snapshot.data;
                     if (kDebugMode) {

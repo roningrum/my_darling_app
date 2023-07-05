@@ -266,14 +266,14 @@ class _NotulenDetailState extends State<NotulenDetail> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryRed,
+                      backgroundColor: Colors.lightBlue,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0)
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8)
                   ),
-                  icon: const Icon(Icons.remove_red_eye, size: 24.0,),
+                  icon: const Icon(Icons.file_open_rounded, size: 24.0,),
                   label: Text('Lihat Notulen', style: title.copyWith(color: Colors.white),),)
               ],
             ),
