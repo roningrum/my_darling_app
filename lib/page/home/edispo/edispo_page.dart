@@ -45,10 +45,9 @@ class _EdispoState extends State<Edispo> {
   @override
   void initState() {
     // TODO: implement initState
-    iniateState();
     super.initState();
+    iniateState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +130,7 @@ class _EdispoState extends State<Edispo> {
             ),
             GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const Notulen()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Notulen(userId: userId)));
                 },
                 child: const EdispoMenuWidget('Notulen', 'assets/icons/edispo/note.png')),
 

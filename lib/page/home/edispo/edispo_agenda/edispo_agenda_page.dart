@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
+import 'package:my_darling_app/page/home/agenda_surat_detail.dart';
+import 'package:my_darling_app/page/home/edispo/agenda_search_page.dart';
 import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
@@ -30,7 +32,9 @@ class _EdispoAgendaPageState extends State<EdispoAgendaPage> {
             children: [
               Text('Agenda Hari Ini', style: regular.copyWith(color: secondaryBlueBlack, fontWeight: FontWeight.w600),),
               TextButton.icon(
-                onPressed:(){},
+                onPressed:(){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AgendaSearchPage()));
+                },
                 style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith((Set<MaterialState> states){
                       if(states.contains(MaterialState.pressed)){
@@ -60,7 +64,11 @@ class _EdispoAgendaPageState extends State<EdispoAgendaPage> {
                     itemCount: snapshot.data!.length ,
                     itemBuilder: (context, index){
                       var data = snapshot.data![index];
-                      return AgendaTodayItem(data: data);
+                      return GestureDetector(
+                          onTap:() => Navigator.push(context,
+                              MaterialPageRoute(builder: (context) =>
+                                  AgendaSuratDetail(data: data))),
+                          child: AgendaTodayItem(data: data));
                     },
                   );
                 }

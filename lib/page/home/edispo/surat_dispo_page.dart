@@ -19,13 +19,6 @@ class SuratDispo extends StatefulWidget {
 class _SuratDispoState extends State<SuratDispo> {
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-  }
-
-  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,

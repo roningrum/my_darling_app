@@ -3,6 +3,7 @@ import 'dart:core';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_darling_app/repository/model/Item_notulen_response.dart';
 import 'package:my_darling_app/repository/model/Walking_data_response.dart';
 import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
@@ -18,14 +19,14 @@ import 'model/login_response.dart';
 import 'model/surat_response.dart';
 
 class NetworkRepo {
-  final String url_dispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
-  final String url_record = 'http://119.2.50.170:9094/mydarling/api';
-  final String url_yohSehat = 'http://119.2.50.170:7773/db_lb1/api';
+  final String urlDispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
+  final String urlRecord = 'http://119.2.50.170:9094/mydarling/api';
+  final String urlYohSehat = 'http://119.2.50.170:7773/db_lb1/api';
 
   //getLogin
   Future<List<Login>> getLogin(String username, String password) async {
     final queryParameters = {'username': username, 'password': password};
-    var response = await http.get(Uri.parse('$url_dispo/login')
+    var response = await http.get(Uri.parse('$urlDispo/login')
         .replace(queryParameters: queryParameters));
     List<Login> loginUserList = [];
     if (response.statusCode == 200) {
@@ -41,7 +42,7 @@ class NetworkRepo {
   //get Detail User
   Future<List<User>> getUserProfile(String? userId) async {
     final queryParameters = {'user_id': userId};
-    var response = await http.get(Uri.parse('$url_dispo/get_detail_userbyid')
+    var response = await http.get(Uri.parse('$urlDispo/get_detail_userbyid')
         .replace(queryParameters: queryParameters));
     List<User> userDetailList = [];
     if (response.statusCode == 200) {
@@ -66,7 +67,7 @@ class NetworkRepo {
       'status1': 'disposisi',
       'status2': 'diterima'
     };
-    var response = await http.get(Uri.parse('$url_dispo/surat_dp')
+    var response = await http.get(Uri.parse('$urlDispo/surat_dp')
         .replace(queryParameters: queryParameters));
     if (kDebugMode) {
       print('response url ${response.request}');
@@ -87,7 +88,7 @@ class NetworkRepo {
   Future<List<Surat>> getSuratProsesKadin(String jenis) async {
     final queryParameters = {'jenis': jenis};
     var response = await http.get(
-        Uri.parse('$url_dispo/get_surat_dp_kadin_sudah_diproses')
+        Uri.parse('$urlDispo/get_surat_dp_kadin_sudah_diproses')
             .replace(queryParameters: queryParameters));
     if (kDebugMode) {
       print('response url ${response.request}');
@@ -117,7 +118,7 @@ class NetworkRepo {
       'status2': 'diterima',
       'tgl_agenda': tgl
     };
-    var response = await http.get(Uri.parse('$url_dispo/surat_dp_by_tgl')
+    var response = await http.get(Uri.parse('$urlDispo/surat_dp_by_tgl')
         .replace(queryParameters: queryParameters));
     if (kDebugMode) {
       print('response url ${response.request}');
@@ -146,7 +147,7 @@ class NetworkRepo {
       'status1': 'proses',
       'status2': 'proses'
     };
-    var response = await http.get(Uri.parse('$url_dispo/surat_dp')
+    var response = await http.get(Uri.parse('$urlDispo/surat_dp')
         .replace(queryParameters: queryParameters));
     if (kDebugMode) {
       print('response url ${response.request}');
@@ -175,7 +176,7 @@ class NetworkRepo {
       'status2': 'proses',
       'tgl_agenda': tgl
     };
-    var response = await http.get(Uri.parse('$url_dispo/surat_dp_by_tgl')
+    var response = await http.get(Uri.parse('$urlDispo/surat_dp_by_tgl')
         .replace(queryParameters: queryParameters));
     if (kDebugMode) {
       print('response url ${response.request}');
@@ -195,7 +196,7 @@ class NetworkRepo {
   //get Agenda
   Future<List<Data>> getAgenda(String dari, String sampai) async {
     final queryParameters = {'dari': dari, 'sampai': sampai};
-    var response = await http.get(Uri.parse('$url_dispo/agenda')
+    var response = await http.get(Uri.parse('$urlDispo/agenda')
         .replace(queryParameters: queryParameters));
     List<Data> agendaList = [];
     if (response.statusCode == 200) {
@@ -212,7 +213,7 @@ class NetworkRepo {
   Future<RecordLangkah> sendRecordLangkah(String nik, String langkah) async {
     var requestBody = {'nik': nik, 'langkah': langkah};
     var response = await http.post(
-        Uri.parse('$url_record/create_record_langkah'),
+        Uri.parse('$urlRecord/create_record_langkah'),
         body: requestBody);
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);
@@ -235,7 +236,7 @@ class NetworkRepo {
       'password': 'yohsehat'
     };
     final responseYohSehat =
-        await http.post(Uri.parse('$url_yohSehat/login'), body: requestBody);
+        await http.post(Uri.parse('$urlYohSehat/login'), body: requestBody);
     if (responseYohSehat.statusCode == 200) {
       var tokenResponse = jsonDecode(responseYohSehat.body);
       final token = TokenResponse.fromJson(tokenResponse).accessToken;
@@ -249,7 +250,7 @@ class NetworkRepo {
       String? nik) async {
     final token = await getToken();
     final response = await http.post(
-        Uri.parse('$url_yohSehat/catatan_kesehatan'),
+        Uri.parse('$urlYohSehat/catatan_kesehatan'),
         body: {'nik': nik},
         headers: {'Authorization': 'Bearer $token'});
 
@@ -271,7 +272,7 @@ class NetworkRepo {
 
   //get Bidang
   Future<List<Bidang>> getBidang() async {
-    var response = await http.get(Uri.parse('$url_dispo/get_bidang'));
+    var response = await http.get(Uri.parse('$urlDispo/get_bidang'));
     List<Bidang> bidangList = [];
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);
@@ -288,7 +289,7 @@ class NetworkRepo {
       String idBidang, String tglKegiatan) async {
     final queryparameter = {"id_bidang": idBidang, "tgl_kegiatan": tglKegiatan};
     var response = await http.get(
-        Uri.parse('$url_dispo/get_kegiatan_internal_bybidang')
+        Uri.parse('$urlDispo/get_kegiatan_internal_bybidang')
             .replace(queryParameters: queryparameter));
     List<KegiatanInternal> kegiatanList = [];
     if (response.statusCode == 200) {
@@ -310,7 +311,7 @@ class NetworkRepo {
       String idBidang, String tglKegiatan) async {
     final queryparameter = {"id_bidang": idBidang, "tgl_kegiatan": tglKegiatan};
     var response = await http.get(
-        Uri.parse('$url_dispo/get_kegiatan_luar_bybidang')
+        Uri.parse('$urlDispo/get_kegiatan_luar_bybidang')
             .replace(queryParameters: queryparameter));
     if (kDebugMode) {
       print("Data Kegiatan: ${response.body}");
@@ -329,7 +330,7 @@ class NetworkRepo {
   //get kegiatan PPPK
   Future<List<KegiatanPppk>> getKegiatanPPPK(String dari, String sampai) async {
     final queryParameter = {"dari": dari, "sampai": sampai};
-    var response = await http.get(Uri.parse('$url_dispo/get_pppk')
+    var response = await http.get(Uri.parse('$urlDispo/get_pppk')
         .replace(queryParameters: queryParameter));
     if (kDebugMode) {
       print("Data Kegiatan PPPK : ${response.body}");
@@ -348,7 +349,7 @@ class NetworkRepo {
   //get semua langkah jalan based on nik
   Future<List<WalkingDataResponse>> getRiwayatJalan(String nik) async {
     var response = await http.post(
-        Uri.parse('$url_record/semua_record_langkah'),
+        Uri.parse('$urlRecord/semua_record_langkah'),
         body: {'nik': nik});
     List<WalkingDataResponse> walkinList = [];
     if (response.statusCode == 200) {
@@ -357,6 +358,21 @@ class NetworkRepo {
       walkinList =
           list.map((data) => WalkingDataResponse.fromJson(data)).toList();
       return walkinList;
+    } else {
+      throw response.statusCode;
+    }
+  }
+
+  //get semua notulen
+  Future<List<ItemNotulen>> getNotulen(String userId) async {
+    var response = await http.get(Uri.parse('$urlDispo/notulen')
+        .replace(queryParameters: {"user_id": userId}));
+    List<ItemNotulen> notulenList = [];
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      List<dynamic> list = jsonData["item_notulen"];
+      notulenList = list.map((data) => ItemNotulen.fromJson(data)).toList();
+      return notulenList;
     } else {
       throw response.statusCode;
     }

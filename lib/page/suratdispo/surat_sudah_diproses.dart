@@ -2,8 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
+import 'package:my_darling_app/page/home/edispo/surat_detail_page.dart';
+import 'package:my_darling_app/repository/model/surat_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
+import 'package:my_darling_app/widget/edispo/surat_item.dart';
 
 class SuratSudahDiproses extends StatefulWidget {
   final String jenisSurat;
@@ -63,6 +66,7 @@ class _SuratSudahDiprosesState extends State<SuratSudahDiproses> {
               ),
             ),
             const SizedBox(height: 12.0),
+            dateinput.text=="" ? daftarSuratProses( widget.rule, widget.bidang, widget.seksi, widget.userId): dataSuratbyTgl(dateinput.text)
           ],
         ),
       ),
@@ -87,6 +91,108 @@ class _SuratSudahDiprosesState extends State<SuratSudahDiproses> {
       ),
     );
   }
+
+  Widget daftarSuratProses(String rule, String bidang, String seksi,
+      String userId) {
+    if (kDebugMode) {
+      print('Data rule $rule, bidang $bidang, seksi $seksi, userId $userId');
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 16.0),
+        FutureBuilder<List<Surat>>(
+            future: _networkRepo.getSuratProses(
+                widget.jenisSurat, rule, bidang, seksi, userId),
+            builder: (context, snapshot) {
+              var data = snapshot.data;
+              if (kDebugMode) {
+                print('List : $data');
+              }
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (data == null) {
+                  return dataNoFoundWidget();
+                }
+                else {
+                  var dataLength = data.length;
+                  if (dataLength == 0) {
+                    return dataNoFoundWidget();
+                  }
+                  else {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: data.length,
+                      itemBuilder: ((context, index) {
+                        return GestureDetector(
+                            onTap: () => Navigator.push(context,
+                                MaterialPageRoute(builder: (context) =>
+                                    SuratDetailPage(surat: data[index],))),
+                            child: SuratItem(surat: data[index]));
+                      }),
+                    );
+                  }
+                }
+              }
+              else {
+                return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height:MediaQuery.of(context).size.height,
+                    alignment: Alignment.topCenter,
+                    child: CircularProgressIndicator(color: primaryRed,));
+              }
+            })
+      ],
+    );
+  }
+
+  Widget dataSuratbyTgl(String tglAgenda) {
+    return FutureBuilder<List<Surat>>(
+        future: _networkRepo.getSuratProsesByTgl(
+            widget.jenisSurat, widget.rule, widget.bidang, widget.seksi, widget.userId, tglAgenda),
+        builder: (context, snapshot) {
+          var data = snapshot.data;
+          if (kDebugMode) {
+            print('List : $data');
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (data == null) {
+              return dataNoFoundWidget();
+            }
+            else {
+              var dataLength = data.length;
+              if (dataLength == 0) {
+                return dataNoFoundWidget();
+              }
+              else {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.length,
+                  itemBuilder: ((context, index) {
+                    return GestureDetector(
+                        onTap: () => Navigator.push(context,
+                            MaterialPageRoute(builder: (context) =>
+                                SuratDetailPage(surat: data[index],))),
+                        child: SuratItem(surat: data[index]));
+                  }),
+                );
+              }
+            }
+          }
+          else {
+            return Container(
+                width: MediaQuery.of(context).size.width,
+                height:MediaQuery.of(context).size.height,
+                alignment: Alignment.topCenter,
+                child: CircularProgressIndicator(color: primaryRed));
+          }
+        });
+  }
+  
+  
 
   Future _selectDate() async {
     var picked = await showDatePicker(context: context,
