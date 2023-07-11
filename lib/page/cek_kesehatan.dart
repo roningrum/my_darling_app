@@ -3,6 +3,7 @@ import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/widget/cekkesehatan_list.dart';
+import 'package:my_darling_app/widget/edispo/akm_riwayat_profile.dart';
 
 import '../theme/theme.dart';
 
@@ -34,60 +35,76 @@ class _CekKesehatanState extends State<CekKesehatan> {
               style: title.copyWith(color: Colors.white, fontSize: 16)),
           backgroundColor: primaryBlueBlack,
         ),
-        body: FutureBuilder<List<CatatanKesehatanResponse>>(
-          future: getCatatan(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data!.isEmpty) {
-                return Container(
-                  margin: EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Catatan Kesehatan ${widget.nama}",
-                        style: title.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: 16.0),
-                      Center(
-                        child: Text("Saat ini belum ada catatan terekam",
-                            style: regular.copyWith(
-                                fontSize: 14.0, color: secondaryBlueBlack)),
-                      ),
-                    ],
-                  ),
-                );
-              }
-              else {
-                return ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return CekKesehatanWidget(
-                          catatanKesehatanResponse: snapshot.data![index], nama: widget.nama,);
-                    });
-              }
-            } else if (snapshot.hasError) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
+        body: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
                     "Catatan Kesehatan ${widget.nama}",
-                    style: title.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+                    style: title.copyWith(fontSize: 16.0, fontWeight: FontWeight.w500),
                   ),
-                  Center(
-                    child: Text("Tidak ada Riwayat yg terekam",
-                        style: regular.copyWith(
-                            fontSize: 14.0, color: secondaryBlueBlack)),
-                  ),
-                ],
-              );
-            }
-            else{
-            return Center(child: CircularProgressIndicator(color: primaryRed));
-            }
-          },
+                ),
+                const SizedBox(height: 12.0),
+                Text(
+                  "Catatan Kesehatan di AKM",
+                  style: title.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.start,
+                ),
+                const AkmRiwayatWidget(),
+                FutureBuilder<List<CatatanKesehatanResponse>>(
+                  future: getCatatan(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return Container(
+                          margin: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16.0),
+                              Center(
+                                child: Text("Saat ini belum ada catatan terekam",
+                                    style: regular.copyWith(
+                                        fontSize: 14.0, color: secondaryBlueBlack)),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      else {
+                        return ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return CekKesehatanWidget(
+                                  catatanKesehatanResponse: snapshot.data![index], nama: widget.nama,);
+                            });
+                      }
+                    } else if (snapshot.hasError) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Text("Tidak ada Riwayat yg terekam",
+                                style: regular.copyWith(
+                                    fontSize: 14.0, color: secondaryBlueBlack)),
+                          ),
+                        ],
+                      );
+                    }
+                    else{
+                    return Center(child: CircularProgressIndicator(color: primaryRed));
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
         )
     );
   }
