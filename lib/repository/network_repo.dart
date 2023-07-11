@@ -21,7 +21,7 @@ import 'model/surat_response.dart';
 class NetworkRepo {
   final String urlDispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
   final String urlRecord = 'http://119.2.50.170:9094/mydarling/api';
-  final String urlYohSehat = 'http://119.2.50.170:7773/db_lb1/api';
+  final String urlYohSehat ='http://119.2.50.170:7773/db_lb1/api';
 
   //getLogin
   Future<List<Login>> getLogin(String username, String password) async {
@@ -210,17 +210,18 @@ class NetworkRepo {
   }
 
   //post Record Langkah
-  Future<RecordLangkah> sendRecordLangkah(String nik, String langkah) async {
-    var requestBody = {'nik': nik, 'langkah': langkah};
-    var response = await http.post(
-        Uri.parse('$urlRecord/create_record_langkah'),
-        body: requestBody);
+  Future<RecordLangkah> sendRecordLangkah(String nik, String langkah, String cal) async {
+    var requestBody = {'nik': nik,'langkah': langkah,'cal': cal};
+    var response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/create_record_langkah'),body: requestBody);
+    if (kDebugMode) {
+      print("Response URL ${response.request}");
+    }
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);
       var data = RecordLangkah.fromJson(jsonData);
       RecordLangkah recordResponse = data;
       if (kDebugMode) {
-        print('Response $recordResponse');
+        print('Response ${recordResponse.langkah}');
       }
       return recordResponse;
     } else {
@@ -235,8 +236,7 @@ class NetworkRepo {
       'email': 'yohsehat@gmail.com',
       'password': 'yohsehat'
     };
-    final responseYohSehat =
-        await http.post(Uri.parse('$urlYohSehat/login'), body: requestBody);
+    final responseYohSehat = await http.post(Uri.parse('$urlYohSehat/login'), body: requestBody);
     if (responseYohSehat.statusCode == 200) {
       var tokenResponse = jsonDecode(responseYohSehat.body);
       final token = TokenResponse.fromJson(tokenResponse).accessToken;

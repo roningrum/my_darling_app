@@ -7,7 +7,6 @@ import 'package:my_darling_app/page/home/edispo/edispo_page.dart';
 import 'package:my_darling_app/page/home/user_profile.dart';
 import 'package:my_darling_app/page/home_banner_walking.dart';
 import 'package:my_darling_app/page/pekunden_page.dart';
-import 'package:my_darling_app/page/walking_chart_page.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/home_artikel_berita_item.dart';

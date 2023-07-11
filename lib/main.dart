@@ -1,44 +1,30 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:my_darling_app/page/splash_screen.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+
+// const AndroidInitializationSettings initializationSettingsAndroid =
+// AndroidInitializationSettings('ic_notification');
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light));
-  // chekPermission();
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings, onDidReceiveNotificationResponse: (NotificationResponse response){});
   runApp(const MyApp());
 }
 
-chekPermission(){
-  AwesomeNotifications().isNotificationAllowed().then((isAlowed) {
-    if(!isAlowed){
-      AwesomeNotifications().requestPermissionToSendNotifications();
-    }
-    else{
-      //do nothing
-      setNotification();
-    }
-  }
-  );
-}
 
-void setNotification() {
-  AwesomeNotifications().initialize(null, [
-    NotificationChannel(
-        channelKey: 'notification',
-        channelName: 'Jalan Jalan',
-        channelDescription: 'testing',
-        defaultColor: Colors.red.shade300,
-       channelShowBadge: true,
-        importance: NotificationImportance.High
-    )
-  ], debug: true);
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
