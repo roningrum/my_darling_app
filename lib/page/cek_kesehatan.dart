@@ -9,6 +9,7 @@ import '../theme/theme.dart';
 
 class CekKesehatan extends StatefulWidget {
   final String nama;
+
   const CekKesehatan({Key? key, required this.nama}) : super(key: key);
 
   @override
@@ -34,6 +35,12 @@ class _CekKesehatanState extends State<CekKesehatan> {
           title: Text('Cek Kesehatan Ku ',
               style: title.copyWith(color: Colors.white, fontSize: 16)),
           backgroundColor: primaryBlueBlack,
+          actions: [
+            PopupMenuButton(
+                itemBuilder: (context)=>[
+                  PopupMenuItem(value: 0, child: Text('Tambah Manual', style: regular.copyWith(fontSize: 16.0),))
+            ])
+          ],
         ),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
@@ -44,16 +51,25 @@ class _CekKesehatanState extends State<CekKesehatan> {
                 Center(
                   child: Text(
                     "Catatan Kesehatan ${widget.nama}",
-                    style: title.copyWith(fontSize: 16.0, fontWeight: FontWeight.w500),
+                    style: title.copyWith(
+                        fontSize: 16.0, fontWeight: FontWeight.w500),
                   ),
                 ),
                 const SizedBox(height: 12.0),
                 Text(
                   "Catatan Kesehatan di AKM",
-                  style: title.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+                  style: title.copyWith(
+                      fontSize: 14.0, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.start,
                 ),
                 const AkmRiwayatWidget(),
+                const SizedBox(height: 12.0),
+                Text(
+                  "Rekam Medis di Yoh Sehat",
+                  style: title.copyWith(
+                      fontSize: 14.0, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.start,
+                ),
                 FutureBuilder<List<CatatanKesehatanResponse>>(
                   future: getCatatan(),
                   builder: (context, snapshot) {
@@ -66,15 +82,16 @@ class _CekKesehatanState extends State<CekKesehatan> {
                             children: [
                               const SizedBox(height: 16.0),
                               Center(
-                                child: Text("Saat ini belum ada catatan terekam",
+                                child: Text(
+                                    "Saat ini belum ada catatan terekam",
                                     style: regular.copyWith(
-                                        fontSize: 14.0, color: secondaryBlueBlack)),
+                                        fontSize: 14.0,
+                                        color: secondaryBlueBlack)),
                               ),
                             ],
                           ),
                         );
-                      }
-                      else {
+                      } else {
                         return ListView.builder(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
@@ -82,7 +99,9 @@ class _CekKesehatanState extends State<CekKesehatan> {
                             itemCount: snapshot.data!.length,
                             itemBuilder: (BuildContext context, int index) {
                               return CekKesehatanWidget(
-                                  catatanKesehatanResponse: snapshot.data![index], nama: widget.nama,);
+                                catatanKesehatanResponse: snapshot.data![index],
+                                nama: widget.nama,
+                              );
                             });
                       }
                     } else if (snapshot.hasError) {
@@ -96,17 +115,15 @@ class _CekKesehatanState extends State<CekKesehatan> {
                           ),
                         ],
                       );
-                    }
-                    else{
-                    return Center(child: CircularProgressIndicator(color: primaryRed));
+                    } else {
+                      return Center(
+                          child: CircularProgressIndicator(color: primaryRed));
                     }
                   },
                 ),
               ],
             ),
           ),
-        )
-    );
+        ));
   }
-
 }

@@ -67,6 +67,7 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                       width: 60, height: 60),
                   const SizedBox(height: 8.0),
                   Text("Kg", style: regular.copyWith(fontSize: 14.0)),
+                  TextButton(onPressed: (){}, child:Text("Riwayat", style: regular.copyWith(fontSize: 14.0, color: primaryRed, fontWeight: FontWeight.w600)))
                 ],
               ),
               Column(
