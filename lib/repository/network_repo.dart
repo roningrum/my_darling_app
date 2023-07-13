@@ -7,6 +7,7 @@ import 'package:my_darling_app/repository/model/Item_notulen_response.dart';
 import 'package:my_darling_app/repository/model/Walking_data_response.dart';
 import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
+import 'package:my_darling_app/repository/model/data_checkup_response.dart';
 import 'package:my_darling_app/repository/model/record_langkah.dart';
 import 'package:my_darling_app/repository/model/token_response.dart';
 import 'package:my_darling_app/repository/model/user_response.dart';
@@ -20,6 +21,7 @@ import 'model/surat_response.dart';
 
 class NetworkRepo {
   final String urlDispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
+  final String urlAKM = 'http://119.2.50.170:9095/akm/service';
   final String urlRecord = 'http://119.2.50.170:9094/mydarling/api';
   final String urlYohSehat ='http://119.2.50.170:7773/db_lb1/api';
 
@@ -211,8 +213,8 @@ class NetworkRepo {
 
   //post Record Langkah
   Future<RecordLangkah> sendRecordLangkah(String nik, String langkah, String cal) async {
-    var requestBody = {'nik': nik,'langkah': langkah,'cal': cal};
-    var response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/create_record_langkah'),body: requestBody);
+    final requestBody = {'nik': nik,'langkah': langkah,'cal': cal};
+    var response = await http.post(Uri.parse('$urlRecord/create_record_langkah'),body:requestBody);
     if (kDebugMode) {
       print("Response URL ${response.request}");
     }
@@ -374,6 +376,64 @@ class NetworkRepo {
       notulenList = list.map((data) => ItemNotulen.fromJson(data)).toList();
       return notulenList;
     } else {
+      throw response.statusCode;
+    }
+  }
+
+  /*
+  * AKM
+  * */
+  //checkup
+  Future<List<DataCheckup>> getDataCheckupTerakhir(String nik) async{
+    var response = await http.get(Uri.parse('$urlAKM/show_data_checkup_sekarang_user').replace(queryParameters: {"nik":nik}));
+    List<DataCheckup> dataCheckupList = [];
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      List<dynamic> list = jsonData["data_checkup"];
+      dataCheckupList = list.map((data) => DataCheckup.fromJson(data)).toList();
+      return dataCheckupList;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
+  Future<List<DataCheckup>> getBeratBadanTerakhir(String nik) async{
+    var response = await http.get(Uri.parse('$urlAKM/show_history_user_berat_badan').replace(queryParameters: {"nik":nik}));
+    List<DataCheckup> dataCheckupList = [];
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      List<dynamic> list = jsonData["data_checkup"];
+      dataCheckupList = list.map((data) => DataCheckup.fromJson(data)).toList();
+      return dataCheckupList;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
+
+  Future<List<DataCheckup>> getTinggiBadanTerakhir(String nik) async{
+    var response = await http.get(Uri.parse('$urlAKM/show_history_user_tinggi_badan').replace(queryParameters: {"nik":nik}));
+    List<DataCheckup> dataCheckupList = [];
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      List<dynamic> list = jsonData["data_checkup"];
+      dataCheckupList = list.map((data) => DataCheckup.fromJson(data)).toList();
+      return dataCheckupList;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
+  Future<List<DataCheckup>> getHistoryTensiTerakhir(String nik) async{
+    var response = await http.get(Uri.parse('$urlAKM/show_history_user_tensi').replace(queryParameters: {"nik":nik}));
+    List<DataCheckup> dataCheckupList = [];
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      List<dynamic> list = jsonData["data_checkup"];
+      dataCheckupList = list.map((data) => DataCheckup.fromJson(data)).toList();
+      return dataCheckupList;
+    }
+    else{
       throw response.statusCode;
     }
   }

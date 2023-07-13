@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late String token;
   String? userId;
   String? nama;
+  String? nik;
   late String urlPhoto;
 
   Future<String?> getNama() async {
@@ -46,6 +47,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return urlPhoto;
   }
 
+  Future<String?> getNIK() async {
+    nik = await _sessionManager.readNama("nik");
+    return nik;
+  }
+
 
 
   @override
@@ -54,6 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     getNama();
     getUserId();
+    getNIK();
+    sendData();
   }
 
   @override
@@ -203,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CekKesehatan(nama: nama!)));
+                        builder: (context) => CekKesehatan(nama: nama!, nik: nik!,)));
               },
               child: const HomeMenuWidget(
                   'Kesehatan', 'assets/icons/cek_kesehatan_menu.png')),
@@ -301,5 +309,10 @@ class _HomeScreenState extends State<HomeScreen> {
   //launch dinkesapp
   Future<void> launchDinkesApp() async {
     await launch('https://dinkes.semarangkota.go.id/aplikasi/');
+  }
+
+  void sendData() async {
+    _networkRepo.sendRecordLangkah(nik!, "100", "120");
+
   }
 }

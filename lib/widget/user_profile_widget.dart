@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
+import 'package:my_darling_app/widget/edispo/akm_riwayat_profile.dart';
 
 class UserProfileWidget extends StatefulWidget {
   const UserProfileWidget({Key? key, required this.userId, required this.nik})
@@ -151,6 +152,8 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                             fontSize: 14, color: secondaryBlueBlack)),
                     const SizedBox(height: 16.0),
                     rekamanKesehatan(),
+                    const SizedBox(height: 16.0),
+                    rekamanKesehatanAKM(),
                     const SizedBox(height: 16.0),
                   ],
                 ),
@@ -305,5 +308,26 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
             );
           }
         });
+  }
+
+  Widget rekamanKesehatanAKM() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.person, color: secondaryBlueBlack),
+            const SizedBox(
+              width: 12.0,
+            ),
+            Text('Riwayat Kesehatan AKM',
+                style: title.copyWith(
+                    fontSize: 14, color: secondaryBlueBlack)),
+          ],
+        ),
+        AkmRiwayatWidget(nik: widget.nik)
+      ],
+    );
   }
 }

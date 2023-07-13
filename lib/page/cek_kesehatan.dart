@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
@@ -9,8 +10,10 @@ import '../theme/theme.dart';
 
 class CekKesehatan extends StatefulWidget {
   final String nama;
+  final String nik;
 
-  const CekKesehatan({Key? key, required this.nama}) : super(key: key);
+  const CekKesehatan({Key? key, required this.nama, required this.nik})
+      : super(key: key);
 
   @override
   State<CekKesehatan> createState() => _CekKesehatanState();
@@ -19,12 +22,13 @@ class CekKesehatan extends StatefulWidget {
 class _CekKesehatanState extends State<CekKesehatan> {
   final networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
-  String? nik;
+
+  // String? nik;
 
   Future<List<CatatanKesehatanResponse>> getCatatan() async {
-    nik = await sessionManager.getNikUser("nik");
+    // nik = await sessionManager.getNikUser("nik");
     // nik = "9202125312940001";
-    final response = await networkRepo.getCatatanKesehatan(nik);
+    final response = await networkRepo.getCatatanKesehatan(widget.nik);
     return response;
   }
 
@@ -37,9 +41,14 @@ class _CekKesehatanState extends State<CekKesehatan> {
           backgroundColor: primaryBlueBlack,
           actions: [
             PopupMenuButton(
-                itemBuilder: (context)=>[
-                  PopupMenuItem(value: 0, child: Text('Tambah Manual', style: regular.copyWith(fontSize: 16.0),))
-            ])
+                itemBuilder: (context) => [
+                      PopupMenuItem(
+                          value: 0,
+                          child: Text(
+                            'Tambah Manual',
+                            style: regular.copyWith(fontSize: 16.0),
+                          ))
+                    ])
           ],
         ),
         body: Container(
@@ -62,7 +71,7 @@ class _CekKesehatanState extends State<CekKesehatan> {
                       fontSize: 14.0, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.start,
                 ),
-                const AkmRiwayatWidget(),
+                AkmRiwayatWidget(nik: widget.nik),
                 const SizedBox(height: 12.0),
                 Text(
                   "Rekam Medis di Yoh Sehat",
@@ -78,7 +87,8 @@ class _CekKesehatanState extends State<CekKesehatan> {
                         return Container(
                           margin: const EdgeInsets.all(16.0),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const SizedBox(height: 16.0),
                               Center(
@@ -105,18 +115,22 @@ class _CekKesehatanState extends State<CekKesehatan> {
                             });
                       }
                     } else if (snapshot.hasError) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Text("Tidak ada Riwayat yg terekam",
+                      return Container(
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 16.0),
+                            SvgPicture.asset("assets/icons/no_data.svg", width: 120, height: 120,),
+                            const SizedBox(height: 8.0),
+                            Text("Tidak ada Riwayat yg terekam",
                                 style: regular.copyWith(
                                     fontSize: 14.0, color: secondaryBlueBlack)),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
                     } else {
-                      return Center(
+                      return Container(
+                          alignment: Alignment.center,
                           child: CircularProgressIndicator(color: primaryRed));
                     }
                   },
