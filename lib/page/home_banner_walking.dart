@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_service/flutter_foreground_service.dart';
@@ -90,7 +92,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
                         SvgPicture.asset('assets/icons/kalori.svg',
                             width: 24.0, height: 24.0),
                         const SizedBox(width: 6.0),
-                        Text(pedometerProvider.calorieNow,
+                        Text('${pedometerProvider.calorieNow}cal',
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
@@ -121,19 +123,17 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     );
   }
 
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   super.dispose();
-  //   ForegroundService().stop();
-  //   Hive.close();
-  // }
 
-  void sendResponse(String steps, String calorie) async {
-    if(steps != "0" && calorie != "0"){
-      var nik = await sessionManager.getUserId('nik');
-      networkRepo.sendRecordLangkah(
-          nik!, todaySteps.toString(), calorie.toString());
-    }
-  }
+  // void sendResponse(String steps, String calorie) async {
+  //   if(steps != "0" && calorie != "0"){
+  //     var nik = await sessionManager.getUserId('nik');
+  //     Timer.periodic(const Duration(minutes: 1), (timer) {
+  //       networkRepo.sendRecordLangkah(
+  //           nik!, todaySteps.toString(), calorie.toString());
+  //       timer.cancel();
+  //     });
+  //
+  //
+  //   }
+  // }
 }

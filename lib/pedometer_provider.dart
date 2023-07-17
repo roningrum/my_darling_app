@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:path_provider/path_provider.dart';
@@ -100,10 +101,6 @@ class PedometerProvider with ChangeNotifier {
     int savedStepsCount = stepBox.get(savedStepCountKey, defaultValue: 0)!;
     int todayDayNo = Jiffy.now().dayOfYear;
 
-    if (kDebugMode) {
-      print('Last Day $todayDayNo');
-    }
-
     if (event.steps < savedStepsCount) {
       savedStepsCount = 0;
       stepBox.put(savedStepCountKey, savedStepsCount);
@@ -115,6 +112,10 @@ class PedometerProvider with ChangeNotifier {
     if (lastSavedDay < todayDayNo) {
       lastSavedDay = todayDayNo;
       savedStepsCount = event.steps;
+
+      if (kDebugMode) {
+        print('Last Day $lastSavedDay');
+      }
 
       stepBox
         ..put(lastSavedDayKey, lastSavedDay)
@@ -152,7 +153,7 @@ class PedometerProvider with ChangeNotifier {
   String getCalorieTerbakar(int steps) {
     num cal = steps * 0.04;
     cal = num.parse(cal.toStringAsFixed(2));
-    _calorie = "$cal Cal";
+    _calorie = "$cal";
     return _calorie;
   }
 
@@ -166,7 +167,14 @@ class PedometerProvider with ChangeNotifier {
   void sendResponse(int steps) async {
     if(steps > 0){
       var nik = await sessionManager.getUserId('nik');
-      _networkRepo.sendRecordLangkah(nik!, steps.toString(), _calorie.toString());
+      var updateTime = DateTime.now();
+      var format = DateFormat("hh:mm:ss");
+      // final updatedTime = format.format(updateTime);
+
+      if(DateTime.now().isAfter(updateTime.add(const Duration(days: 1)))){
+        _networkRepo.sendRecordLangkah(nik!, steps.toString(), _calorie.toString());
+      }
+      notifyListeners();
     }
   }
 

@@ -3,6 +3,7 @@ import 'dart:core';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_darling_app/repository/model/Dinkes_news_response.dart';
 import 'package:my_darling_app/repository/model/Item_notulen_response.dart';
 import 'package:my_darling_app/repository/model/Walking_data_response.dart';
 import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
@@ -24,6 +25,7 @@ class NetworkRepo {
   final String urlAKM = 'http://119.2.50.170:9095/akm/service';
   final String urlRecord = 'http://119.2.50.170:9094/mydarling/api';
   final String urlYohSehat ='http://119.2.50.170:7773/db_lb1/api';
+  final String urlDinkesNews ='https://dinkes.semarangkota.go.id/content/ajax/info_semarang';
 
   //getLogin
   Future<List<Login>> getLogin(String username, String password) async {
@@ -212,23 +214,34 @@ class NetworkRepo {
   }
 
   //post Record Langkah
-  Future<RecordLangkah> sendRecordLangkah(String nik, String langkah, String cal) async {
-    final requestBody = {'nik': nik,'langkah': langkah,'cal': cal};
-    var response = await http.post(Uri.parse('$urlRecord/create_record_langkah'),body:requestBody);
-    if (kDebugMode) {
-      print("Response URL ${response.request}");
-    }
-    if (response.statusCode == 200) {
-      var jsonData = json.decode(response.body);
-      var data = RecordLangkah.fromJson(jsonData);
-      RecordLangkah recordResponse = data;
-      if (kDebugMode) {
-        print('Response ${recordResponse.langkah}');
+  Future<RecordLangkah?>sendRecordLangkah(String nik, String langkah, String cal) async {
+    try{
+      http.Response response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/create_record_langkah'),
+      body: {
+        "nik": nik,
+        "langkah": langkah,
+        "cal":cal
+      });
+      if(response.statusCode == 200){
+        if (kDebugMode) {
+          print("Response URL ${response.request}");
+          var jsonData = json.decode(response.body);
+          var data = RecordLangkah.fromJson(jsonData);
+          RecordLangkah recordResponse = data;
+          if (kDebugMode) {
+            print('Response ${recordResponse.langkah}');
+          }
+          return recordResponse;
+        }
       }
-      return recordResponse;
-    } else {
-      throw response.statusCode;
+      else{
+        print("Response error: ${response.body}");
+      }
     }
+    catch(e){
+      print("Response error: ${e.toString()}");
+    }
+    return null;
   }
 
   //login Yoh Sehat
@@ -435,6 +448,20 @@ class NetworkRepo {
     }
     else{
       throw response.statusCode;
+    }
+  }
+
+  //get Berita Dinkes
+  Future<List<DinkesNewsResponse>>getListNews()async{
+    var response = await http.get(Uri.parse(urlDinkesNews));
+    List<DinkesNewsResponse> news = [];
+    if(response.statusCode == 200){
+      Iterable jsonData = jsonDecode(response.body);
+      news = jsonData.map((data)=> DinkesNewsResponse.fromJson(data)).toList();
+      return news;
+    }
+    else{
+      return throw response.statusCode;
     }
   }
 }

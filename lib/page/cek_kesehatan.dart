@@ -74,7 +74,7 @@ class _CekKesehatanState extends State<CekKesehatan> {
                 AkmRiwayatWidget(nik: widget.nik),
                 const SizedBox(height: 12.0),
                 Text(
-                  "Rekam Medis di Yoh Sehat",
+                  "Catatan Kesehatan Pribadi",
                   style: title.copyWith(
                       fontSize: 14.0, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.start,

@@ -181,7 +181,7 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                     const SizedBox(
                       width: 12.0,
                     ),
-                    Text('Riwayat Kesehatan',
+                    Text('Catatan Kesehatan Pribadi',
                         style: title.copyWith(
                             fontSize: 14, color: secondaryBlueBlack)),
                   ],
@@ -295,7 +295,7 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                   children: [
                     Icon(Icons.person, color: secondaryBlueBlack),
                     const SizedBox(width: 8.0),
-                    Text('Riwayat Kesehatan',
+                    Text('Catatan Kesehatan Pribadi',
                         style: title.copyWith(
                             fontSize: 14, color: secondaryBlueBlack)),
                   ],

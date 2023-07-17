@@ -72,6 +72,19 @@ String formatTanggal (String date){
   return tglBaru;
 }
 
+String formatTglSurat(String? date){
+  if(date != null){
+    var tgl = DateTime.parse(date);
+    var formatTgl = DateFormat('dd-MM-yyyy');
+    var tglBaru = formatTgl.format(tgl);
+    return tglBaru;
+  }
+  else{
+    return "1970-01-01";
+  }
+
+}
+
 String dateParameter(){
   var date = getDateToday();
   var dateFormat = DateFormat('yyyy-MM-dd');

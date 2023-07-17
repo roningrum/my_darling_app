@@ -7,6 +7,7 @@ import 'package:my_darling_app/page/home/edispo/edispo_page.dart';
 import 'package:my_darling_app/page/home/user_profile.dart';
 import 'package:my_darling_app/page/home_banner_walking.dart';
 import 'package:my_darling_app/page/pekunden_page.dart';
+import 'package:my_darling_app/repository/model/Dinkes_news_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/home_artikel_berita_item.dart';
@@ -61,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     getNama();
     getUserId();
     getNIK();
-    sendData();
+    // sendData();
   }
 
   @override
@@ -155,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
             )),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -244,29 +245,71 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //Widget untuk Artikel Berita
   Widget homeArtikel() {
-    return SizedBox(
-      height: 300,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          HomeArtikelBeritaItem(
-              'Peleburan Eijkman ke BRIN, Birokratis',
-              'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
-              'assets/image/dummy-image.png'),
-          HomeArtikelBeritaItem(
-              'Peleburan Eijkman ke BRIN, Birokratis',
-              'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
-              'assets/image/dummy-image.png'),
-          HomeArtikelBeritaItem(
-              'Peleburan Eijkman ke BRIN, Birokratis',
-              'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
-              'assets/image/dummy-image.png'),
-          HomeArtikelBeritaItem(
-              'Peleburan Eijkman ke BRIN, Birokratis',
-              'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
-              'assets/image/dummy-image.png'),
-        ],
-      ),
+    return FutureBuilder<List<DinkesNewsResponse>>(
+      future: _networkRepo.getListNews(),
+      builder: (context, snapshot){
+        if(snapshot.hasData && snapshot.connectionState == ConnectionState.done){
+          if(snapshot.data!.isNotEmpty){
+            return SizedBox(
+              height: 300,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index){
+                    return Card(
+                      elevation: 0,
+                      margin: const EdgeInsets.only(right: 8.0),
+                      child: Container(
+                        width: 200,
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(16.0),
+                              child: Image.network(snapshot.data![index].fav!, width: 200, height: 150, fit: BoxFit.fill,),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "${snapshot.data![index].titel}",
+                              style: title.copyWith(color: primaryBlueBlack, fontSize: 14),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+            );
+            // return HomeArtikelBeritaItem(
+            //     'Peleburan Eijkman ke BRIN, Birokratis',
+            //     'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
+            //     'assets/image/dummy-image.png'),
+          }
+          else{
+            return Center(
+              child: Text("Tidak ada Berita hari ini",
+                  style: regular.copyWith(
+                      fontSize: 14.0, color: secondaryBlueBlack)),
+            );
+          }
+        }
+        else if(snapshot.hasError && snapshot.connectionState == ConnectionState.none){
+          return Center(
+            child: Text("Cek Koneksi Kembali",
+                style: regular.copyWith(
+                    fontSize: 14.0, color: secondaryBlueBlack)),
+          );
+        }
+        else{
+          return Container(
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(color: primaryRed));
+        }
+      }
     );
   }
 
@@ -309,10 +352,5 @@ class _HomeScreenState extends State<HomeScreen> {
   //launch dinkesapp
   Future<void> launchDinkesApp() async {
     await launch('https://dinkes.semarangkota.go.id/aplikasi/');
-  }
-
-  void sendData() async {
-    _networkRepo.sendRecordLangkah(nik!, "100", "120");
-
   }
 }

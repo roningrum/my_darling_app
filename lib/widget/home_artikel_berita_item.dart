@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/theme/theme.dart';
 
-class HomeArtikelBeritaItem extends StatelessWidget {
-  String judulBerita;
-  String isiBerita;
-  String imageBerita;
+class HomeArtikelBeritaItem extends StatefulWidget {
+  final String judulBerita;
+  final String imageBerita;
 
-  HomeArtikelBeritaItem(this.judulBerita, this.isiBerita, this.imageBerita,
-      {Key? key})
-      : super(key: key);
+  const HomeArtikelBeritaItem({super.key, required this.judulBerita, required this.imageBerita});
 
+  @override
+  State<HomeArtikelBeritaItem> createState() => _HomeArtikelBeritaItemState();
+}
+
+class _HomeArtikelBeritaItemState extends State<HomeArtikelBeritaItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -24,19 +26,13 @@ class HomeArtikelBeritaItem extends StatelessWidget {
             const SizedBox(height: 8),
             ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
-              child: Image.asset(imageBerita),
+              child: Image.network(widget.imageBerita),
             ),
             const SizedBox(height: 8),
             Text(
-              judulBerita,
+              widget.judulBerita,
               style: title.copyWith(color: primaryBlueBlack, fontSize: 14),
             ),
-            const SizedBox(height: 8),
-            RichText(
-                maxLines: 3,
-                text: TextSpan(
-                    style: TextStyle(color: secondaryBlueBlack.withOpacity(0.8), fontSize: 12),
-                    text: isiBerita)),
             const SizedBox(height: 8),
           ],
         ),

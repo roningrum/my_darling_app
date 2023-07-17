@@ -32,6 +32,45 @@ class SuratItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
                     children: [
+                      const SizedBox(height: 8.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Tgl Surat:',
+                                  style: title.copyWith(
+                                      fontSize: 13.0, fontWeight: FontWeight.w500)),
+                              const SizedBox(width: 8.0),
+                              Text(formatTglSurat(surat.tglSurat),
+                                style: regular.copyWith(
+                                  fontSize: 13.0,
+                                ),
+                                textAlign: TextAlign.start, maxLines: 2,),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Tgl Terima:',
+                                  style: title.copyWith(
+                                      fontSize: 13.0, fontWeight: FontWeight.w500)),
+                              const SizedBox(width: 8.0),
+                              Text(formatTglSurat(surat.tglTerima),
+                                style: regular.copyWith(
+                                  fontSize: 13.0,
+                                ),
+                                textAlign: TextAlign.start, maxLines: 2,),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(surat.dari ?? "-",
+                        style: regular.copyWith(
+                            color: primaryBlueBlack, fontSize: 14.0), maxLines: 3,),
+                      const SizedBox(height: 12.0),
                       Text(surat.acara??"-",
                           style: title.copyWith(
                               color: primaryBlueBlack, fontSize: 16.0), maxLines: 3,),
@@ -62,7 +101,7 @@ class SuratItem extends StatelessWidget {
                               baseline: TextBaseline.alphabetic,
                               child: SizedBox(width: 10)),
                           TextSpan(
-                              text: "${dateFormat(surat.tanggal)} s/d ${dateFormat(surat.tanggal2)} (${surat.jam ?? "-"})",
+                              text: "${dateFormat(surat.tglSurat)} (${surat.jam ?? "-"})",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -144,6 +183,26 @@ class SuratItem extends StatelessWidget {
               const SizedBox(width: 8.0),
               Flexible(
                 child: Text(surat.isiSurat??"-",
+                    style: regular.copyWith(
+                      fontSize: 14.0,
+                    ),
+                    textAlign: TextAlign.start),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 100,
+                child: Text('Perihal',
+                    style: title.copyWith(
+                        fontSize: 14.0, fontWeight: FontWeight.w500)),
+              ),
+              const SizedBox(width: 8.0),
+              Flexible(
+                child: Text(surat.perihalSurat??"-",
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
