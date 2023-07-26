@@ -189,7 +189,7 @@ class _AgendaSuratDetailState extends State<AgendaSuratDetail> {
                         textAlign: TextAlign.start)),
                 ElevatedButton.icon(
                   onPressed: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> FileSuratDispo(fileSurat: widget.data.fileSurat!)));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> widget.data.fileSurat != null ? FileSuratDispo(fileSurat: widget.data.fileSurat!): const FileSuratDispo(fileSurat:"tidak ada")));
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: primaryRed,

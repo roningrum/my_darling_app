@@ -4,9 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -22,16 +20,16 @@ InitializationSettings initializationSettings =
 
 class PedometerProvider with ChangeNotifier {
   int _stepCountToday = 0;
+  int _totalStepCount = 0;
   String _calorie = "0";
   String _distance = "0";
 
   final Stream<StepCount> _stepCountStream = Pedometer.stepCountStream;
-  final _networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
 
   String _status = 'Standing';
 
-
+  late Timer _dailyResetTimer;
   late Box<int> stepBox;
   final Stream<PedestrianStatus> _pedestrianStatusStream =
       Pedometer.pedestrianStatusStream;
@@ -39,7 +37,8 @@ class PedometerProvider with ChangeNotifier {
   initialize() async {
     final appDocumentDirectory = await getApplicationDocumentsDirectory();
     Hive.init(appDocumentDirectory.path);
-    stepBox = await Hive.openBox('steps');
+    stepBox =  await Hive.openBox('steps');
+
     checkPermission();
     notifyListeners();
   }
@@ -48,23 +47,20 @@ class PedometerProvider with ChangeNotifier {
     final androidInfo = await DeviceInfoPlugin().androidInfo;
     late final Map<Permission, PermissionStatus> status;
 
-    if (androidInfo.version.sdkInt <= 32) {
-      status = await [Permission.activityRecognition].request();
-      startListening();
-    } else {
-      status = await [Permission.activityRecognition, Permission.notification]
-          .request();
+    status = await[Permission.activityRecognition, Permission.notification].request();
 
-      var allAcepted = true;
-      status.forEach((permission, status) {
-        if (status != PermissionStatus.granted) {
-          allAcepted = false;
-        }
-      });
-      if (allAcepted) {
+    status.forEach((permission, status) {
+      if(status.isGranted){
         startListening();
+        startDailyStepReset();
       }
-    }
+      else if(status.isDenied){
+        openAppSettings();
+      }
+      else{
+       print('Permission not activate');
+      }
+    });
     notifyListeners();
   }
 
@@ -96,18 +92,23 @@ class PedometerProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void stop(){
+    _stepCountStream.listen(onStepCount).cancel();
+    notifyListeners();
+  }
+
   void onStepCount(StepCount event) async {
     int savedStepCountKey = 999999;
     int savedStepsCount = stepBox.get(savedStepCountKey, defaultValue: 0)!;
     int todayDayNo = Jiffy.now().dayOfYear;
 
+    int lastSavedDayKey = 888888;
+    int lastSavedDay = stepBox.get(lastSavedDayKey, defaultValue: 0)!;
+
     if (event.steps < savedStepsCount) {
       savedStepsCount = 0;
       stepBox.put(savedStepCountKey, savedStepsCount);
     }
-
-    int lastSavedDayKey = 888888;
-    int lastSavedDay = stepBox.get(lastSavedDayKey, defaultValue: 0)!;
 
     if (lastSavedDay < todayDayNo) {
       lastSavedDay = todayDayNo;
@@ -115,6 +116,7 @@ class PedometerProvider with ChangeNotifier {
 
       if (kDebugMode) {
         print('Last Day $lastSavedDay');
+        print('Saved Steps $savedStepsCount');
       }
 
       stepBox
@@ -124,23 +126,40 @@ class PedometerProvider with ChangeNotifier {
     _stepCountToday = event.steps - savedStepsCount;
     stepBox.put('today steps', _stepCountToday);
 
-    showLocalNotification("MyDarling", _stepCountToday);
-
     getCalorieTerbakar(_stepCountToday);
     getDistance(_stepCountToday);
-    sendResponse(_stepCountToday);
+    showLocalNotification("MyDarling", _stepCountToday);
 
+    // sendResponse(_stepCountToday);
+
+    notifyListeners();
+  }
+
+  void startDailyStepReset(){
+    _dailyResetTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      DateTime now = DateTime.now();
+      DateTime tomorrow = DateTime(now.year, now.month, now.day + 1);
+      Duration timeUntilReset = tomorrow.difference(now);
+
+      if(timeUntilReset.inSeconds > 0) {
+        timeUntilReset -= const Duration(seconds: 1);
+      } else{
+        _totalStepCount += _stepCountToday;
+        _stepCountToday = 0;
+        timeUntilReset = tomorrow.difference(DateTime.now());
+      }
+    });
     notifyListeners();
   }
 
   void showLocalNotification(String title, int body) {
     const androidNotificationDetail = AndroidNotificationDetails(
-      '0', // channel Id
-      'general',
-      ongoing: true,
-      autoCancel: false
-      // channel Name
-    );
+        '0', // channel Id
+        'general',
+        ongoing: true,
+        autoCancel: false
+        // channel Name
+        );
     const notificationDetails =
         NotificationDetails(android: androidNotificationDetail);
     flutterLocalNotificationsPlugin.show(
@@ -148,7 +167,11 @@ class PedometerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  //send
+  //logout
+  void closeBox(){
+    stepBox.clear();
+    notifyListeners();
+  }
 
   String getCalorieTerbakar(int steps) {
     num cal = steps * 0.04;
@@ -163,21 +186,6 @@ class PedometerProvider with ChangeNotifier {
     _distance = "$distance km";
     return _distance;
   }
-
-  void sendResponse(int steps) async {
-    if(steps > 0){
-      var nik = await sessionManager.getUserId('nik');
-      var updateTime = DateTime.now();
-      var format = DateFormat("hh:mm:ss");
-      // final updatedTime = format.format(updateTime);
-
-      if(DateTime.now().isAfter(updateTime.add(const Duration(days: 1)))){
-        _networkRepo.sendRecordLangkah(nik!, steps.toString(), _calorie.toString());
-      }
-      notifyListeners();
-    }
-  }
-
 
   String get pedestrianStatus => _status;
 

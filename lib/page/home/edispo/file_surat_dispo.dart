@@ -31,9 +31,17 @@ class _FileSuratDispoState extends State<FileSuratDispo> {
             style: title.copyWith(color: white),
           ),
         ),
-        body: widget.fileSurat != null
-            ? tampilinFile(widget.fileSurat)
-            : Container());
+        body: widget.fileSurat == "tidak ada"
+            ? Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: Text(
+                    "Tidak dapat memuat file",
+                    style: regular.copyWith(fontSize: 16.0),
+                  ),
+                ),
+              )
+            : tampilinFile(widget.fileSurat));
   }
 
   Widget tampilinFile(String fileSurat) {
@@ -52,13 +60,21 @@ class _FileSuratDispoState extends State<FileSuratDispo> {
       return Container(
         child: const PDF().cachedFromUrl(
           'http://119.2.50.170:9095/e_dispo/assets/temp/file_surat/${widget.fileSurat}',
-          placeholder: (double progress) => const Center(child: CircularProgressIndicator()),
+          placeholder: (double progress) =>
+              const Center(child: CircularProgressIndicator()),
           errorWidget: (dynamic error) => Center(child: Text(error.toString())),
         ),
       );
-    }
-    else {
-      return Container();
+    } else {
+      return Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Text(
+            "Tidak ada",
+            style: regular.copyWith(fontSize: 16.0),
+          ),
+        ),
+      );
     }
   }
 }

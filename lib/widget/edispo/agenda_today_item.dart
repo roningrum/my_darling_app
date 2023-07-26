@@ -27,6 +27,12 @@ class _AgendaTodayItemState extends State<AgendaTodayItem> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(widget.data.dari ?? "-",
+              style: regular.copyWith(
+                fontSize: 14.0,
+              ),
+              textAlign: TextAlign.start),
+          const SizedBox(height: 8.0),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,

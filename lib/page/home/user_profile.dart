@@ -146,6 +146,6 @@ class _UserProfileState extends State<UserProfile> {
     var sessionManager = SessionManager();
     sessionManager.clear();
     Hive.deleteBoxFromDisk('steps');
-    Hive.close();
+    // Hive.close();
   }
 }

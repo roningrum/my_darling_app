@@ -9,7 +9,7 @@ import 'package:my_darling_app/repository/model/Walking_data_response.dart';
 import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
 import 'package:my_darling_app/repository/model/data_checkup_response.dart';
-import 'package:my_darling_app/repository/model/record_langkah.dart';
+import 'package:my_darling_app/repository/model/send_record_langkah.dart';
 import 'package:my_darling_app/repository/model/token_response.dart';
 import 'package:my_darling_app/repository/model/user_response.dart';
 
@@ -214,7 +214,7 @@ class NetworkRepo {
   }
 
   //post Record Langkah
-  Future<RecordLangkah?>sendRecordLangkah(String nik, String langkah, String cal) async {
+  Future<SendRecordLangkah?>sendRecordLangkah(String nik, String langkah, String cal) async {
     try{
       http.Response response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/create_record_langkah'),
       body: {
@@ -226,8 +226,8 @@ class NetworkRepo {
         if (kDebugMode) {
           print("Response URL ${response.request}");
           var jsonData = json.decode(response.body);
-          var data = RecordLangkah.fromJson(jsonData);
-          RecordLangkah recordResponse = data;
+          var data = SendRecordLangkah.fromJson(jsonData);
+          SendRecordLangkah recordResponse = data;
           if (kDebugMode) {
             print('Response ${recordResponse.langkah}');
           }

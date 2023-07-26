@@ -38,7 +38,7 @@ dependencies:
   flutter_svg: ^2.0.2
   percent_indicator: ^4.2.3
   fl_chart: ^0.63.0
-  http: ^0.13.5
+  http: ^1.1.0
   shared_preferences: ^2.0.18
   sensors_plus: ^3.0.2
   intl: ^0.18.0
@@ -46,7 +46,7 @@ dependencies:
   path: ^1.8.2
   pedometer: ^4.0.1
   hive: ^2.2.3
-  flutter_foreground_service: ^0.3.0
+#  flutter_foreground_service: ^0.4.0
   jiffy: ^6.1.0
   path_provider: ^2.0.15
   provider: ^6.0.0
@@ -60,6 +60,7 @@ dependencies:
   device_info_plus: ^9.0.2
   timezone: ^0.9.2
   flutter_barcode_scanner: ^2.0.0
+  syncfusion_flutter_charts: ^22.1.39
 
 dev_dependencies:
   flutter_test:

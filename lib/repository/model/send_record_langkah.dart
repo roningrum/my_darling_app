@@ -1,5 +1,5 @@
-class RecordLangkah {
-  RecordLangkah({
+class SendRecordLangkah {
+  SendRecordLangkah({
       this.id, 
       this.nik, 
       this.langkah, 
@@ -7,7 +7,7 @@ class RecordLangkah {
       this.createdAt, 
       this.updatedAt,});
 
-  RecordLangkah.fromJson(dynamic json) {
+  SendRecordLangkah.fromJson(dynamic json) {
     id = json['id'];
     nik = json['nik'];
     langkah = json['langkah'];
@@ -17,8 +17,8 @@ class RecordLangkah {
   }
   int? id;
   String? nik;
-  int? langkah;
-  double? cal;
+  String? langkah;
+  String? cal;
   String? createdAt;
   String? updatedAt;
 

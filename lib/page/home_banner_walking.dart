@@ -1,10 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foreground_service/flutter_foreground_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hive/hive.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
@@ -27,6 +24,8 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   final sessionManager = SessionManager();
   final pedometerProvider = Provider.of<PedometerProvider>;
 
+  final _networkRepo = NetworkRepo();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -42,6 +41,10 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   Widget build(BuildContext context) {
     return Consumer<PedometerProvider>(
         builder: (context, pedometerProvider, child) {
+          calorie = pedometerProvider.calorieNow;
+          todaySteps = pedometerProvider.pedestrianStepCount;
+          sendResponse(todaySteps, calorie);
+
           return Container(
             width: MediaQuery.of(context).size.width - 16,
             margin: const EdgeInsets.only(top: 20),
@@ -123,17 +126,26 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     );
   }
 
+  void sendResponse(String steps, String cal) async {
+    final step = int.parse(steps);
+    final calorie = double.parse(cal);
 
-  // void sendResponse(String steps, String calorie) async {
-  //   if(steps != "0" && calorie != "0"){
-  //     var nik = await sessionManager.getUserId('nik');
-  //     Timer.periodic(const Duration(minutes: 1), (timer) {
-  //       networkRepo.sendRecordLangkah(
-  //           nik!, todaySteps.toString(), calorie.toString());
-  //       timer.cancel();
-  //     });
-  //
-  //
-  //   }
-  // }
+    if(step > 0){
+      var nik = await sessionManager.getUserId('nik');
+      // var updateTime = DateTime.now();
+      Timer.periodic(const Duration(seconds: 1), (timer) {
+        DateTime now = DateTime.now();
+        DateTime tomorrow = DateTime(now.year, now.month, now.day + 1);
+        Duration timeUntilReset = tomorrow.difference(now);
+        if (timeUntilReset.inSeconds > 0) {
+          timeUntilReset -= const Duration(seconds: 1);
+        } else {
+          _networkRepo.sendRecordLangkah(nik!, steps, calorie.toString());
+
+          timeUntilReset = tomorrow.difference(DateTime.now());
+        }
+      });
+
+    }
+  }
 }
