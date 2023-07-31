@@ -42,7 +42,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     return Consumer<PedometerProvider>(
         builder: (context, pedometerProvider, child) {
           calorie = pedometerProvider.calorieNow;
-          todaySteps = pedometerProvider.pedestrianStepCount;
+          todaySteps = pedometerProvider.totalStepCount;
           sendResponse(todaySteps, calorie);
 
           return Container(
@@ -85,6 +85,9 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
                                 fontWeight: FontWeight.w600))
                       ],
                     ),
+                    const SizedBox(height: 12.0),
+                    Text('Status : ${pedometerProvider.pedestrianStatus}',
+                        style: regular.copyWith(fontSize: 12.0, color: white))
                   ],
                 ),
                 Column(
@@ -130,22 +133,21 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     final step = int.parse(steps);
     final calorie = double.parse(cal);
 
-    if(step > 0){
-      var nik = await sessionManager.getUserId('nik');
-      // var updateTime = DateTime.now();
-      Timer.periodic(const Duration(seconds: 1), (timer) {
-        DateTime now = DateTime.now();
-        DateTime tomorrow = DateTime(now.year, now.month, now.day + 1);
-        Duration timeUntilReset = tomorrow.difference(now);
-        if (timeUntilReset.inSeconds > 0) {
-          timeUntilReset -= const Duration(seconds: 1);
-        } else {
-          _networkRepo.sendRecordLangkah(nik!, steps, calorie.toString());
+    print('Steps $step');
 
-          timeUntilReset = tomorrow.difference(DateTime.now());
-        }
-      });
-
-    }
+    var nik = await sessionManager.getUserId('nik');
+    // var updateTime = DateTime.now();
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      DateTime now = DateTime.now();
+      DateTime tomorrow = DateTime(now.year, now.month, now.day + 1);
+      Duration timeUntilReset = tomorrow.difference(now);
+      if (timeUntilReset.inSeconds > 0) {
+        timeUntilReset -= const Duration(seconds: 1);
+      } else if(timeUntilReset.inSeconds == 0) {
+        _networkRepo.sendRecordLangkah(nik!, step.toString(), calorie.toString());
+        timeUntilReset = tomorrow.difference(DateTime.now());
+        timer.cancel();
+      }
+    });
   }
 }

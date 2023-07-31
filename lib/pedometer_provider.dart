@@ -37,8 +37,7 @@ class PedometerProvider with ChangeNotifier {
   initialize() async {
     final appDocumentDirectory = await getApplicationDocumentsDirectory();
     Hive.init(appDocumentDirectory.path);
-    stepBox =  await Hive.openBox('steps');
-
+    stepBox = await Hive.openBox('steps');
     checkPermission();
     notifyListeners();
   }
@@ -47,18 +46,17 @@ class PedometerProvider with ChangeNotifier {
     final androidInfo = await DeviceInfoPlugin().androidInfo;
     late final Map<Permission, PermissionStatus> status;
 
-    status = await[Permission.activityRecognition, Permission.notification].request();
+    status = await [Permission.activityRecognition, Permission.notification]
+        .request();
 
     status.forEach((permission, status) {
-      if(status.isGranted){
+      if (status.isGranted) {
         startListening();
         startDailyStepReset();
-      }
-      else if(status.isDenied){
+      } else if (status.isDenied) {
         openAppSettings();
-      }
-      else{
-       print('Permission not activate');
+      } else {
+        print('Permission not activate');
       }
     });
     notifyListeners();
@@ -92,7 +90,7 @@ class PedometerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void stop(){
+  void stop() {
     _stepCountStream.listen(onStepCount).cancel();
     notifyListeners();
   }
@@ -124,6 +122,7 @@ class PedometerProvider with ChangeNotifier {
         ..put(savedStepCountKey, savedStepsCount);
     }
     _stepCountToday = event.steps - savedStepsCount;
+    _totalStepCount = _stepCountToday;
     stepBox.put('today steps', _stepCountToday);
 
     getCalorieTerbakar(_stepCountToday);
@@ -135,15 +134,15 @@ class PedometerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void startDailyStepReset(){
+  void startDailyStepReset() {
     _dailyResetTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       DateTime now = DateTime.now();
       DateTime tomorrow = DateTime(now.year, now.month, now.day + 1);
       Duration timeUntilReset = tomorrow.difference(now);
 
-      if(timeUntilReset.inSeconds > 0) {
+      if (timeUntilReset.inSeconds > 0) {
         timeUntilReset -= const Duration(seconds: 1);
-      } else{
+      } else if (timeUntilReset.inSeconds == 0) {
         _totalStepCount += _stepCountToday;
         _stepCountToday = 0;
         timeUntilReset = tomorrow.difference(DateTime.now());
@@ -168,8 +167,9 @@ class PedometerProvider with ChangeNotifier {
   }
 
   //logout
-  void closeBox(){
+  void closeBox() {
     stepBox.clear();
+    _stepCountToday = 0;
     notifyListeners();
   }
 
@@ -194,4 +194,6 @@ class PedometerProvider with ChangeNotifier {
   String get pedestrianStepCount => _stepCountToday.toString();
 
   String get distance => _distance;
+
+  String get totalStepCount => _totalStepCount.toString();
 }

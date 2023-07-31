@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/login_screen.dart';
+import 'package:my_darling_app/pedometer_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../theme/theme.dart';
 import 'home_screen.dart';
@@ -20,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     Future.delayed(const Duration(seconds: 3), (){
       checkLoginSession();
+
     });
     super.initState();
 
@@ -58,13 +61,17 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<bool> checkLoginSession() async{
     var checkLogin = await _sessionManager.isLogin();
     if(checkLogin!=null && checkLogin == true){
-      // ignore: use_build_context_synchronously
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) =>
-              const HomeScreen()),
-              (Route<dynamic> route) => false);
+      if(mounted){
+        Provider.of<PedometerProvider>(context).initialize();
+      }
+      if(mounted){
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                const HomeScreen()),
+                (Route<dynamic> route) => false);
+      }
       return checkLogin;
     }
     else{

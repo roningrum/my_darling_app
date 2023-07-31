@@ -3,7 +3,7 @@ class RecordLangkah {
       this.id, 
       this.nik, 
       this.langkah, 
-      this.cal, 
+      // this.cal,
       this.createdAt, 
       this.updatedAt,});
 
@@ -11,14 +11,14 @@ class RecordLangkah {
     id = json['id'];
     nik = json['nik'];
     langkah = json['langkah'];
-    cal = json['cal'];
+    // cal = json['cal'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }
   int? id;
   String? nik;
   int? langkah;
-  double? cal;
+  // double? cal;
   String? createdAt;
   String? updatedAt;
 
@@ -27,7 +27,7 @@ class RecordLangkah {
     map['id'] = id;
     map['nik'] = nik;
     map['langkah'] = langkah;
-    map['cal'] = cal;
+    // map['cal'] = cal;
     map['created_at'] = createdAt;
     map['updated_at'] = updatedAt;
     return map;

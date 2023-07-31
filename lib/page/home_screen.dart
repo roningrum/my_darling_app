@@ -53,8 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return nik;
   }
 
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -149,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                       onTap: (){
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => const HomeBannerChart()));
+                            MaterialPageRoute(builder: (context) => HomeBannerChart(nik : nik!)));
                       },
                       child: const HomeBannerWalking()),
                   const SizedBox(

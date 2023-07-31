@@ -18,6 +18,7 @@ import 'model/bidang_response.dart';
 import 'model/kegiatan_internal_response.dart';
 import 'model/kegiatan_luar_response.dart';
 import 'model/login_response.dart';
+import 'model/record_langkah.dart';
 import 'model/surat_response.dart';
 
 class NetworkRepo {
@@ -242,6 +243,38 @@ class NetworkRepo {
       print("Response error: ${e.toString()}");
     }
     return null;
+  }
+
+  //getSemua Langkah
+  Future<List<RecordLangkah>>getAllRecordDaily(String nik) async {
+    try{
+      http.Response response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/semua_record_langkah').replace(queryParameters: {'nik':nik}));
+      if(response.statusCode == 200){
+        if (kDebugMode) {
+          print("Response URL ${response.request}");
+          var jsonData = json.decode(response.body);
+          List<RecordLangkah> recordList = [];
+          List<dynamic> recordData = jsonData;
+
+          recordList = recordData.map((data) => RecordLangkah.fromJson(data)).toList();
+          if (kDebugMode) {
+            print('Response $recordList');
+          }
+          return recordList;
+        }
+      }
+      else{
+        if (kDebugMode) {
+          print("Response error: ${response.body}");
+        }
+      }
+    }
+    catch(e){
+      if (kDebugMode) {
+        print("Response error: ${e.toString()}");
+      }
+    }
+    return [];
   }
 
   //login Yoh Sehat
