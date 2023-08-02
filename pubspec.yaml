@@ -63,6 +63,8 @@ dependencies:
   syncfusion_flutter_charts: ^22.1.39
   fluttertoast: ^8.2.2
   flutter_foreground_task: ^6.0.0+1
+  connectivity_plus: ^4.0.1
+  datepicker_dropdown: ^0.0.7+5
 
 dev_dependencies:
   flutter_test:

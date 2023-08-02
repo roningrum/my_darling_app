@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:my_darling_app/helper/network_helper.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
@@ -19,6 +22,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   String todaySteps = "0";
   String calorie = "0";
   String distanceKm = "0";
+  String nik ="";
 
   final networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
@@ -26,15 +30,25 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
 
   final _networkRepo = NetworkRepo();
 
+  var  _source = {ConnectivityResult.none: false};
+  final _networkHelper = NetworkHelper.instance;
+  String status = '';
+
+  Future<String> getNIK() async{
+    nik = (await sessionManager.getUserId('nik'))!;
+    return nik;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      var pedometerProvider =
-          Provider.of<PedometerProvider>(context, listen: false);
+      var pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
       pedometerProvider.initialize();
     });
+    _networkHelper.initialize();
+    getNIK();
   }
 
   @override
@@ -135,18 +149,41 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
 
     print('Steps $step');
 
-    var nik = await sessionManager.getUserId('nik');
-    // var updateTime = DateTime.now();
+    // _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
+
     Timer.periodic(const Duration(seconds: 1), (timer) {
       DateTime now = DateTime.now();
       DateTime tomorrow = DateTime(now.year, now.month, now.day + 1);
       Duration timeUntilReset = tomorrow.difference(now);
       if (timeUntilReset.inSeconds > 0) {
         timeUntilReset -= const Duration(seconds: 1);
+        // getConnection(step.toString(), calorie.toString());
       } else if(timeUntilReset.inSeconds == 0) {
-        _networkRepo.sendRecordLangkah(nik!, step.toString(), calorie.toString());
+        getConnection(step.toString(), calorie.toString());
         timeUntilReset = tomorrow.difference(DateTime.now());
         timer.cancel();
+      }
+    });
+  }
+
+  void getConnection(String step, String calorie) {
+    _networkHelper.myStream.listen((source) {
+      _source = source;
+      switch(_source.keys.toList()[0]){
+        case ConnectivityResult.mobile:
+          _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
+          if (kDebugMode) {
+            print('Status : ${_source.values.toList()[0]? 'Mobile: Online' : 'Mobile: Offline'}');
+          }
+          break;
+        case ConnectivityResult.wifi:
+          _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
+          print('Status : ${_source.values.toList()[0]? 'Wifi: Online' : 'Wifi: Offline'}');
+          break;
+        case ConnectivityResult.none:
+        default:
+          print('Status : ${_source.values.toList()[0]? 'Wifi: Online' : 'Wifi: Offline'}');
+
       }
     });
   }

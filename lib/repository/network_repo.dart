@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -275,6 +276,51 @@ class NetworkRepo {
       }
     }
     return [];
+  }
+
+  // get All Total Langkah
+  Future<List<int>> getTotalLangkah(String nik, String month, String year) async{
+    final request = {
+      'nik':nik,
+      'bulan': month,
+      'tahun': year,
+      'jenis': 'langkah'
+    };
+    final response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/total_record_langkah').replace(queryParameters: request));
+    if(response.statusCode == 200){
+      var langkahResponse = jsonDecode(response.body);
+      final List<dynamic> langkahData = langkahResponse;
+      final List<int> totalLangkah = langkahData.cast<int>();
+      if (kDebugMode) {
+        print('$totalLangkah');
+      }
+      return totalLangkah;
+    }
+    else{
+      return throw response.statusCode;
+    }
+  }
+
+  //get All Total Kalori
+  Future<List<int>> getTotalKalori(String nik, String month, String year) async{
+    final request = {
+      'nik' :nik,
+      'bulan': month,
+      'tahun': year,
+      'jenis': 'cal'
+    };
+    final response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/total_record_langkah').replace(queryParameters: request));
+    print('response ${response.body}');
+    if(response.statusCode == 200){
+      var langkahResponse = jsonDecode(response.body);
+      final List<dynamic> calorieData = langkahResponse;
+      final List<int> totalCalorie = calorieData.cast<int>();
+      print('total calorie $totalCalorie');
+      return totalCalorie;
+    }
+    else{
+      return throw response.statusCode;
+    }
   }
 
   //login Yoh Sehat
