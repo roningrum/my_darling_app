@@ -208,23 +208,12 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
         }
       },
     );
-    // // var now = DateTime.now();
-    // var totalDays = daysInMonth(month);
-    // var listofDates = List<int>.generate(totalDays, (index) => index + 1);
-    // //
-    // if (kDebugMode) {
-    //   print(listofDates);
-    // }
-
-    // return Container();
 
   }
 
   int daysInMonth(String bulan) {
     int year = DateTime.now().year;
     int month = int.parse(bulan);
-
-    var now = DateTime.now();
 
     var lastDayMonth =
         (month < 12) ? DateTime(year, month + 1, 0) : DateTime(year + 1, 1, 0);
