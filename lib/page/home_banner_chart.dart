@@ -19,12 +19,14 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
   final _networkRepo = NetworkRepo();
   List<_RecordData> recordData = [];
   List<_RecordCalorie> recordCal = [];
+  List<int> listOfDates =[];
   String month = "";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
   }
 
   @override
@@ -151,20 +153,25 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
     }
     return FutureBuilder(
       future: _networkRepo.getTotalLangkah(widget.nik, month, year),
+      initialData: const [],
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var data = snapshot.data;
+          listOfDates.clear();
+          recordData.clear();
           if (month != "") {
             var totalDays = daysInMonth(month);
-            var listofDates = List<int>.generate(totalDays, (index) => index + 1);
-            //
-            print(listofDates);
+            listOfDates = List<int>.generate(totalDays, (index) => index + 1);
             if(data != null){
-              for (int i = 0; i < listofDates.length; i++) {
-                recordData.add(_RecordData(listofDates[i], data[i]));
+              // recordData.clear();
+              for (var i= 0;i<listOfDates.length; i++) {
+                if(data.length == listOfDates.length){
+                  recordData.add(_RecordData(listOfDates[i], data[i]));
+                  print("record data ${recordData[i].langkah}");
+                  print("record data $listOfDates");
+                }
               }
             }
-
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: SizedBox(

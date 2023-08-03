@@ -43,12 +43,9 @@ class PedometerProvider with ChangeNotifier {
   }
 
   Future<void> checkPermission() async {
-    final androidInfo = await DeviceInfoPlugin().androidInfo;
     late final Map<Permission, PermissionStatus> status;
-
     status = await [Permission.activityRecognition, Permission.notification]
         .request();
-
     status.forEach((permission, status) {
       if (status.isGranted) {
         startListening();
@@ -112,16 +109,16 @@ class PedometerProvider with ChangeNotifier {
       lastSavedDay = todayDayNo;
       savedStepsCount = event.steps;
 
-      if (kDebugMode) {
-        print('Last Day $lastSavedDay');
-        print('Saved Steps $savedStepsCount');
-      }
-
       stepBox
         ..put(lastSavedDayKey, lastSavedDay)
         ..put(savedStepCountKey, savedStepsCount);
     }
     _stepCountToday = event.steps - savedStepsCount;
+
+    if (kDebugMode) {
+      print('Last Day $lastSavedDay');
+      print('Saved Steps $savedStepsCount');
+    }
     _totalStepCount = _stepCountToday;
     stepBox.put('today steps', _stepCountToday);
 
@@ -146,6 +143,8 @@ class PedometerProvider with ChangeNotifier {
         _totalStepCount += _stepCountToday;
         _stepCountToday = 0;
         timeUntilReset = tomorrow.difference(DateTime.now());
+
+        _dailyResetTimer.cancel();
       }
     });
     notifyListeners();

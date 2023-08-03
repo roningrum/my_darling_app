@@ -30,7 +30,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
 
   final _networkRepo = NetworkRepo();
 
-  var  _source = {ConnectivityResult.none: false};
+
   final _networkHelper = NetworkHelper.instance;
   String status = '';
 
@@ -57,6 +57,11 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
         builder: (context, pedometerProvider, child) {
           calorie = pedometerProvider.calorieNow;
           todaySteps = pedometerProvider.totalStepCount;
+
+          if (kDebugMode) {
+            print('Steps Today $todaySteps');
+          }
+
           sendResponse(todaySteps, calorie);
 
           return Container(
@@ -143,6 +148,10 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     );
   }
 
+  void refresh(){
+
+  }
+
   void sendResponse(String steps, String cal) async {
     final step = int.parse(steps);
     final calorie = double.parse(cal);
@@ -163,28 +172,6 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
         _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
         timeUntilReset = tomorrow.difference(DateTime.now());
         timer.cancel();
-      }
-    });
-  }
-
-  void getConnection(String step, String calorie) {
-    _networkHelper.myStream.listen((source) {
-      _source = source;
-      switch(_source.keys.toList()[0]){
-        case ConnectivityResult.mobile:
-          _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
-          if (kDebugMode) {
-            print('Status : ${_source.values.toList()[0]? 'Mobile: Online' : 'Mobile: Offline'}');
-          }
-          break;
-        case ConnectivityResult.wifi:
-          _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
-          print('Status : ${_source.values.toList()[0]? 'Wifi: Online' : 'Wifi: Offline'}');
-          break;
-        case ConnectivityResult.none:
-        default:
-          print('Status : ${_source.values.toList()[0]? 'Wifi: Online' : 'Wifi: Offline'}');
-
       }
     });
   }

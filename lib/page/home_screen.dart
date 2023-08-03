@@ -14,7 +14,6 @@ import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/home_menu_widget.dart';
 
 class HomeScreen extends StatefulWidget {
-
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -85,9 +84,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (snapshot.hasData && snapshot.data != null) {
                       return GestureDetector(
                         onTap: () {
-                          if(userId !=null){
+                          if (userId != null) {
                             Navigator.of(context).push((MaterialPageRoute(
-                                builder: (context) => UserProfile(userId: userId!))));
+                                builder: (context) =>
+                                    UserProfile(userId: userId!))));
                           }
 
                           // logout();
@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   FutureBuilder<String?>(
                       future: getNama(),
-                      builder: (context, snapshot){
+                      builder: (context, snapshot) {
                         return Text('Selamat Pagi, ${snapshot.data}',
                             style: title.copyWith(
                                 fontSize: 16.0, color: primaryBlueBlack));
@@ -145,9 +145,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   //     style: title.copyWith(
                   //         fontSize: 16.0, color: primaryBlueBlack)),
                   GestureDetector(
-                      onTap: (){
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => HomeBannerChart(nik : nik!)));
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    HomeBannerChart(nik: nik!)));
                       },
                       child: const HomeBannerWalking()),
                   const SizedBox(
@@ -215,7 +218,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CekKesehatan(nama: nama!, nik: nik!,)));
+                        builder: (context) => CekKesehatan(
+                              nama: nama!,
+                              nik: nik!,
+                            )));
               },
               child: const HomeMenuWidget(
                   'Kesehatan', 'assets/icons/cek_kesehatan_menu.png')),
@@ -249,71 +255,80 @@ class _HomeScreenState extends State<HomeScreen> {
   //Widget untuk Artikel Berita
   Widget homeArtikel() {
     return FutureBuilder<List<DinkesNewsResponse>>(
-      future: _networkRepo.getListNews(),
-      builder: (context, snapshot){
-        if(snapshot.hasData && snapshot.connectionState == ConnectionState.done){
-          if(snapshot.data!.isNotEmpty){
-            return SizedBox(
-              height: 300,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index){
-                    return Card(
-                      elevation: 0,
-                      margin: const EdgeInsets.only(right: 8.0),
-                      child: Container(
-                        width: 200,
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(16.0),
-                              child: Image.network(snapshot.data![index].fav!, width: 200, height: 150, fit: BoxFit.fill,),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "${snapshot.data![index].titel}",
-                              style: title.copyWith(color: primaryBlueBlack, fontSize: 14),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
+        future: _networkRepo.getListNews(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.data!.isNotEmpty) {
+              return SizedBox(
+                height: 450,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        elevation: 0,
+                        margin: const EdgeInsets.only(right: 8.0),
+                        child: Container(
+                          width: 200,
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(16.0),
+                                child: Image.network(
+                                  snapshot.data![index].fav!,
+                                  width: 200,
+                                  height: 150,
+                                  fit: BoxFit.fill,
+                                  errorBuilder: (BuildContext context,
+                                      Object exception,
+                                      StackTrace? stackTrace) {
+                                    return Image.asset('assets/image/no-image.png', width: 200, height: 150, fit: BoxFit.fill,);
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "${snapshot.data![index].titel}",
+                                style: title.copyWith(
+                                    color: primaryBlueBlack, fontSize: 14),
+                              ),
+                              const SizedBox(height: 8),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  }),
-            );
-            // return HomeArtikelBeritaItem(
-            //     'Peleburan Eijkman ke BRIN, Birokratis',
-            //     'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
-            //     'assets/image/dummy-image.png'),
-          }
-          else{
+                      );
+                    }),
+              );
+              // return HomeArtikelBeritaItem(
+              //     'Peleburan Eijkman ke BRIN, Birokratis',
+              //     'Peleburan Lembaga Biologi Molekuler Eijkman dan bagian riset Kapal Baruna menuai kritik publik..',
+              //     'assets/image/dummy-image.png'),
+            } else {
+              return Center(
+                child: Text("Tidak ada Berita hari ini",
+                    style: regular.copyWith(
+                        fontSize: 14.0, color: secondaryBlueBlack)),
+              );
+            }
+          } else if (snapshot.hasError &&
+              snapshot.connectionState == ConnectionState.none) {
             return Center(
-              child: Text("Tidak ada Berita hari ini",
+              child: Text("Cek Koneksi Kembali",
                   style: regular.copyWith(
                       fontSize: 14.0, color: secondaryBlueBlack)),
             );
+          } else {
+            return Container(
+                alignment: Alignment.center,
+                child: CircularProgressIndicator(color: primaryRed));
           }
-        }
-        else if(snapshot.hasError && snapshot.connectionState == ConnectionState.none){
-          return Center(
-            child: Text("Cek Koneksi Kembali",
-                style: regular.copyWith(
-                    fontSize: 14.0, color: secondaryBlueBlack)),
-          );
-        }
-        else{
-          return Container(
-              alignment: Alignment.center,
-              child: CircularProgressIndicator(color: primaryRed));
-        }
-      }
-    );
+        });
   }
 
   //launch Navara
