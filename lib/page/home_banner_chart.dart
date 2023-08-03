@@ -1,6 +1,7 @@
 import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
@@ -24,7 +25,7 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    initializeDateFormatting();
     super.initState();
 
   }
@@ -45,101 +46,58 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                  "Record Aktivitas ${DateFormat(DateFormat.YEAR_MONTH).format(DateTime.now())}",
-                  style: title.copyWith(fontSize: 16, color: primaryBlueBlack)),
               const SizedBox(height: 16.0),
-              SizedBox(
-                width: 350,
-                child: DropdownDatePicker(
-                    textStyle: title.copyWith(
-                        fontSize: 14.0, fontWeight: FontWeight.w400),
-                    inputDecoration: InputDecoration(
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 1.0),
-                        ),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    isFormValidator: true,
-                    showDay: false,
-                    showYear: false,
-                    startYear: 2000,
-                    endYear: DateTime.now().year,
-                    width: 8,
-                    selectedMonth: DateTime.now().month,
-                    // optional
-                    onChangedMonth: (value) {
-                      setState(() {
-                        value != null
-                            ? month = value
-                            : month = DateFormat("M").format(DateTime.now());
-                      });
-                    }
-                    // print(month);
+              Row(
+                  children: [
+                    Text(
+                        "Pilih Bulan :",
+                        style: title.copyWith(fontSize: 14, color: primaryBlueBlack)),
+                    const SizedBox(width: 8.0),
+                    SizedBox(
+                      width: 150,
+                      height: 64,
+                      child: DropdownDatePicker(
+                          textStyle: title.copyWith(
+                              fontSize: 14.0, fontWeight: FontWeight.w400),
+                          inputDecoration: InputDecoration(
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide:
+                                BorderSide(color: Colors.grey, width: 1.0),
+                              ),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          isFormValidator: true,
+                          showDay: false,
+                          showYear: false,
+                          startYear: 2000,
+                          endYear: DateTime.now().year,
+                          width: 8,
+                          selectedMonth:DateTime.now().month,
+                          // optional
+                          onChangedMonth: (value) {
+                            setState(() {
+                              value != null
+                                  ? month = value
+                                  : month = DateFormat("M").format(DateTime.now());
+                            });
+                          }
+                        // print(month);
+                      ),
                     ),
+                  ]
               ),
+              const SizedBox(height: 16.0),
+              Text(
+                  "Record Aktivitas ${getMonths(month)}",
+                  style: title.copyWith(fontSize: 16, color: primaryBlueBlack)),
               const SizedBox(height: 16.0),
               getDataLangkah(month, DateFormat('yyyy').format(DateTime.now())),
               const SizedBox(height: 16.0),
               Text(
-                  "Record Kalori terbakar ${DateFormat(DateFormat.YEAR_MONTH).format(DateTime.now())}",
+                  "Record Kalori terbakar ${getMonths(month)}",
                   style: title.copyWith(fontSize: 16, color: primaryBlueBlack)),
               const SizedBox(height: 16.0),
-              FutureBuilder(
-                future: _networkRepo.getTotalKalori(widget.nik, DateFormat('MM').format(DateTime.now()), DateFormat('yyyy').format(DateTime.now())),
-                builder: (context, snapshot) {
-                  var data = snapshot.data;
-                  var now = DateTime.now().month;
-                  var totalDays = daysInMonth(now.toString());
-                  var listofDates = List<int>.generate(totalDays, (index) => index+1);
-                  if(data != null){
-                    for(int i = 0; i<listofDates.length; i++){
-
-                      recordCal.add(_RecordCalorie(listofDates[i], data[i]));
-                    }
-                  }
-                  if (snapshot.hasData) {
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: SizedBox(
-                        width: 1000,
-                        child: SfCartesianChart(
-                          plotAreaBorderWidth: 0.0,
-                          primaryYAxis: NumericAxis(
-                            title: AxisTitle(text:'Langkah'),
-                            majorGridLines: const MajorGridLines(width: 0),
-                          ),
-                          primaryXAxis: CategoryAxis(
-                            labelIntersectAction: AxisLabelIntersectAction.rotate90,
-                            majorGridLines: const MajorGridLines(width: 0),
-                          ),
-                          enableAxisAnimation: true,
-                          series: <ChartSeries<_RecordCalorie, int>>[
-                            ColumnSeries<_RecordCalorie, int>(
-                              dataLabelSettings: DataLabelSettings(
-                                isVisible: true,
-                                showZeroValue: false, alignment: ChartAlignment.far,
-                                labelIntersectAction: LabelIntersectAction.shift,
-                                color: secondaryBlueBlack
-                              ),
-                                color: Colors.deepOrangeAccent,
-                                borderRadius: const BorderRadius.only(topLeft:Radius.circular(8.0), topRight: Radius.circular(8.0)),
-                                borderWidth: 100,
-                                dataSource: recordCal,
-                                animationDuration: 2000,
-                                xValueMapper: (_RecordCalorie data, _) => data.tgl,
-                                yValueMapper: (_RecordCalorie data, _) => data.calorie
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
-              ),
+              getDataKalori(month, DateFormat('yyyy').format(DateTime.now()))
             ],
           ),
         ),
@@ -151,17 +109,17 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
     if (kDebugMode) {
       print("Bulan $month");
     }
-    return FutureBuilder(
-      future: _networkRepo.getTotalLangkah(widget.nik, month, year),
-      initialData: const [],
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          var data = snapshot.data;
-          listOfDates.clear();
-          recordData.clear();
-          if (month != "") {
-            var totalDays = daysInMonth(month);
-            listOfDates = List<int>.generate(totalDays, (index) => index + 1);
+    if(month!=""){
+      listOfDates.clear();
+      var totalDays = daysInMonth(month);
+      listOfDates = List<int>.generate(totalDays, (index) => index + 1);
+      return FutureBuilder(
+        future: _networkRepo.getTotalLangkah(widget.nik, month, year),
+        initialData: const [],
+        builder: (context, snapshot){
+          if (snapshot.hasData) {
+            var data = snapshot.data;
+            recordData.clear();
             if(data != null){
               // recordData.clear();
               for (var i= 0;i<listOfDates.length; i++) {
@@ -207,14 +165,215 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
                 ),
               ),
             );
-          } else {
+          }
+          else{
             return Container();
           }
-        } else {
-          return Container();
-        }
-      },
-    );
+        },
+      );
+    }
+    else{
+      return FutureBuilder(
+        future: _networkRepo.getTotalLangkah(widget.nik, DateFormat("MM").format(DateTime.now()), year),
+        initialData: const [],
+        builder: (context, snapshot){
+          if (snapshot.hasData) {
+            var data = snapshot.data;
+            listOfDates.clear();
+            recordData.clear();
+              var now = DateTime.now().month;
+              var totalDays = daysInMonth(now.toString());
+              listOfDates = List<int>.generate(totalDays, (index) => index + 1);
+              if(data != null){
+                // recordData.clear();
+                for (var i= 0;i<listOfDates.length; i++) {
+                  if(data.length == listOfDates.length){
+                    recordData.add(_RecordData(listOfDates[i], data[i]));
+                    print("record data ${recordData[i].langkah}");
+                    print("record data $listOfDates");
+                  }
+                }
+              }
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: 1000,
+                  child: SfCartesianChart(
+                    plotAreaBorderWidth: 0.0,
+                    primaryYAxis: NumericAxis(
+                      title: AxisTitle(text: 'Langkah'),
+                      majorGridLines: const MajorGridLines(width: 0),
+                    ),
+                    primaryXAxis: CategoryAxis(
+                      labelIntersectAction: AxisLabelIntersectAction.rotate90,
+                      majorGridLines: const MajorGridLines(width: 0),
+                    ),
+                    enableAxisAnimation: true,
+                    series: <ChartSeries<_RecordData, int>>[
+                      ColumnSeries<_RecordData, int>(
+                          dataLabelSettings: DataLabelSettings(
+                              isVisible: true,
+                              showZeroValue: false,
+                              alignment: ChartAlignment.far,
+                              labelIntersectAction: LabelIntersectAction.shift,
+                              color: secondaryBlueBlack),
+                          color: Colors.deepOrangeAccent,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(8.0),
+                              topRight: Radius.circular(8.0)),
+                          borderWidth: 100,
+                          dataSource: recordData,
+                          xValueMapper: (_RecordData data, _) => data.tgl,
+                          yValueMapper: (_RecordData data, _) => data.langkah)
+                    ],
+                  ),
+                ),
+              );
+            }
+          else{
+            return Container();
+          }
+          }
+      );
+    }
+
+
+
+  }
+
+  Widget getDataKalori(String month, String year) {
+    if (kDebugMode) {
+      print("Bulan $month");
+    }
+    if(month!=""){
+      listOfDates.clear();
+      var totalDays = daysInMonth(month);
+      listOfDates = List<int>.generate(totalDays, (index) => index + 1);
+      return FutureBuilder(
+        future: _networkRepo.getTotalKalori(widget.nik, month, year),
+        initialData: const [],
+        builder: (context, snapshot){
+          if (snapshot.hasData) {
+            var data = snapshot.data;
+            recordCal.clear();
+            if(data != null){
+              // recordData.clear();
+              for (var i= 0;i<listOfDates.length; i++) {
+                if(data.length == listOfDates.length){
+                  recordCal.add(_RecordCalorie(listOfDates[i], data[i]));
+                  print("record data ${recordCal[i].calorie}");
+                  print("record data $listOfDates");
+                }
+              }
+            }
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: 1000,
+                child: SfCartesianChart(
+                  plotAreaBorderWidth: 0.0,
+                  primaryYAxis: NumericAxis(
+                    title: AxisTitle(text: 'Langkah'),
+                    majorGridLines: const MajorGridLines(width: 0),
+                  ),
+                  primaryXAxis: CategoryAxis(
+                    labelIntersectAction: AxisLabelIntersectAction.rotate90,
+                    majorGridLines: const MajorGridLines(width: 0),
+                  ),
+                  enableAxisAnimation: true,
+                  series: <ChartSeries<_RecordCalorie, int>>[
+                    ColumnSeries<_RecordCalorie, int>(
+                        dataLabelSettings: DataLabelSettings(
+                            isVisible: true,
+                            showZeroValue: false,
+                            alignment: ChartAlignment.far,
+                            labelIntersectAction: LabelIntersectAction.shift,
+                            color: secondaryBlueBlack),
+                        color: Colors.deepOrangeAccent,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(8.0),
+                            topRight: Radius.circular(8.0)),
+                        borderWidth: 100,
+                        dataSource: recordCal,
+                        xValueMapper: (_RecordCalorie data, _) => data.tgl,
+                        yValueMapper: (_RecordCalorie data, _) => data.calorie)
+                  ],
+                ),
+              ),
+            );
+          }
+          else{
+            return Container();
+          }
+        },
+      );
+    }
+    else{
+      return FutureBuilder(
+          future: _networkRepo.getTotalKalori(widget.nik, DateFormat("MM").format(DateTime.now()), year),
+          initialData: const [],
+          builder: (context, snapshot){
+            if (snapshot.hasData) {
+              var data = snapshot.data;
+              listOfDates.clear();
+              recordCal.clear();
+              var now = DateTime.now().month;
+              var totalDays = daysInMonth(now.toString());
+              listOfDates = List<int>.generate(totalDays, (index) => index + 1);
+              if(data != null){
+                // recordData.clear();
+                for (var i= 0;i<listOfDates.length; i++) {
+                  if(data.length == listOfDates.length){
+                    recordCal.add(_RecordCalorie(listOfDates[i], data[i]));
+                    print("record data ${recordData[i].langkah}");
+                    print("record data $listOfDates");
+                  }
+                }
+              }
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: 1000,
+                  child: SfCartesianChart(
+                    plotAreaBorderWidth: 0.0,
+                    primaryYAxis: NumericAxis(
+                      title: AxisTitle(text: 'Langkah'),
+                      majorGridLines: const MajorGridLines(width: 0),
+                    ),
+                    primaryXAxis: CategoryAxis(
+                      labelIntersectAction: AxisLabelIntersectAction.rotate90,
+                      majorGridLines: const MajorGridLines(width: 0),
+                    ),
+                    enableAxisAnimation: true,
+                    series: <ChartSeries<_RecordCalorie, int>>[
+                      ColumnSeries<_RecordCalorie, int>(
+                          dataLabelSettings: DataLabelSettings(
+                              isVisible: true,
+                              showZeroValue: false,
+                              alignment: ChartAlignment.far,
+                              labelIntersectAction: LabelIntersectAction.shift,
+                              color: secondaryBlueBlack),
+                          color: Colors.deepOrangeAccent,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(8.0),
+                              topRight: Radius.circular(8.0)),
+                          borderWidth: 100,
+                          dataSource: recordCal,
+                          xValueMapper: (_RecordCalorie data, _) => data.tgl,
+                          yValueMapper: (_RecordCalorie data, _) => data.calorie)
+                    ],
+                  ),
+                ),
+              );
+            }
+            else{
+              return Container();
+            }
+          }
+      );
+    }
+
+
 
   }
 
@@ -230,6 +389,19 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
   DateTime getFormatDateTime(String tgl) {
     var date = DateTime.parse(tgl);
     return date;
+  }
+
+  String getMonths(String bulan){
+    if(bulan != ""){
+      int month = int.parse(bulan);
+      var thisMonth = DateFormat("MMMM", "id_ID").format(DateTime(month));
+      return thisMonth;
+    }
+    else{
+      var thisMonth = DateFormat("MMMM", "id_ID").format(DateTime.now());
+      return thisMonth;
+    }
+
   }
 }
 

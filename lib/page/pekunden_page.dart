@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
-import 'package:my_darling_app/widget/edispo_menu_widget.dart';
+import 'package:my_darling_app/widget/pekunden_menu_widget.dart';
 
 import '../theme/theme.dart';
 
@@ -16,31 +16,24 @@ class _PekundenPageState extends State<PekundenPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pekunden Page',
+        title: Text('Kepegawaian',
             style: title.copyWith(color: Colors.white, fontSize: 16)),
         backgroundColor: primaryBlueBlack,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 8.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:[
-                  const EdispoMenuWidget('Pelayanan Pekunden','assets/icons/ic_pekunden_file.png'),
-                  GestureDetector(
-                      onTap: (){
-                        whatsAppKepegawaian();
-                      },
-                      child: const EdispoMenuWidget('Whatsapp Layanan Pekunded','assets/icons/whatsapp.png')),
-                ],
-              ),
-            ],
-          )
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 8.0),
+            const PekundenMenuWidget('Pelayanan Pekunden','assets/icons/ic_pekunden_file.png'),
+            const SizedBox(height: 8.0),
+            GestureDetector(
+                onTap: (){
+                  whatsAppKepegawaian();
+                },
+                child: const PekundenMenuWidget('Whatsapp Layanan Pekunden','assets/icons/whatsapp.png'))
+          ],
+        ),
       ),
     );
   }
