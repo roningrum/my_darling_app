@@ -159,7 +159,8 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
         timeUntilReset -= const Duration(seconds: 1);
         // getConnection(step.toString(), calorie.toString());
       } else if(timeUntilReset.inSeconds == 0) {
-        getConnection(step.toString(), calorie.toString());
+        // getConnection(step.toString(), calorie.toString());
+        _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
         timeUntilReset = tomorrow.difference(DateTime.now());
         timer.cancel();
       }
