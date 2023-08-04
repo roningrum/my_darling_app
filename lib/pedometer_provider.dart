@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
@@ -108,6 +107,7 @@ class PedometerProvider with ChangeNotifier {
     if (lastSavedDay < todayDayNo) {
       lastSavedDay = todayDayNo;
       savedStepsCount = event.steps;
+      _totalStepCount = savedStepsCount;
 
       stepBox
         ..put(lastSavedDayKey, lastSavedDay)
@@ -143,7 +143,6 @@ class PedometerProvider with ChangeNotifier {
         _totalStepCount += _stepCountToday;
         _stepCountToday = 0;
         timeUntilReset = tomorrow.difference(DateTime.now());
-
         _dailyResetTimer.cancel();
       }
     });

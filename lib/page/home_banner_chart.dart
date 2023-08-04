@@ -315,17 +315,13 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
           builder: (context, snapshot){
             if (snapshot.hasData) {
               var data = snapshot.data;
-              listOfDates.clear();
               recordCal.clear();
-              var now = DateTime.now().month;
-              var totalDays = daysInMonth(now.toString());
-              listOfDates = List<int>.generate(totalDays, (index) => index + 1);
               if(data != null){
                 // recordData.clear();
                 for (var i= 0;i<listOfDates.length; i++) {
                   if(data.length == listOfDates.length){
                     recordCal.add(_RecordCalorie(listOfDates[i], data[i]));
-                    print("record data ${recordData[i].langkah}");
+                    print("record data ${recordCal[i].calorie}");
                     print("record data $listOfDates");
                   }
                 }

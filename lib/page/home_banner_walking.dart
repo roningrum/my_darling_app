@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -47,7 +45,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
       var pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
       pedometerProvider.initialize();
     });
-    _networkHelper.initialize();
+    // _networkHelper.initialize();
     getNIK();
   }
 
@@ -56,13 +54,14 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     return Consumer<PedometerProvider>(
         builder: (context, pedometerProvider, child) {
           calorie = pedometerProvider.calorieNow;
-          todaySteps = pedometerProvider.totalStepCount;
+          todaySteps = pedometerProvider.pedestrianStepCount;
 
           if (kDebugMode) {
             print('Steps Today $todaySteps');
           }
 
           sendResponse(todaySteps, calorie);
+
 
           return Container(
             width: MediaQuery.of(context).size.width - 16,
@@ -148,29 +147,27 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
     );
   }
 
-  void refresh(){
-
-  }
-
-  void sendResponse(String steps, String cal) async {
+  void sendResponse(String steps, String cal) {
     final step = int.parse(steps);
     final calorie = double.parse(cal);
 
-    print('Steps $step');
+    // print('Steps $step');
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
 
-    // _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
-
-    Timer.periodic(const Duration(seconds: 1), (timer) {
       DateTime now = DateTime.now();
       DateTime tomorrow = DateTime(now.year, now.month, now.day + 1);
       Duration timeUntilReset = tomorrow.difference(now);
       if (timeUntilReset.inSeconds > 0) {
-        timeUntilReset -= const Duration(seconds: 1);
+          timeUntilReset -= const Duration(seconds: 1);
         // getConnection(step.toString(), calorie.toString());
-      } else if(timeUntilReset.inSeconds == 0) {
-        // getConnection(step.toString(), calorie.toString());
+      } else{
+        // timeUntilReset = tomorrow.difference(DateTime.now());
         _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
-        timeUntilReset = tomorrow.difference(DateTime.now());
+        final snackBar = SnackBar(
+            content: Text('Berhasil kirim $steps')
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        print('Steps $step');
         timer.cancel();
       }
     });
