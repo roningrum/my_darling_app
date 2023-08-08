@@ -109,7 +109,7 @@ class _SuratBelumDiprosesState extends State<SuratBelumDiproses> {
                         return GestureDetector(
                             onTap: () => Navigator.push(context,
                                 MaterialPageRoute(builder: (context) =>
-                                    SuratDetailPage(surat: data[index],))),
+                                    SuratDetailPage(surat: data[index], rulePegawai: widget.rule))),
                             child: SuratItem(surat: data[index]));
                       }),
                     );
@@ -184,7 +184,7 @@ class _SuratBelumDiprosesState extends State<SuratBelumDiproses> {
                     return GestureDetector(
                         onTap: () => Navigator.push(context,
                             MaterialPageRoute(builder: (context) =>
-                                SuratDetailPage(surat: data[index],))),
+                                SuratDetailPage(surat: data[index], rulePegawai: widget.rule,))),
                         child: SuratItem(surat: data[index]));
                   }),
                 );

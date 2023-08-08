@@ -139,13 +139,12 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  Future<void> logout() async{
-    if(!mounted) return;
-    Navigator.of(context).pop();
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
+  void logout(){
     var sessionManager = SessionManager();
     sessionManager.clear();
     Hive.deleteBoxFromDisk('steps');
+    Navigator.of(context).pop();
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
     // Hive.close();
   }
 }

@@ -6,8 +6,9 @@ import 'package:my_darling_app/theme/theme.dart';
 
 class SuratDetailPage extends StatefulWidget {
   final Surat surat;
+  final String rulePegawai;
 
-  const SuratDetailPage({super.key, required this.surat});
+  const SuratDetailPage({super.key, required this.surat, required this.rulePegawai});
 
   @override
   State<SuratDetailPage> createState() => _SuratDetailPageState();
@@ -347,7 +348,8 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                 spacing: MediaQuery.of(context).size.width * 0.20,
                 runSpacing: 16,
                 children: [
-                  ElevatedButton.icon(
+
+                  widget.rulePegawai == "staff"? Container(): ElevatedButton.icon(
                     onPressed: (){},
                     style: ElevatedButton.styleFrom(
                         backgroundColor: primaryRed,
