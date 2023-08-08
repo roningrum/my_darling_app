@@ -22,6 +22,9 @@ class PedometerProvider with ChangeNotifier {
   int _totalStepCount = 0;
   String _calorie = "0";
   String _distance = "0";
+  late DateTime _startTime;
+
+  bool isActivate = false;
 
   final Stream<StepCount> _stepCountStream = Pedometer.stepCountStream;
   final sessionManager = SessionManager();
@@ -29,6 +32,7 @@ class PedometerProvider with ChangeNotifier {
   String _status = 'Standing';
 
   late Timer _dailyResetTimer;
+  late Timer _startTimer;
   late Box<int> stepBox;
   final Stream<PedestrianStatus> _pedestrianStatusStream =
       Pedometer.pedestrianStatusStream;
@@ -65,6 +69,7 @@ class PedometerProvider with ChangeNotifier {
     _stepCountStream.listen(onStepCount).onError(onStepCountError);
     notifyListeners();
   }
+
 
   void onStepCountError(error) {
     if (kDebugMode) {
@@ -185,6 +190,7 @@ class PedometerProvider with ChangeNotifier {
     return _distance;
   }
 
+
   String get pedestrianStatus => _status;
 
   String get calorieNow => _calorie;
@@ -194,4 +200,8 @@ class PedometerProvider with ChangeNotifier {
   String get distance => _distance;
 
   String get totalStepCount => _totalStepCount.toString();
+
+
+
+
 }

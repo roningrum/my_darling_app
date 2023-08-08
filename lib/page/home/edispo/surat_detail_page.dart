@@ -27,7 +27,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -35,7 +35,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                 style:
                     title.copyWith(color: secondaryBlueBlack, fontSize: 16.0),
                 textAlign: TextAlign.center),
-            const SizedBox(height: 12.0),
+            const SizedBox(height: 16.0),
             Row(
               children: [
                 SizedBox(
@@ -321,7 +321,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=> FileSuratDispo(fileSurat: widget.surat.fileSurat!)));
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryRed,
+                      backgroundColor: const Color(0xff367588),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0)
@@ -333,6 +333,62 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
               ],
             ),
             const SizedBox(height: 16.0),
+            SizedBox(
+                width: 100,
+                child: Text('Aksi',
+                    style: title.copyWith(
+                        color: secondaryBlueBlack, fontSize: 16.0),
+                    textAlign: TextAlign.start)),
+            const SizedBox(height: 16.0),
+            Center(
+              child: Wrap(
+                alignment: WrapAlignment.spaceAround,
+                runAlignment: WrapAlignment.spaceAround,
+                spacing: MediaQuery.of(context).size.width * 0.20,
+                runSpacing: 16,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: (){},
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryRed,
+                        elevation: 0,
+                        minimumSize: const Size(125,48),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8)
+                    ),
+                    icon: const Icon(Icons.edit_document, size: 24.0,),
+                    label: Text( widget.surat.statusDp == "proses"? 'Disposisi' : 'Edit Disposisi', style: title.copyWith(color: Colors.white),),),
+                  ElevatedButton.icon(
+                    onPressed: (){},
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff355BF5),
+                        elevation: 0,
+                        minimumSize: const Size(125,48),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8)
+                    ),
+                    icon: const Icon(Icons.mark_email_read, size: 24.0,),
+                    label: Text('Terima Surat', style: title.copyWith(color: Colors.white),),),
+                  ElevatedButton.icon(
+                    onPressed: (){},
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xffFF9900),
+                        elevation: 0,
+                        minimumSize: const Size(125,48),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8)
+                    ),
+                    icon: const Icon(Icons.refresh_rounded, size: 24.0,),
+                    label: Text('Dispo Balik', style: title.copyWith(color: Colors.white),),),
+                ],
+              ),
+            ),
           ],
         ),
       ),
