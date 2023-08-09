@@ -124,7 +124,7 @@ class ItemNotulen {
   String? idStaff;
   String? notulen;
   String? keterangan;
-  dynamic? submitedAt;
+  dynamic submitedAt;
   String? lastUpdate;
 
   Map<String, dynamic> toJson() {

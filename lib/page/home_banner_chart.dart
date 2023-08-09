@@ -369,8 +369,6 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
       );
     }
 
-
-
   }
 
   int daysInMonth(String bulan) {
@@ -381,6 +379,8 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
         (month < 12) ? DateTime(year, month + 1, 0) : DateTime(year + 1, 1, 0);
     return lastDayMonth.day;
   }
+
+
 
   DateTime getFormatDateTime(String tgl) {
     var date = DateTime.parse(tgl);

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:core';
-import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -21,6 +20,7 @@ import 'model/kegiatan_luar_response.dart';
 import 'model/login_response.dart';
 import 'model/record_langkah.dart';
 import 'model/surat_response.dart';
+import 'model/terima_response_surat.dart';
 
 class NetworkRepo {
   final String urlDispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
@@ -212,6 +212,23 @@ class NetworkRepo {
       return agendaList;
     } else {
       throw response.statusCode;
+    }
+  }
+
+  //terima surat disposisi
+
+  //staff
+  Future<String?> getTerimaStaffResponse(String idSurat, String userId) async{
+    var response = await http.post(Uri.parse(urlDispo), body: {
+      'id_surat':idSurat, 'user_id':userId});
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      var data = TerimaSuratResponse.fromJson(jsonData);
+      var message = data.message;
+      return message;
+    }
+    else{
+      return "Gagal Terima Surat Silakan Coba Lagi";
     }
   }
 
@@ -529,6 +546,8 @@ class NetworkRepo {
       throw response.statusCode;
     }
   }
+
+
 
   //get Berita Dinkes
   Future<List<DinkesNewsResponse>>getListNews()async{

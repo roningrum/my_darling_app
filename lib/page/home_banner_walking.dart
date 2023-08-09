@@ -1,8 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:my_darling_app/helper/network_helper.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
@@ -27,9 +27,6 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
   final pedometerProvider = Provider.of<PedometerProvider>;
 
   final _networkRepo = NetworkRepo();
-
-
-  final _networkHelper = NetworkHelper.instance;
   String status = '';
 
   Future<String> getNIK() async{

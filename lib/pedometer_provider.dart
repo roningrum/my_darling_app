@@ -22,7 +22,6 @@ class PedometerProvider with ChangeNotifier {
   int _totalStepCount = 0;
   String _calorie = "0";
   String _distance = "0";
-  late DateTime _startTime;
 
   bool isActivate = false;
 
@@ -32,7 +31,6 @@ class PedometerProvider with ChangeNotifier {
   String _status = 'Standing';
 
   late Timer _dailyResetTimer;
-  late Timer _startTimer;
   late Box<int> stepBox;
   final Stream<PedestrianStatus> _pedestrianStatusStream =
       Pedometer.pedestrianStatusStream;
