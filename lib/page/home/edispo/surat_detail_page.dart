@@ -16,7 +16,7 @@ class SuratDetailPage extends StatefulWidget {
 }
 
 class _SuratDetailPageState extends State<SuratDetailPage> {
-  bool _isLoading = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -407,8 +407,9 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                                     style: regular.copyWith(
                                         color: secondaryBlueBlack),)),
                               ElevatedButton(onPressed: () {
+                                setState((){isLoading = true;});
                                 Navigator.pop(context);
-                                _fetchData(context);
+                                fetchData(context).then((value) => showProcess());
                               },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xff355BF5),
@@ -459,28 +460,45 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
       ),
     );
   }
+
+  void showProcess() {
+    setState(() => isLoading = false);
+    showDialog(context: context, builder: (_) => const AlertDialog(
+        title: Text('Alert'),
+      ));
+  }
 }
 
-void _fetchData(BuildContext context,  [bool mounted = true]) async{
-  showDialog(barrierDismissible: false,
-      context: context,
-      builder: (_) {
-        return Dialog(
-          backgroundColor: white,
-          child: Padding(
-            padding:  EdgeInsets.symmetric(vertical: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(color: primaryRed),
-                const SizedBox(height: 10),
-                Text("Mohon Tunggu Sebentar", style: regular)
-              ],
+Future<void> fetchData(BuildContext context) async{
+  try{
+    showDialog(barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return Dialog(
+            backgroundColor: white,
+            child: Padding(
+              padding:  const EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(color: primaryRed),
+                  const SizedBox(height: 20),
+                  Text("Mohon Tunggu Sebentar", style: regular)
+                ],
+              ),
             ),
-          ),
-        );
-      });
-  await Future.delayed(const Duration(seconds: 3));
-  if (!mounted) return;
-  Navigator.of(context).pop();
+          );
+        });
+    Future.delayed(const Duration(seconds: 2), (){
+      showDialog(context: context, builder: (_) => const AlertDialog(
+        title: Text('Alert'),
+      ));
+      Navigator.pop(context);
+    });
+  }
+  catch(error){
+    print(error);
+  }
+
+
 }
