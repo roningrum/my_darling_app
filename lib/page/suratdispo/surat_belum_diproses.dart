@@ -106,11 +106,7 @@ class _SuratBelumDiprosesState extends State<SuratBelumDiproses> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: data.length,
                       itemBuilder: ((context, index) {
-                        return GestureDetector(
-                            onTap: () => Navigator.push(context,
-                                MaterialPageRoute(builder: (context) =>
-                                    SuratDetailPage(surat: data[index], rulePegawai: widget.rule))),
-                            child: SuratItem(surat: data[index]));
+                        return SuratItem(surat: data[index], rule: widget.rule);
                       }),
                     );
                   }
@@ -181,11 +177,7 @@ class _SuratBelumDiprosesState extends State<SuratBelumDiproses> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: data.length,
                   itemBuilder: ((context, index) {
-                    return GestureDetector(
-                        onTap: () => Navigator.push(context,
-                            MaterialPageRoute(builder: (context) =>
-                                SuratDetailPage(surat: data[index], rulePegawai: widget.rule,))),
-                        child: SuratItem(surat: data[index]));
+                    return SuratItem(surat: data[index], rule: widget.rule,);
                   }),
                 );
               }

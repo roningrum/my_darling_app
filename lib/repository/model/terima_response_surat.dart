@@ -1,9 +1,9 @@
-class TerimaSuratResponse {
-  TerimaSuratResponse({
+class SuccessMessageResponse {
+  SuccessMessageResponse({
       this.success, 
       this.message,});
 
-  TerimaSuratResponse.fromJson(dynamic json) {
+  SuccessMessageResponse.fromJson(dynamic json) {
     success = json['success'];
     message = json['message'];
   }

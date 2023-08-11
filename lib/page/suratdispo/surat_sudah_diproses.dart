@@ -66,7 +66,7 @@ class _SuratSudahDiprosesState extends State<SuratSudahDiproses> {
               ),
             ),
             const SizedBox(height: 12.0),
-            dateinput.text=="" ? daftarSuratProses( widget.rule, widget.bidang, widget.seksi, widget.userId): dataSuratbyTgl(dateinput.text)
+            dateinput.text=="" ? daftarSuratProses( widget.rule, widget.bidang, widget.seksi, widget.userId): dataSuratbyTgl(dateinput.text, widget.rule)
           ],
         ),
       ),
@@ -97,99 +97,186 @@ class _SuratSudahDiprosesState extends State<SuratSudahDiproses> {
     if (kDebugMode) {
       print('Data rule $rule, bidang $bidang, seksi $seksi, userId $userId');
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 16.0),
-        FutureBuilder<List<Surat>>(
-            future: _networkRepo.getSuratProses(
-                widget.jenisSurat, rule, bidang, seksi, userId),
-            builder: (context, snapshot) {
-              var data = snapshot.data;
-              if (kDebugMode) {
-                print('List : $data');
-              }
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (data == null) {
-                  return dataNoFoundWidget();
+    if(rule == "kadin"){
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 16.0),
+          FutureBuilder<List<Surat>>(
+              future: _networkRepo.getSuratProsesKadin(
+                  widget.jenisSurat),
+              builder: (context, snapshot) {
+                var data = snapshot.data;
+                if (kDebugMode) {
+                  print('List : $data');
                 }
-                else {
-                  var dataLength = data.length;
-                  if (dataLength == 0) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (data == null) {
                     return dataNoFoundWidget();
                   }
                   else {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: data.length,
-                      itemBuilder: ((context, index) {
-                        return GestureDetector(
-                            onTap: () => Navigator.push(context,
-                                MaterialPageRoute(builder: (context) =>
-                                    SuratDetailPage(surat: data[index], rulePegawai: rule))),
-                            child: SuratItem(surat: data[index]));
-                      }),
-                    );
+                    var dataLength = data.length;
+                    if (dataLength == 0) {
+                      return dataNoFoundWidget();
+                    }
+                    else {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: data.length,
+                        itemBuilder: ((context, index) {
+                          return SuratItem(surat: data[index], rule: rule);
+                        }),
+                      );
+                    }
                   }
                 }
-              }
-              else {
-                return Container(
-                    width: MediaQuery.of(context).size.width,
-                    height:MediaQuery.of(context).size.height,
-                    alignment: Alignment.topCenter,
-                    child: CircularProgressIndicator(color: primaryRed,));
-              }
-            })
-      ],
-    );
+                else {
+                  return Container(
+                      width: MediaQuery.of(context).size.width,
+                      height:MediaQuery.of(context).size.height,
+                      alignment: Alignment.topCenter,
+                      child: CircularProgressIndicator(color: primaryRed,));
+                }
+              })
+        ],
+      );
+    }
+    else{
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 16.0),
+          FutureBuilder<List<Surat>>(
+              future: _networkRepo.getSuratProses(
+                  widget.jenisSurat, rule, bidang, seksi, userId),
+              builder: (context, snapshot) {
+                var data = snapshot.data;
+                if (kDebugMode) {
+                  print('List : $data');
+                }
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (data == null) {
+                    return dataNoFoundWidget();
+                  }
+                  else {
+                    var dataLength = data.length;
+                    if (dataLength == 0) {
+                      return dataNoFoundWidget();
+                    }
+                    else {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: data.length,
+                        itemBuilder: ((context, index) {
+                          return SuratItem(surat: data[index], rule: rule);
+                        }),
+                      );
+                    }
+                  }
+                }
+                else {
+                  return Container(
+                      width: MediaQuery.of(context).size.width,
+                      height:MediaQuery.of(context).size.height,
+                      alignment: Alignment.topCenter,
+                      child: CircularProgressIndicator(color: primaryRed,));
+                }
+              })
+        ],
+      );
+    }
+
   }
 
-  Widget dataSuratbyTgl(String tglAgenda) {
-    return FutureBuilder<List<Surat>>(
-        future: _networkRepo.getSuratProsesByTgl(
-            widget.jenisSurat, widget.rule, widget.bidang, widget.seksi, widget.userId, tglAgenda),
-        builder: (context, snapshot) {
-          var data = snapshot.data;
-          if (kDebugMode) {
-            print('List : $data');
-          }
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (data == null) {
-              return dataNoFoundWidget();
+  Widget dataSuratbyTgl(String tglAgenda, String rule) {
+    if(rule == "kadin"){
+      return FutureBuilder<List<Surat>>(
+          future: _networkRepo.getSuratProsesKadinByTgl(
+              widget.jenisSurat, tglAgenda),
+          builder: (context, snapshot) {
+            var data = snapshot.data;
+            if (kDebugMode) {
+              print('List : $data');
             }
-            else {
-              var dataLength = data.length;
-              if (dataLength == 0) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (data == null) {
                 return dataNoFoundWidget();
               }
               else {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  itemBuilder: ((context, index) {
-                    return GestureDetector(
-                        onTap: () => Navigator.push(context,
-                            MaterialPageRoute(builder: (context) =>
-                                SuratDetailPage(surat: data[index], rulePegawai: widget.rule))),
-                        child: SuratItem(surat: data[index]));
-                  }),
-                );
+                var dataLength = data.length;
+                if (dataLength == 0) {
+                  return dataNoFoundWidget();
+                }
+                else {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.length,
+                    itemBuilder: ((context, index) {
+                      return SuratItem(surat: data[index], rule: rule);
+                    }),
+                  );
+                }
               }
             }
-          }
-          else {
-            return Container(
-                width: MediaQuery.of(context).size.width,
-                height:MediaQuery.of(context).size.height,
-                alignment: Alignment.topCenter,
-                child: CircularProgressIndicator(color: primaryRed));
-          }
-        });
+            else {
+              return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height:MediaQuery.of(context).size.height,
+                  alignment: Alignment.topCenter,
+                  child: CircularProgressIndicator(color: primaryRed));
+            }
+          });
+    }
+    else{
+      return FutureBuilder<List<Surat>>(
+          future: _networkRepo.getSuratProsesByTgl(
+              widget.jenisSurat, widget.rule, widget.bidang, widget.seksi, widget.userId, tglAgenda),
+          builder: (context, snapshot) {
+            var data = snapshot.data;
+            if (kDebugMode) {
+              print('List : $data');
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (data == null) {
+                return dataNoFoundWidget();
+              }
+              else {
+                var dataLength = data.length;
+                if (dataLength == 0) {
+                  return dataNoFoundWidget();
+                }
+                else {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.length,
+                    itemBuilder: ((context, index) {
+                      return GestureDetector(
+                          onTap: () => Navigator.push(context,
+                              MaterialPageRoute(builder: (context) =>
+                                  SuratDetailPage(surat: data[index], rulePegawai: widget.rule))),
+                          child: SuratItem(surat: data[index], rule: rule));
+                    }),
+                  );
+                }
+              }
+            }
+            else {
+              return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height:MediaQuery.of(context).size.height,
+                  alignment: Alignment.topCenter,
+                  child: CircularProgressIndicator(color: primaryRed));
+            }
+          });
+    }
   }
   
   

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
+import 'package:my_darling_app/page/home/edispo/surat_detail_page.dart';
 import 'package:my_darling_app/repository/model/surat_response.dart';
 
 import '../../theme/theme.dart';
 
 class SuratItem extends StatelessWidget {
   final Surat surat;
-  const SuratItem({Key? key, required this.surat}) : super(key: key);
+  final String rule;
+  const SuratItem({Key? key, required this.surat, required this.rule}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +43,17 @@ class SuratItem extends StatelessWidget {
                             children: [
                               Text('Tgl Surat:',
                                   style: title.copyWith(
-                                      fontSize: 13.0, fontWeight: FontWeight.w500)),
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.w500)),
                               const SizedBox(width: 8.0),
-                              Text(formatTglSurat(surat.tglSurat),
+                              Text(
+                                formatTglSurat(surat.tglSurat),
                                 style: regular.copyWith(
                                   fontSize: 13.0,
                                 ),
-                                textAlign: TextAlign.start, maxLines: 2,),
+                                textAlign: TextAlign.start,
+                                maxLines: 2,
+                              ),
                             ],
                           ),
                           Row(
@@ -55,25 +61,35 @@ class SuratItem extends StatelessWidget {
                             children: [
                               Text('Tgl Terima:',
                                   style: title.copyWith(
-                                      fontSize: 13.0, fontWeight: FontWeight.w500)),
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.w500)),
                               const SizedBox(width: 8.0),
-                              Text(formatTglSurat(surat.tglTerima),
+                              Text(
+                                formatTglSurat(surat.tglTerima),
                                 style: regular.copyWith(
                                   fontSize: 13.0,
                                 ),
-                                textAlign: TextAlign.start, maxLines: 2,),
+                                textAlign: TextAlign.start,
+                                maxLines: 2,
+                              ),
                             ],
                           ),
                         ],
                       ),
                       const SizedBox(height: 8.0),
-                      Text(surat.dari ?? "-",
+                      Text(
+                        surat.dari ?? "-",
                         style: regular.copyWith(
-                            color: primaryBlueBlack, fontSize: 14.0), maxLines: 3,),
+                            color: primaryBlueBlack, fontSize: 14.0),
+                        maxLines: 3,
+                      ),
                       const SizedBox(height: 12.0),
-                      Text(surat.acara??"-",
-                          style: title.copyWith(
-                              color: primaryBlueBlack, fontSize: 16.0), maxLines: 3,),
+                      Text(
+                        surat.acara ?? "-",
+                        style: title.copyWith(
+                            color: primaryBlueBlack, fontSize: 16.0),
+                        maxLines: 3,
+                      ),
                       const SizedBox(height: 8.0),
                       RichText(
                         text: TextSpan(children: [
@@ -85,7 +101,7 @@ class SuratItem extends StatelessWidget {
                               baseline: TextBaseline.alphabetic,
                               child: SizedBox(width: 10)),
                           TextSpan(
-                              text: surat.tempat??"-",
+                              text: surat.tempat ?? "-",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -101,7 +117,8 @@ class SuratItem extends StatelessWidget {
                               baseline: TextBaseline.alphabetic,
                               child: SizedBox(width: 10)),
                           TextSpan(
-                              text: "${dateFormat(surat.tglSurat)} (${surat.jam ?? "-"})",
+                              text:
+                                  "${dateFormat(surat.tglSurat)} (${surat.jam ?? "-"})",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -115,18 +132,19 @@ class SuratItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 64,
+                width: 96,
                 child: Text('Bidang',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text(surat.disposisi1 ??"-",
+                child: Text(surat.disposisi1 ?? "-",
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
-                    textAlign: TextAlign.start, maxLines: 3),
+                    textAlign: TextAlign.start,
+                    maxLines: 3),
               ),
             ],
           ),
@@ -135,18 +153,21 @@ class SuratItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 64,
+                width: 96,
                 child: Text('Seksi',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text(surat.disposisi2 ??"-",
-                    style: regular.copyWith(
-                      fontSize: 14.0,
-                    ),
-                    textAlign: TextAlign.start, maxLines: 3,),
+                child: Text(
+                  surat.disposisi2 ?? "-",
+                  style: regular.copyWith(
+                    fontSize: 14.0,
+                  ),
+                  textAlign: TextAlign.start,
+                  maxLines: 3,
+                ),
               ),
             ],
           ),
@@ -155,18 +176,21 @@ class SuratItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 64,
+                width: 96,
                 child: Text('Staff',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text(surat.disposisi2??"-",
-                    style: regular.copyWith(
-                      fontSize: 14.0,
-                    ),
-                    textAlign: TextAlign.start, maxLines: 2,),
+                child: Text(
+                  surat.disposisi2 ?? "-",
+                  style: regular.copyWith(
+                    fontSize: 14.0,
+                  ),
+                  textAlign: TextAlign.start,
+                  maxLines: 2,
+                ),
               ),
             ],
           ),
@@ -175,14 +199,14 @@ class SuratItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 100,
+                width: 96,
                 child: Text('Keterangan',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text(surat.isiSurat??"-",
+                child: Text(surat.isiSurat ?? "-",
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
@@ -195,14 +219,14 @@ class SuratItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 100,
+                width: 96,
                 child: Text('Perihal',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text(surat.perihalSurat??"-",
+                child: Text(surat.perihalSurat ?? "-",
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
@@ -215,14 +239,14 @@ class SuratItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 100,
+                width: 96,
                 child: Text('Keterangan DispoBalik',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8.0),
               Flexible(
-                child: Text(surat.isiDp??"-",
+                child: Text(surat.isiDp ?? "-",
                     style: regular.copyWith(
                       fontSize: 14.0,
                     ),
@@ -230,6 +254,27 @@ class SuratItem extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 8.0),
+          Align(
+              alignment: Alignment.bottomRight,
+              child: SizedBox(
+                  width: 120,
+                  height: 45,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) =>
+                            SuratDetailPage(surat: surat, rulePegawai: rule)));
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryRed,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0))),
+                      child: Text(
+                        "Detail",
+                        style: title.copyWith(fontSize: 14),
+                      )))),
           const SizedBox(height: 16.0),
         ],
       ),

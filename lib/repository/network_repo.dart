@@ -9,9 +9,11 @@ import 'package:my_darling_app/repository/model/Walking_data_response.dart';
 import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
 import 'package:my_darling_app/repository/model/data_checkup_response.dart';
+import 'package:my_darling_app/repository/model/item_dispoisisi_response.dart';
 import 'package:my_darling_app/repository/model/send_record_langkah.dart';
 import 'package:my_darling_app/repository/model/token_response.dart';
 import 'package:my_darling_app/repository/model/user_response.dart';
+import 'package:path/path.dart';
 
 import 'model/Kegiatan_pppk_response.dart';
 import 'model/bidang_response.dart';
@@ -90,7 +92,7 @@ class NetworkRepo {
     }
   }
 
-  //get Surat Proses
+  //get Surat Proses by Kadin
   Future<List<Surat>> getSuratProsesKadin(String jenis) async {
     final queryParameters = {'jenis': jenis};
     var response = await http.get(
@@ -125,6 +127,28 @@ class NetworkRepo {
       'tgl_agenda': tgl
     };
     var response = await http.get(Uri.parse('$urlDispo/surat_dp_by_tgl')
+        .replace(queryParameters: queryParameters));
+    if (kDebugMode) {
+      print('response url ${response.request}');
+      print('Data Response ${response.body}');
+    }
+    List<Surat> suratDPList = [];
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      List<dynamic> data = jsonData['surat'];
+      suratDPList = data.map((data) => Surat.fromJson(data)).toList();
+      return suratDPList;
+    } else {
+      throw response.statusCode;
+    }
+  }
+
+  Future<List<Surat>> getSuratProsesKadinByTgl(String jenis, String tgl) async {
+    final queryParameters = {
+      'jenis': jenis,
+      'tgl_terima': tgl
+    };
+    var response = await http.get(Uri.parse('$urlDispo/get_surat_dp_kadin_sudah_diproses_by_tgl')
         .replace(queryParameters: queryParameters));
     if (kDebugMode) {
       print('response url ${response.request}');
@@ -218,19 +242,40 @@ class NetworkRepo {
   //terima surat disposisi
 
   //staff
-  Future<String?> getTerimaStaffResponse(String idSurat, String userId) async{
+  Future<SuccessMessageResponse> getTerimaStaffResponse(String idSurat, String userId) async{
     var response = await http.post(Uri.parse(urlDispo), body: {
       'id_surat':idSurat, 'user_id':userId});
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
-      var data = TerimaSuratResponse.fromJson(jsonData);
-      var message = data.message;
-      return message;
+      var data = SuccessMessageResponse.fromJson(jsonData);
+      return data;
     }
     else{
-      return "Gagal Terima Surat Silakan Coba Lagi";
+      throw response.statusCode;
     }
   }
+
+  /* Get Item Disposisi*/
+  // Kadin => rule = kadin, bidang = 0, seksi = 0
+  // Kabid => rule = kabid, bidang = 1, seksi = 0
+  // Kasi => rule = kasi, bidang = 1, seksi = 6
+
+  Future<List<ItemDisposisi>> getItemDisposisi(String rule, String bidang, String seksi) async{
+    final request ={ "rule": rule, "bidang": bidang, "seksi": seksi};
+    var response = await http.get(Uri.parse('$urlDispo/get_item_disposisi').replace(queryParameters:request));
+
+    List<ItemDisposisi> itemDispoList = [];
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      List<dynamic> data = jsonData['item_disposisi'];
+      itemDispoList = data.map((data) => ItemDisposisi.fromJson(data)).toList();
+      return itemDispoList;
+    } else {
+      throw response.statusCode;
+    }
+  }
+
+
 
   //post Record Langkah
   Future<SendRecordLangkah?>sendRecordLangkah(String nik, String langkah, String cal) async {
