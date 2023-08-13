@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/home/edispo/file_surat_dispo.dart';
+import 'package:my_darling_app/repository/model/item_dispoisisi_response.dart';
 import 'package:my_darling_app/repository/model/surat_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
@@ -22,14 +25,18 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
   final networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
 
-  List<String> dispoSelected = [];
+  List<String> dispoIdSelect = [];
+  List<bool?> dispoSelect = [];
+  List<ItemDisposisi> allItemDispo=[];
+  late final ValueChanged<List<String>> onSelectIdChanged;
 
   String? userId = "0";
   String? bidang = '';
   String? seksi = '';
   String? isi_dp = '';
 
-  bool selected = false;
+  bool isSelected = false;
+  final selectedIndex = [];
 
   Future<String?> getIdUser() async {
     userId = await sessionManager.getUserId("userId");
@@ -45,6 +52,14 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
     seksi = await sessionManager.getBidang("seksi");
     return seksi;
   }
+  Future<List<ItemDisposisi>> getAllDispoSisi() async{
+    final bidangDispo = await sessionManager.getBidang("bidang");
+    final seksiDispo = await sessionManager.getBidang("seksi");
+    var response = await networkRepo.getItemDisposisi(widget.rulePegawai, bidangDispo!, seksiDispo!);
+    allItemDispo = response;
+    print("Data Dispo $allItemDispo");
+    return allItemDispo;
+  }
 
   @override
   void initState() {
@@ -52,6 +67,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
     getIdUser();
     getIdBidang();
     getIdSeksi();
+    getAllDispoSisi();
   }
 
   void _onLoading() {
@@ -76,7 +92,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
         });
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pop(context); //pop dialog
-      sendData(widget.surat.idSurat, userId);
+      sendData(widget.surat.idSurat, userId, bidang, seksi);
     });
   }
 
@@ -630,79 +646,41 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
         });
   }
 
-  void sendData(String? idSurat, String? userId) async {
-    if (idSurat != null && userId != null) {
+  void sendData(String? idSurat, String? userId, String? bidang, String? seksi) async {
+    if (idSurat != null && userId != null && bidang!= null && seksi !=null) {
       switch (widget.rulePegawai) {
         case "staff":
-          final snackBar = SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Sukses Diterima oleh Staff',
-                style: regular.copyWith(fontSize: 14)),
-          );
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          getResponseTerimaSurat("staff", idSurat, userId);
           break;
         case "kasi":
-          final snackBar = SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Sukses Diterima oleh Kasi',
-                style: regular.copyWith(fontSize: 14)),
-          );
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          getResponseTerimaSurat("kasi", idSurat, userId, bidang, seksi);
           break;
         case "kabid":
-          final snackBar = SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Sukses Diterima oleh Kabid',
-                style: regular.copyWith(fontSize: 14)),
-          );
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          getResponseTerimaSurat("kabid", idSurat, userId, bidang);
           break;
         case "kadin":
-          final snackBar = SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Sukses Diterima oleh Kadin',
-                style: regular.copyWith(fontSize: 14)),
-          );
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          break;
-        default:
-          final snackBar = SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Sukses Diterima oleh admin',
-                style: regular.copyWith(fontSize: 14)),
-          );
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          getResponseTerimaSurat("kabid", idSurat, userId, bidang);
           break;
       }
-      // if(widget.rulePegawai == "staff"){
-      //   final snackBar = SnackBar(
-      //     backgroundColor: Colors.green,
-      //     content: Text('Sukses Diterima', style: regular.copyWith(fontSize: 14)),
-      //   );
-      //   if(!mounted) return;
-      //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      // }
     }
-
-    // var response = await networkRepo.getTerimaStaffResponse(idSurat, userId);
-    // if(response.success == 1){
-    //   final snackBar = SnackBar(
-    //     backgroundColor: Colors.green,
-    //     content: Text('Sukses Diterima', style: regular.copyWith(fontSize: 14)),
-    //   );
-    //   if(!mounted) return;
-    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // }
   }
 
   void dispoProcess(String? proses) {
     print("bidang : $bidang seksi: $seksi");
     if (proses == "proses") {
+      showDialog(
+          context: context,
+          builder: (_) {
+            return DialogDispo(
+                dispoList: allItemDispo,
+                selectedId: dispoIdSelect,
+                onSelectedId: (dispoSelect){
+                  dispoIdSelect = dispoSelect;
+                  print(dispoSelect);
+                }
+            );
+          });
+    } else {
       showDialog(
           context: context,
           builder: (_) {
@@ -741,15 +719,9 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       return CheckboxListTile(
-                                          autofocus: false,
-                                          activeColor: Colors.red.shade500,
-                                          checkColor: Colors.red.shade500,
-                                          selected: selected,
-                                          value: selected,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selected = value!;
-                                            });
+                                          value: dispoIdSelect.contains(data[index].nama),
+                                          onChanged: (val) {
+                                            
                                           },
                                           title: Text(
                                             "${data[index].nama}",
@@ -822,119 +794,248 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
               ],
             );
           });
-    } else {
-      showDialog(
-          context: context,
-          builder: (_) {
-            return AlertDialog(
-              title: Center(
-                  child: Text("Menu Disposisi",
-                      style: title.copyWith(
-                          color: primaryBlueBlack, fontSize: 16.0))),
-              backgroundColor: white,
-              scrollable: true,
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      "Tujuan Disposisi",
-                      style: title.copyWith(fontSize: 14),
-                    ),
-                    const SizedBox(height: 8.0),
-                    SizedBox(
-                      width: 300,
-                      height: 300,
-                      child: FutureBuilder(
-                          future: networkRepo.getItemDisposisi(
-                              widget.rulePegawai, bidang!, seksi!),
-                          builder: (context, snapshot) {
-                            print("data : ${snapshot.data}");
-                            if (snapshot.hasData) {
-                              var data = snapshot.data;
-                              if (data != null) {
-                                return ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: data.length,
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return CheckboxListTile(
-                                          value: dispoSelected
-                                              .contains(data[index].nama),
-                                          onChanged: (val) {},
-                                          title: Text(
-                                            "${data[index].nama}",
-                                            style: regular.copyWith(
-                                                fontSize: 14.0),
-                                          ));
-                                    });
-                              } else {
-                                return Container();
-                              }
-                            } else {
-                              return Center(
-                                  child: CircularProgressIndicator(
-                                      color: Colors.red.shade500));
-                            }
-                          }),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      "Isi Disposisi",
-                      style: title.copyWith(fontSize: 14),
-                    ),
-                    const SizedBox(height: 8.0),
-                    TextFormField(
-                      keyboardType: TextInputType.text,
-                      maxLines: 1,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Isi Disposisi';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        labelStyle: regular.copyWith(
-                            color: secondaryBlueBlack, fontSize: 14.0),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8.0)),
-                            borderSide: BorderSide(
-                                color: Colors.red.shade500, width: 2.0)),
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8.0)),
-                          borderSide: BorderSide(color: greyColor, width: 2.0),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                Center(
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade500,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0)),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Kirim Disposisi',
-                        style: regular.copyWith(color: white),
-                      )),
-                ),
-              ],
-            );
-          });
+    }
+  }
+
+
+  //buat nerima surat
+  void getResponseTerimaSurat(String rule, String idSurat, String userId, [String? bidang, String? seksi]) async {
+    if(rule == "staff"){
+      var responseTerima = await networkRepo.getTerimaStaffResponse(idSurat, userId);
+      if(responseTerima.success == 1){
+        final snackBar = SnackBar(
+          backgroundColor: Colors.green,
+          content: Text('Sukses Diterima oleh Staff',
+              style: regular.copyWith(fontSize: 14)),
+        );
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      else{
+        final snackBar = SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Gagal Diterima oleh Staff',
+              style: regular.copyWith(fontSize: 14)),
+        );
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
+    else if(rule == "kasi"){
+      var responseTerima = await networkRepo.getTerimaKasiResponse(idSurat, userId, bidang!, seksi!);
+      if(responseTerima.success == 1){
+        final snackBar = SnackBar(
+          backgroundColor: Colors.green,
+          content: Text('Sukses Diterima oleh Kasi',
+              style: regular.copyWith(fontSize: 14)),
+        );
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      else{
+        final snackBar = SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Gagal Diterima oleh Kasi',
+              style: regular.copyWith(fontSize: 14)),
+        );
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
+    else if(rule == "kabid"){
+      var responseTerima = await networkRepo.getTerimaKabidResponse(idSurat, userId, bidang!);
+      if(responseTerima.success == 1){
+        final snackBar = SnackBar(
+          backgroundColor: Colors.green,
+          content: Text('Sukses Diterima oleh Kabid',
+              style: regular.copyWith(fontSize: 14)),
+        );
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      else{
+        final snackBar = SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Gagal Diterima oleh Kabid',
+              style: regular.copyWith(fontSize: 14)),
+        );
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
+    else if(rule == "kadin"){
+      var responseTerima = await networkRepo.getTerimaKadinResponse(idSurat, userId, bidang!);
+      if(responseTerima.success == 1){
+        final snackBar = SnackBar(
+          backgroundColor: Colors.green,
+          content: Text('Sukses Diterima oleh Kadin',
+              style: regular.copyWith(fontSize: 14)),
+        );
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      else{
+        final snackBar = SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Gagal Diterima oleh Kadin',
+              style: regular.copyWith(fontSize: 14)),
+        );
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     }
   }
 }
+
+class DialogDispo extends StatefulWidget {
+  final List<ItemDisposisi> dispoList;
+  final List<String> selectedId;
+  final ValueChanged<List<String>> onSelectedId;
+
+  const DialogDispo({super.key, required this.dispoList, required this.selectedId, required this.onSelectedId});
+
+  @override
+  State<DialogDispo> createState() => _DialogDispoState();
+}
+
+class _DialogDispoState extends State<DialogDispo> {
+  List<String> _tempSelectedId =[];
+  bool isSelected = false;
+
+  @override
+  void initState() {
+    _tempSelectedId = widget.selectedId;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Center(
+          child: Text("Menu Disposisi",
+              style: title.copyWith(
+                  color: primaryBlueBlack, fontSize: 16.0))),
+      backgroundColor: white,
+      scrollable: true,
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              "Tujuan Disposisi",
+              style: title.copyWith(fontSize: 14),
+            ),
+            const SizedBox(height: 8.0),
+            SizedBox(
+              width: 300,
+              height: 300,
+              child:ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.dispoList.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder:
+                    (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(
+                      "${widget.dispoList[index].nama}",
+                      style:
+                      regular.copyWith(fontSize: 14.0),
+                    ),
+                    trailing: Checkbox(
+                      activeColor: Colors.red.shade500,
+                      checkColor: white,
+                      value: _tempSelectedId.contains(widget.dispoList[index].id),
+                      onChanged: (value) {
+                        if(value != null){
+                          print(value);
+                          if(value){
+                            if(!_tempSelectedId.contains(widget.dispoList[index].id)){
+                              setState(() {
+                                final idSelect =[];
+                                _tempSelectedId.add(widget.dispoList[index].id!);
+                                for(var dispoItem in _tempSelectedId){
+                                  var concatenate = StringBuffer();
+                                  concatenate.write('"$dispoItem"');
+                                  idSelect.add(concatenate);
+                                  print(idSelect);
+                                }
+                                print("data id terpilih: ${idSelect.toString()}");
+                              });
+                            }
+                            else{
+                              setState(() {
+                                _tempSelectedId.removeWhere((String id) => id == (widget.dispoList[index].id!));
+                              });
+                            }
+                          }
+                          else{
+                            setState(() {
+                              _tempSelectedId.removeWhere((String id) => id == (widget.dispoList[index].id!));
+                            });
+
+                          }
+                          widget.onSelectedId(_tempSelectedId);
+                        }
+                      }
+                    ),
+                  );
+                }),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              "Isi Disposisi",
+              style: title.copyWith(fontSize: 14),
+            ),
+            const SizedBox(height: 8.0),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              maxLines: 1,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Isi Disposisi';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                labelStyle: regular.copyWith(
+                    color: secondaryBlueBlack, fontSize: 14.0),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius:
+                        const BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(
+                        color: Colors.red.shade500, width: 2.0)),
+                border: OutlineInputBorder(
+                  borderRadius:
+                      const BorderRadius.all(Radius.circular(8.0)),
+                  borderSide: BorderSide(color: greyColor, width: 2.0),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        Center(
+          child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red.shade500,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
+                elevation: 0,
+              ),
+              child: Text(
+                'Kirim Disposisi',
+                style: regular.copyWith(color: white),
+              )),
+        ),
+      ],
+    );
+  }
+}
+

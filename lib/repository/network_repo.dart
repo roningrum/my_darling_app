@@ -243,7 +243,7 @@ class NetworkRepo {
 
   //staff
   Future<SuccessMessageResponse> getTerimaStaffResponse(String idSurat, String userId) async{
-    var response = await http.post(Uri.parse(urlDispo), body: {
+    var response = await http.post(Uri.parse('$urlDispo/terima_staff'), body: {
       'id_surat':idSurat, 'user_id':userId});
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
@@ -254,6 +254,52 @@ class NetworkRepo {
       throw response.statusCode;
     }
   }
+
+  //kasi
+  Future<SuccessMessageResponse> getTerimaKasiResponse(String idSurat, String userId, String idBidang, String idSeksi) async{
+    var response = await http.post(Uri.parse('$urlDispo/terima_kasi'), body: {
+      'id_surat':idSurat, 'user_id':userId, 'id_bidang': idBidang, 'id_seksi': idSeksi});
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      var data = SuccessMessageResponse.fromJson(jsonData);
+      return data;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
+
+  //kabid
+
+  Future<SuccessMessageResponse> getTerimaKabidResponse(String idSurat, String userId, String idBidang) async{
+    var response = await http.post(Uri.parse('$urlDispo/terima_kabid'), body: {
+      'id_surat':idSurat, 'user_id':userId, 'id_bidang': idBidang});
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      var data = SuccessMessageResponse.fromJson(jsonData);
+      return data;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
+
+
+  //kadin
+  Future<SuccessMessageResponse> getTerimaKadinResponse(String idSurat, String userId, String idBidang) async{
+    var response = await http.post(Uri.parse('$urlDispo/terima_kadin'), body: {
+      'id_surat':idSurat, 'user_id':userId, 'id_bidang': idBidang});
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      var data = SuccessMessageResponse.fromJson(jsonData);
+      return data;
+    }
+    else{
+      throw response.statusCode;
+    }
+  }
+
+
 
   /* Get Item Disposisi*/
   // Kadin => rule = kadin, bidang = 0, seksi = 0
