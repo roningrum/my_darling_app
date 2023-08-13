@@ -88,13 +88,13 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
               ),
               const SizedBox(height: 16.0),
               Text(
-                  "Record Aktivitas ${getMonths(month)}",
+                  "Record Aktivitas ${month!=""?getMonths(month): getMonths(DateFormat("M").format(DateTime.now()))}",
                   style: title.copyWith(fontSize: 16, color: primaryBlueBlack)),
               const SizedBox(height: 16.0),
               getDataLangkah(month, DateFormat('yyyy').format(DateTime.now())),
               const SizedBox(height: 16.0),
               Text(
-                  "Record Kalori terbakar ${getMonths(month)}",
+                  "Record Kalori ${month!=""?getMonths(month): getMonths(DateFormat("M").format(DateTime.now()))}",
                   style: title.copyWith(fontSize: 16, color: primaryBlueBlack)),
               const SizedBox(height: 16.0),
               getDataKalori(month, DateFormat('yyyy').format(DateTime.now()))
@@ -388,16 +388,34 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
   }
 
   String getMonths(String bulan){
-    if(bulan != ""){
-      int month = int.parse(bulan);
-      var thisMonth = DateFormat("MMMM", "id_ID").format(DateTime(month));
-      return thisMonth;
-    }
-    else{
-      var thisMonth = DateFormat("MMMM", "id_ID").format(DateTime.now());
-      return thisMonth;
+    switch(bulan){
+      case '1':
+        return "Januari";
+      case '2':
+        return "Februari";
+      case '3':
+        return "Maret";
+      case '4':
+        return "April";
+      case '5':
+        return "Mei";
+      case '6':
+        return "Juni";
+      case '7':
+        return "Juli";
+      case '8':
+        return "Agustus";
+      case '9':
+        return "September";
+      case '10':
+        return "Oktober";
+      case '11':
+        return "November";
+      case '12':
+        return "Desember";
     }
 
+    return bulan;
   }
 }
 

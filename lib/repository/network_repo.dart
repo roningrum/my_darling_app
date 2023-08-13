@@ -322,6 +322,25 @@ class NetworkRepo {
     }
   }
 
+  Future<List<ItemDisposisi>> getItemEditDisposisi(
+      String idSurat, String rule) async {
+    final request = {"id_surat":idSurat, "rule": rule};
+    var response = await http.get(Uri.parse('$urlDispo/get_item_edit_disposisi')
+        .replace(queryParameters: request));
+
+    List<ItemDisposisi> itemDispoList = [];
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      List<dynamic> data = jsonData['item_edit_disposisi'];
+      itemDispoList = data.map((data) => ItemDisposisi.fromJson(data)).toList();
+      return itemDispoList;
+    } else {
+      throw response.statusCode;
+    }
+  }
+
+
+
   /// Dispo Balik
   /// Fungsi buat Dispo Balik
   Future<SuccessMessageResponse> getDispoBalikResponse(
@@ -345,6 +364,24 @@ class NetworkRepo {
 
   /// Disposisi & Edit Disposisi
 
+  Future<SuccessMessageResponse> getDispoResponse(
+      String idSurat,
+      String disposisi,
+      String isiDp,
+      String rule,
+      String idBidang,
+      String idSeksi,
+      String userId) async {
+    var response = await http.post(Uri.parse('$urlDispo/post_disposisi'),
+        body: {'id_surat': idSurat,"disposisi": disposisi, "isi_dp": isiDp, "rule": rule, "id_bidang":idBidang, 'id_seksi':idSeksi, 'user_id': userId, 'if': ""});
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      var data = SuccessMessageResponse.fromJson(jsonData);
+      return data;
+    } else {
+      throw response.statusCode;
+    }
+  }
 
 
   //post Record Langkah

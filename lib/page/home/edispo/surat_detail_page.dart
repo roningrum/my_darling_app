@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
@@ -23,8 +24,6 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
   final networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
 
-
-  TextEditingController isiDispoController = TextEditingController();
   TextEditingController isiDispoBalikController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
@@ -32,6 +31,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
   List<String> dispoIdSelect = [];
   List<bool?> dispoSelect = [];
   List<ItemDisposisi> allItemDispo=[];
+  List<ItemDisposisi> editItemDispo=[];
   late final ValueChanged<List<String>> onSelectIdChanged;
 
   String? userId = "0";
@@ -65,6 +65,14 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
     return allItemDispo;
   }
 
+  Future<List<ItemDisposisi>> getAllEditDispoSisi() async{
+    final idSurat = widget.surat.idSurat;
+    var response = await networkRepo.getItemEditDisposisi(idSurat!, widget.rulePegawai);
+    editItemDispo = response;
+    print("Data DispoEdit");
+    return editItemDispo;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -73,6 +81,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
     getIdBidang();
     getIdSeksi();
     getAllDispoSisi();
+    getAllEditDispoSisi();
   }
 
   void _onLoading(String status) {
@@ -108,9 +117,6 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
         }
 
         print("Ini Tombol Dispo Balik dan isinya $isiDispoBalik");
-        
-      }
-      else if(status == "disposisi"){
         
       }
       else if(status == "terimaSurat"){
@@ -701,7 +707,9 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
   }
 
   void dispoProcess(String? proses) {
-    print("bidang : $bidang seksi: $seksi");
+    if (kDebugMode) {
+      print("bidang : $bidang seksi: $seksi");
+    }
     if (proses == "proses") {
       showDialog(
           context: context,
@@ -709,6 +717,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
             return DialogDispo(
                 dispoList: allItemDispo,
                 selectedId: dispoIdSelect,
+                idSurat: widget.surat.idSurat,
                 onSelectedId: (dispoSelect){
                   dispoIdSelect = dispoSelect;
                   print(dispoSelect);
@@ -719,120 +728,19 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
       showDialog(
           context: context,
           builder: (_) {
-            return AlertDialog(
-              title: Center(
-                  child: Text("Menu Disposisi",
-                      style: title.copyWith(
-                          color: primaryBlueBlack, fontSize: 16.0))),
-              backgroundColor: white,
-              scrollable: true,
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      "Tujuan Disposisi",
-                      style: title.copyWith(fontSize: 14),
-                    ),
-                    const SizedBox(height: 8.0),
-                    SizedBox(
-                      width: 300,
-                      height: 300,
-                      child: FutureBuilder(
-                          future: networkRepo.getItemDisposisi(
-                              widget.rulePegawai, bidang!, seksi!),
-                          builder: (context, snapshot) {
-                            print("data : ${snapshot.data}");
-                            if (snapshot.hasData) {
-                              var data = snapshot.data;
-                              if (data != null) {
-                                return ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: data.length,
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return CheckboxListTile(
-                                          value: dispoIdSelect.contains(data[index].nama),
-                                          onChanged: (val) {
-                                            
-                                          },
-                                          title: Text(
-                                            "${data[index].nama}",
-                                            style: regular.copyWith(
-                                                fontSize: 14.0),
-                                          ));
-                                    });
-                              } else {
-                                return Container();
-                              }
-                            } else {
-                              return Center(
-                                  child: CircularProgressIndicator(
-                                      color: Colors.red.shade500));
-                            }
-                          }),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      "Isi Disposisi",
-                      style: title.copyWith(fontSize: 14),
-                    ),
-                    const SizedBox(height: 8.0),
-                    TextFormField(
-                      keyboardType: TextInputType.text,
-                      maxLines: 1,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Isi Disposisi';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        labelStyle: regular.copyWith(
-                            color: secondaryBlueBlack, fontSize: 14.0),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8.0)),
-                            borderSide: BorderSide(
-                                color: Colors.red.shade500, width: 2.0)),
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8.0)),
-                          borderSide: BorderSide(color: greyColor, width: 2.0),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                Center(
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade500,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0)),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Kirim Disposisi',
-                        style: regular.copyWith(color: white),
-                      )),
-                ),
-              ],
+            return DialogDispo(
+                dispoList: allItemDispo,
+                selectedId: dispoIdSelect,
+                idSurat: widget.surat.idSurat,
+                editDispoList: editItemDispo,
+                onSelectedId: (dispoSelect){
+                  dispoIdSelect = dispoSelect;
+                  print(dispoSelect);
+                }
             );
           });
     }
   }
-
-
   //buat nerima surat
   void getResponseTerimaSurat(String rule, String idSurat, String userId, [String? bidang, String? seksi]) async {
     if(rule == "staff"){
@@ -920,7 +828,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
       }
     }
   }
-
+  //buat dispobalik
   void sendDispoBalik(String? idSurat, String isiDispoBalik, String rulePegawai, String bidang, String seksi, String userId) async{
     var response = await networkRepo.getDispoBalikResponse(idSurat!, isiDispoBalik, rulePegawai, bidang, seksi, userId);
     if(response.success == 1){
@@ -947,10 +855,12 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
 
 class DialogDispo extends StatefulWidget {
   final List<ItemDisposisi> dispoList;
+  final List<ItemDisposisi>? editDispoList;
   final List<String> selectedId;
   final ValueChanged<List<String>> onSelectedId;
+  final String? idSurat;
 
-  const DialogDispo({super.key, required this.dispoList, required this.selectedId, required this.onSelectedId});
+  const DialogDispo({super.key, required this.dispoList, required this.selectedId, required this.onSelectedId, required this.idSurat, this.editDispoList});
 
   @override
   State<DialogDispo> createState() => _DialogDispoState();
@@ -958,142 +868,222 @@ class DialogDispo extends StatefulWidget {
 
 class _DialogDispoState extends State<DialogDispo> {
   List<String> _tempSelectedId =[];
+  final sessionManager = SessionManager();
+  final networkRepo = NetworkRepo();
+
+  TextEditingController isiDispoController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   bool isSelected = false;
+  String? userId = "";
+  String? bidang = "";
+  String? seksi = "";
+  String? rule = "";
+  String? disposisi="";
+
+  Future<String?> getIdUser() async {
+    userId = await sessionManager.getUserId("userId");
+    return userId;
+  }
+
+  Future<String?> getIdBidang() async {
+    bidang = await sessionManager.getBidang("bidang");
+    return bidang;
+  }
+
+  Future<String?> getIdSeksi() async {
+    seksi = await sessionManager.getBidang("seksi");
+    return seksi;
+  }
+
+  Future<String?> getIdRule() async {
+    rule = await sessionManager.getRule("rule");
+    return rule;
+  }
 
   @override
   void initState() {
     _tempSelectedId = widget.selectedId;
+    getIdBidang();
+    getIdSeksi();
+    getIdRule();
+    getIdUser();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Center(
-          child: Text("Menu Disposisi",
-              style: title.copyWith(
-                  color: primaryBlueBlack, fontSize: 16.0))),
-      backgroundColor: white,
-      scrollable: true,
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              "Tujuan Disposisi",
-              style: title.copyWith(fontSize: 14),
-            ),
-            const SizedBox(height: 8.0),
-            SizedBox(
-              width: 300,
-              height: 300,
-              child:ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.dispoList.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder:
-                    (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(
-                      "${widget.dispoList[index].nama}",
-                      style:
-                      regular.copyWith(fontSize: 14.0),
-                    ),
-                    trailing: Checkbox(
-                      activeColor: Colors.red.shade500,
-                      checkColor: white,
-                      value: _tempSelectedId.contains(widget.dispoList[index].id),
-                      onChanged: (value) {
-                        if(value != null){
-                          print(value);
-                          if(value){
-                            if(!_tempSelectedId.contains(widget.dispoList[index].id)){
-                              setState(() {
-                                final idSelect =[];
-                                _tempSelectedId.add(widget.dispoList[index].id!);
-                                for(var dispoItem in _tempSelectedId){
-                                  var concatenate = StringBuffer();
-                                  concatenate.write('"$dispoItem"');
-                                  idSelect.add(concatenate);
-                                  print(idSelect);
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return AlertDialog(
+          title: Center(
+              child: Text("Menu Disposisi",
+                  style: title.copyWith(
+                      color: primaryBlueBlack, fontSize: 16.0))),
+          backgroundColor: white,
+          scrollable: true,
+          content: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    "Tujuan Disposisi",
+                    style: title.copyWith(fontSize: 14),
+                  ),
+                  const SizedBox(height: 8.0),
+                  SizedBox(
+                    width: 300,
+                    height: 300,
+                    child:ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: widget.dispoList.length,
+                      scrollDirection: Axis.vertical,
+                      itemBuilder:
+                          (BuildContext context, int index) {
+                        return ListTile(
+                          title: Text(
+                            "${widget.dispoList[index].nama}",
+                            style:
+                            regular.copyWith(fontSize: 14.0),
+                          ),
+                          trailing: Checkbox(
+                            activeColor: Colors.red.shade500,
+                            checkColor: white,
+                            value: _tempSelectedId.contains(widget.dispoList[index].id),
+                            onChanged: (value) {
+                              if(value != null){
+                                if (kDebugMode) {
+                                  print(value);
                                 }
-                                print("data id terpilih: ${idSelect.toString()}");
-                              });
-                            }
-                            else{
-                              setState(() {
-                                _tempSelectedId.removeWhere((String id) => id == (widget.dispoList[index].id!));
-                              });
-                            }
-                          }
-                          else{
-                            setState(() {
-                              _tempSelectedId.removeWhere((String id) => id == (widget.dispoList[index].id!));
-                            });
+                                if(value){
+                                  if(widget.editDispoList != null){
+                                    if(widget.editDispoList?[index].id == widget.dispoList[index].id){
+                                      setState((){
+                                        _tempSelectedId.add(widget.editDispoList![index].id!);
+                                      });
+                                    }
+                                  }
+                                  if(!_tempSelectedId.contains(widget.dispoList[index].id)){
+                                    setState(() {
+                                      _tempSelectedId.add(widget.dispoList[index].id!);
+                                      final idSelect =[];
+                                      for(var dispoItem in _tempSelectedId){
+                                        var concatenate = StringBuffer();
+                                        concatenate.write('"$dispoItem"');
+                                        idSelect.add(concatenate);
+                                      }
+                                      disposisi = idSelect.toString();
+                                      print("data id terpilih: $disposisi");
+                                    });
+                                  }
+                                  else{
+                                    setState(() {
+                                      _tempSelectedId.removeWhere((String id) => id == (widget.dispoList[index].id!));
+                                    });
+                                  }
+                                }
+                                else{
+                                  setState(() {
+                                    _tempSelectedId.removeWhere((String id) => id == (widget.dispoList[index].id!));
+                                  });
 
-                          }
-                          widget.onSelectedId(_tempSelectedId);
-                        }
+                                }
+                                widget.onSelectedId(_tempSelectedId);
+                              }
+                            },
+                          ),
+                        );
+                      }),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    "Isi Disposisi",
+                    style: title.copyWith(fontSize: 14),
+                  ),
+                  const SizedBox(height: 8.0),
+                  TextFormField(
+                    keyboardType: TextInputType.text,
+                    maxLines: 1,
+                    controller: isiDispoController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Isi Disposisi';
                       }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      labelStyle: regular.copyWith(
+                          color: secondaryBlueBlack, fontSize: 14.0),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8.0)),
+                          borderSide: BorderSide(
+                              color: Colors.red.shade500, width: 2.0)),
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8.0)),
+                        borderSide: BorderSide(color: greyColor, width: 2.0),
+                      ),
                     ),
-                  );
-                }),
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              "Isi Disposisi",
-              style: title.copyWith(fontSize: 14),
-            ),
-            const SizedBox(height: 8.0),
-            TextFormField(
-              keyboardType: TextInputType.text,
-              maxLines: 1,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Isi Disposisi';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                labelStyle: regular.copyWith(
-                    color: secondaryBlueBlack, fontSize: 14.0),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(
-                        color: Colors.red.shade500, width: 2.0)),
-                border: OutlineInputBorder(
-                  borderRadius:
-                      const BorderRadius.all(Radius.circular(8.0)),
-                  borderSide: BorderSide(color: greyColor, width: 2.0),
-                ),
+                  ),
+                ],
               ),
+            ),
+          ),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                  onPressed: () {
+                    // Navigator.pop(context);
+                    if (_formKey.currentState!.validate()) {
+                      String isiDispo = isiDispoController.text;
+                      doDisposisi(widget.idSurat, disposisi, isiDispo, rule, bidang, seksi, userId);
+                      // _networkRepo.doLogin(email, password);
+                    }
+
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade500,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0)),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Kirim Disposisi',
+                    style: regular.copyWith(color: white),
+                  )),
             ),
           ],
-        ),
-      ),
-      actions: [
-        Center(
-          child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade500,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
-                elevation: 0,
-              ),
-              child: Text(
-                'Kirim Disposisi',
-                style: regular.copyWith(color: white),
-              )),
-        ),
-      ],
+        );
+      }
     );
+  }
+
+  void doDisposisi(String? idSurat, String? disposisi, String isiDispo, String? rule, String? bidang, String? seksi, String? userId) async{
+    var response = await networkRepo.getDispoResponse(idSurat!, disposisi!, isiDispo, rule!, bidang!, seksi!, userId!);
+    if(response.success == 1){
+      final snackBar = SnackBar(
+        backgroundColor: Colors.green,
+        content: Text('Sukses Disposisi',
+            style: regular.copyWith(fontSize: 14)),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    else{
+      final snackBar = SnackBar(
+        backgroundColor: Colors.redAccent,
+        content: Text('Gagal Disposisi',
+            style: regular.copyWith(fontSize: 14)),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 }
 
