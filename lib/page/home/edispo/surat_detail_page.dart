@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
@@ -24,6 +22,12 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
   bool isLoading = false;
   final networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
+
+
+  TextEditingController isiDispoController = TextEditingController();
+  TextEditingController isiDispoBalikController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
 
   List<String> dispoIdSelect = [];
   List<bool?> dispoSelect = [];
@@ -64,13 +68,14 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
   @override
   void initState() {
     super.initState();
+    isiDispoBalikController.clear();
     getIdUser();
     getIdBidang();
     getIdSeksi();
     getAllDispoSisi();
   }
 
-  void _onLoading() {
+  void _onLoading(String status) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -91,8 +96,28 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
           );
         });
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pop(context); //pop dialog
-      sendData(widget.surat.idSurat, userId, bidang, seksi);
+      Navigator.pop(context); 
+      //pop dialog
+      if(status == "dispoBalik"){
+        String isiDispoBalik = isiDispoBalikController.text;
+        String rule = widget.rulePegawai;
+        final bidangDispo = bidang;
+        final seksiDispo = seksi;
+        if(bidangDispo != null && seksiDispo !=null && userId != null){
+          sendDispoBalik(widget.surat.idSurat, isiDispoBalik, rule, bidangDispo, seksiDispo, userId!);
+        }
+
+        print("Ini Tombol Dispo Balik dan isinya $isiDispoBalik");
+        
+      }
+      else if(status == "disposisi"){
+        
+      }
+      else if(status == "terimaSurat"){
+        print("Ini Tombol Terima Surat");
+        sendData(widget.surat.idSurat, userId, bidang, seksi);
+      }
+     
     });
   }
 
@@ -515,7 +540,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                                   ElevatedButton(
                                       onPressed: () {
                                         Navigator.pop(context);
-                                        _onLoading();
+                                        _onLoading("terimaSurat");
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -584,29 +609,33 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
           return AlertDialog(
             title: Text("Konfirmasi Dispo Balik",
                 style: title.copyWith(color: primaryBlueBlack, fontSize: 16.0)),
-            content: TextFormField(
-              keyboardType: TextInputType.multiline,
-              minLines: 1,
-              maxLines: 5,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Alasan wajib diisi';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                labelText: 'Alasan Dispo Balik',
-                labelStyle:
-                    regular.copyWith(color: secondaryBlueBlack, fontSize: 14.0),
-                focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    borderSide:
-                        BorderSide(color: Color(0xffFF9900), width: 2.0)),
-                border: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                  borderSide: BorderSide(color: greyColor, width: 2.0),
+            content: Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: isiDispoBalikController,
+                keyboardType: TextInputType.multiline,
+                minLines: 1,
+                maxLines: 5,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Alasan wajib diisi';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  labelText: 'Alasan Dispo Balik',
+                  labelStyle:
+                      regular.copyWith(color: secondaryBlueBlack, fontSize: 14.0),
+                  focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide:
+                          BorderSide(color: Color(0xffFF9900), width: 2.0)),
+                  border: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(color: greyColor, width: 2.0),
+                  ),
                 ),
               ),
             ),
@@ -614,6 +643,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
               ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    isiDispoBalikController.clear();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: white,
@@ -630,8 +660,13 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
                   )),
               ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                    _onLoading();
+                    if(_formKey.currentState!.validate()){
+                      String isiDispoBalik = isiDispoBalikController.text;
+                      Navigator.pop(context);
+                      _onLoading("dispoBalik");
+                      print("isiDipsoBalik : $isiDispoBalik");
+                    }
+
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xffFF9900),
@@ -883,6 +918,29 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
+    }
+  }
+
+  void sendDispoBalik(String? idSurat, String isiDispoBalik, String rulePegawai, String bidang, String seksi, String userId) async{
+    var response = await networkRepo.getDispoBalikResponse(idSurat!, isiDispoBalik, rulePegawai, bidang, seksi, userId);
+    if(response.success == 1){
+      final snackBar = SnackBar(
+        backgroundColor: Colors.green,
+        content: Text('Sukses Dispo Balik',
+            style: regular.copyWith(fontSize: 14)),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      isiDispoBalikController.clear();
+    }
+    else{
+      final snackBar = SnackBar(
+        backgroundColor: Colors.redAccent,
+        content: Text('Gagal Dispo Balik',
+            style: regular.copyWith(fontSize: 14)),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 }

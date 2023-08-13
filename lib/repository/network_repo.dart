@@ -28,14 +28,15 @@ class NetworkRepo {
   final String urlDispo = 'http://119.2.50.170:9095/e_dispo/index.php/service';
   final String urlAKM = 'http://119.2.50.170:9095/akm/service';
   final String urlRecord = 'http://119.2.50.170:9094/mydarling/api';
-  final String urlYohSehat ='http://119.2.50.170:7773/db_lb1/api';
-  final String urlDinkesNews ='https://dinkes.semarangkota.go.id/content/ajax/info_semarang';
+  final String urlYohSehat = 'http://119.2.50.170:7773/db_lb1/api';
+  final String urlDinkesNews =
+      'https://dinkes.semarangkota.go.id/content/ajax/info_semarang';
 
   //getLogin
   Future<List<Login>> getLogin(String username, String password) async {
     final queryParameters = {'username': username, 'password': password};
-    var response = await http.get(Uri.parse('$urlDispo/login')
-        .replace(queryParameters: queryParameters));
+    var response = await http.get(
+        Uri.parse('$urlDispo/login').replace(queryParameters: queryParameters));
     List<Login> loginUserList = [];
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
@@ -144,12 +145,10 @@ class NetworkRepo {
   }
 
   Future<List<Surat>> getSuratProsesKadinByTgl(String jenis, String tgl) async {
-    final queryParameters = {
-      'jenis': jenis,
-      'tgl_terima': tgl
-    };
-    var response = await http.get(Uri.parse('$urlDispo/get_surat_dp_kadin_sudah_diproses_by_tgl')
-        .replace(queryParameters: queryParameters));
+    final queryParameters = {'jenis': jenis, 'tgl_terima': tgl};
+    var response = await http.get(
+        Uri.parse('$urlDispo/get_surat_dp_kadin_sudah_diproses_by_tgl')
+            .replace(queryParameters: queryParameters));
     if (kDebugMode) {
       print('response url ${response.request}');
       print('Data Response ${response.body}');
@@ -239,76 +238,78 @@ class NetworkRepo {
     }
   }
 
-  //terima surat disposisi
-
+  /// terima surat disposisi
   //staff
-  Future<SuccessMessageResponse> getTerimaStaffResponse(String idSurat, String userId) async{
-    var response = await http.post(Uri.parse('$urlDispo/terima_staff'), body: {
-      'id_surat':idSurat, 'user_id':userId});
-    if(response.statusCode == 200){
+  Future<SuccessMessageResponse> getTerimaStaffResponse(
+      String idSurat, String userId) async {
+    var response = await http.post(Uri.parse('$urlDispo/terima_staff'),
+        body: {'id_surat': idSurat, 'user_id': userId});
+    if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = SuccessMessageResponse.fromJson(jsonData);
       return data;
-    }
-    else{
+    } else {
       throw response.statusCode;
     }
   }
 
   //kasi
-  Future<SuccessMessageResponse> getTerimaKasiResponse(String idSurat, String userId, String idBidang, String idSeksi) async{
+  Future<SuccessMessageResponse> getTerimaKasiResponse(
+      String idSurat, String userId, String idBidang, String idSeksi) async {
     var response = await http.post(Uri.parse('$urlDispo/terima_kasi'), body: {
-      'id_surat':idSurat, 'user_id':userId, 'id_bidang': idBidang, 'id_seksi': idSeksi});
-    if(response.statusCode == 200){
+      'id_surat': idSurat,
+      'user_id': userId,
+      'id_bidang': idBidang,
+      'id_seksi': idSeksi
+    });
+    if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = SuccessMessageResponse.fromJson(jsonData);
       return data;
-    }
-    else{
+    } else {
       throw response.statusCode;
     }
   }
 
   //kabid
 
-  Future<SuccessMessageResponse> getTerimaKabidResponse(String idSurat, String userId, String idBidang) async{
-    var response = await http.post(Uri.parse('$urlDispo/terima_kabid'), body: {
-      'id_surat':idSurat, 'user_id':userId, 'id_bidang': idBidang});
-    if(response.statusCode == 200){
+  Future<SuccessMessageResponse> getTerimaKabidResponse(
+      String idSurat, String userId, String idBidang) async {
+    var response = await http.post(Uri.parse('$urlDispo/terima_kabid'),
+        body: {'id_surat': idSurat, 'user_id': userId, 'id_bidang': idBidang});
+    if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = SuccessMessageResponse.fromJson(jsonData);
       return data;
-    }
-    else{
+    } else {
       throw response.statusCode;
     }
   }
-
 
   //kadin
-  Future<SuccessMessageResponse> getTerimaKadinResponse(String idSurat, String userId, String idBidang) async{
-    var response = await http.post(Uri.parse('$urlDispo/terima_kadin'), body: {
-      'id_surat':idSurat, 'user_id':userId, 'id_bidang': idBidang});
-    if(response.statusCode == 200){
+  Future<SuccessMessageResponse> getTerimaKadinResponse(
+      String idSurat, String userId, String idBidang) async {
+    var response = await http.post(Uri.parse('$urlDispo/terima_kadin'),
+        body: {'id_surat': idSurat, 'user_id': userId, 'id_bidang': idBidang});
+    if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = SuccessMessageResponse.fromJson(jsonData);
       return data;
-    }
-    else{
+    } else {
       throw response.statusCode;
     }
   }
-
-
 
   /* Get Item Disposisi*/
   // Kadin => rule = kadin, bidang = 0, seksi = 0
   // Kabid => rule = kabid, bidang = 1, seksi = 0
   // Kasi => rule = kasi, bidang = 1, seksi = 6
 
-  Future<List<ItemDisposisi>> getItemDisposisi(String rule, String bidang, String seksi) async{
-    final request ={ "rule": rule, "bidang": bidang, "seksi": seksi};
-    var response = await http.get(Uri.parse('$urlDispo/get_item_disposisi').replace(queryParameters:request));
+  Future<List<ItemDisposisi>> getItemDisposisi(
+      String rule, String bidang, String seksi) async {
+    final request = {"rule": rule, "bidang": bidang, "seksi": seksi};
+    var response = await http.get(Uri.parse('$urlDispo/get_item_disposisi')
+        .replace(queryParameters: request));
 
     List<ItemDisposisi> itemDispoList = [];
     if (response.statusCode == 200) {
@@ -321,18 +322,40 @@ class NetworkRepo {
     }
   }
 
+  /// Dispo Balik
+  /// Fungsi buat Dispo Balik
+  Future<SuccessMessageResponse> getDispoBalikResponse(
+      String idSurat,
+      String isiDp,
+      String rule,
+      String idBidang,
+      String idSeksi,
+      String userId) async {
+    var response = await http.post(Uri.parse('$urlDispo/dispo_balik'),
+        body: {'id_surat': idSurat, "isi_dp": isiDp, "rule": rule, "id_bidang":idBidang, 'id_seksi':idSeksi, 'user_id': userId});
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      var data = SuccessMessageResponse.fromJson(jsonData);
+      return data;
+    } else {
+      throw response.statusCode;
+    }
+  }
+
+
+  /// Disposisi & Edit Disposisi
+
 
 
   //post Record Langkah
-  Future<SendRecordLangkah?>sendRecordLangkah(String nik, String langkah, String cal) async {
-    try{
-      http.Response response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/create_record_langkah'),
-      body: {
-        "nik": nik,
-        "langkah": langkah,
-        "cal":cal
-      });
-      if(response.statusCode == 200){
+  Future<SendRecordLangkah?> sendRecordLangkah(
+      String nik, String langkah, String cal) async {
+    try {
+      http.Response response = await http.post(
+          Uri.parse(
+              'http://119.2.50.170:9094/mydarling/api/create_record_langkah'),
+          body: {"nik": nik, "langkah": langkah, "cal": cal});
+      if (response.statusCode == 200) {
         if (kDebugMode) {
           print("Response URL ${response.request}");
           var jsonData = json.decode(response.body);
@@ -343,42 +366,41 @@ class NetworkRepo {
           }
           return recordResponse;
         }
-      }
-      else{
+      } else {
         print("Response error: ${response.body}");
       }
-    }
-    catch(e){
+    } catch (e) {
       print("Response error: ${e.toString()}");
     }
     return null;
   }
 
   //getSemua Langkah
-  Future<List<RecordLangkah>>getAllRecordDaily(String nik) async {
-    try{
-      http.Response response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/semua_record_langkah').replace(queryParameters: {'nik':nik}));
-      if(response.statusCode == 200){
+  Future<List<RecordLangkah>> getAllRecordDaily(String nik) async {
+    try {
+      http.Response response = await http.post(Uri.parse(
+              'http://119.2.50.170:9094/mydarling/api/semua_record_langkah')
+          .replace(queryParameters: {'nik': nik}));
+      if (response.statusCode == 200) {
         if (kDebugMode) {
           print("Response URL ${response.request}");
           var jsonData = json.decode(response.body);
           List<RecordLangkah> recordList = [];
           List<dynamic> recordData = jsonData;
 
-          recordList = recordData.map((data) => RecordLangkah.fromJson(data)).toList();
+          recordList =
+              recordData.map((data) => RecordLangkah.fromJson(data)).toList();
           if (kDebugMode) {
             print('Response $recordList');
           }
           return recordList;
         }
-      }
-      else{
+      } else {
         if (kDebugMode) {
           print("Response error: ${response.body}");
         }
       }
-    }
-    catch(e){
+    } catch (e) {
       if (kDebugMode) {
         print("Response error: ${e.toString()}");
       }
@@ -387,15 +409,18 @@ class NetworkRepo {
   }
 
   // get All Total Langkah
-  Future<List<int>> getTotalLangkah(String nik, String month, String year) async{
+  Future<List<int>> getTotalLangkah(
+      String nik, String month, String year) async {
     final request = {
-      'nik':nik,
+      'nik': nik,
       'bulan': month,
       'tahun': year,
       'jenis': 'langkah'
     };
-    final response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/total_record_langkah').replace(queryParameters: request));
-    if(response.statusCode == 200){
+    final response = await http.post(
+        Uri.parse('http://119.2.50.170:9094/mydarling/api/total_record_langkah')
+            .replace(queryParameters: request));
+    if (response.statusCode == 200) {
       var langkahResponse = jsonDecode(response.body);
       final List<dynamic> langkahData = langkahResponse;
       final List<int> totalLangkah = langkahData.cast<int>();
@@ -403,30 +428,26 @@ class NetworkRepo {
         print('$totalLangkah');
       }
       return totalLangkah;
-    }
-    else{
+    } else {
       return throw response.statusCode;
     }
   }
 
   //get All Total Kalori
-  Future<List<int>> getTotalKalori(String nik, String month, String year) async{
-    final request = {
-      'nik' :nik,
-      'bulan': month,
-      'tahun': year,
-      'jenis': 'cal'
-    };
-    final response = await http.post(Uri.parse('http://119.2.50.170:9094/mydarling/api/total_record_langkah').replace(queryParameters: request));
+  Future<List<int>> getTotalKalori(
+      String nik, String month, String year) async {
+    final request = {'nik': nik, 'bulan': month, 'tahun': year, 'jenis': 'cal'};
+    final response = await http.post(
+        Uri.parse('http://119.2.50.170:9094/mydarling/api/total_record_langkah')
+            .replace(queryParameters: request));
     print('response ${response.body}');
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       var langkahResponse = jsonDecode(response.body);
       final List<dynamic> calorieData = langkahResponse;
       final List<int> totalCalorie = calorieData.cast<int>();
       print('total calorie $totalCalorie');
       return totalCalorie;
-    }
-    else{
+    } else {
       return throw response.statusCode;
     }
   }
@@ -438,7 +459,8 @@ class NetworkRepo {
       'email': 'yohsehat@gmail.com',
       'password': 'yohsehat'
     };
-    final responseYohSehat = await http.post(Uri.parse('$urlYohSehat/login'), body: requestBody);
+    final responseYohSehat =
+        await http.post(Uri.parse('$urlYohSehat/login'), body: requestBody);
     if (responseYohSehat.statusCode == 200) {
       var tokenResponse = jsonDecode(responseYohSehat.body);
       final token = TokenResponse.fromJson(tokenResponse).accessToken;
@@ -550,9 +572,8 @@ class NetworkRepo {
 
   //get semua langkah jalan based on nik
   Future<List<WalkingDataResponse>> getRiwayatJalan(String nik) async {
-    var response = await http.post(
-        Uri.parse('$urlRecord/semua_record_langkah'),
-        body: {'nik': nik});
+    var response = await http
+        .post(Uri.parse('$urlRecord/semua_record_langkah'), body: {'nik': nik});
     List<WalkingDataResponse> walkinList = [];
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);
@@ -584,72 +605,74 @@ class NetworkRepo {
   * AKM
   * */
   //checkup
-  Future<List<DataCheckup>> getDataCheckupTerakhir(String nik) async{
-    var response = await http.get(Uri.parse('$urlAKM/show_data_checkup_sekarang_user').replace(queryParameters: {"nik":nik}));
+  Future<List<DataCheckup>> getDataCheckupTerakhir(String nik) async {
+    var response = await http.get(
+        Uri.parse('$urlAKM/show_data_checkup_sekarang_user')
+            .replace(queryParameters: {"nik": nik}));
     List<DataCheckup> dataCheckupList = [];
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       List<dynamic> list = jsonData["data_checkup"];
       dataCheckupList = list.map((data) => DataCheckup.fromJson(data)).toList();
       return dataCheckupList;
-    }
-    else{
-      throw response.statusCode;
-    }
-  }
-  Future<List<DataCheckup>> getBeratBadanTerakhir(String nik) async{
-    var response = await http.get(Uri.parse('$urlAKM/show_history_user_berat_badan').replace(queryParameters: {"nik":nik}));
-    List<DataCheckup> dataCheckupList = [];
-    if(response.statusCode == 200){
-      var jsonData = jsonDecode(response.body);
-      List<dynamic> list = jsonData["data_checkup"];
-      dataCheckupList = list.map((data) => DataCheckup.fromJson(data)).toList();
-      return dataCheckupList;
-    }
-    else{
+    } else {
       throw response.statusCode;
     }
   }
 
-  Future<List<DataCheckup>> getTinggiBadanTerakhir(String nik) async{
-    var response = await http.get(Uri.parse('$urlAKM/show_history_user_tinggi_badan').replace(queryParameters: {"nik":nik}));
+  Future<List<DataCheckup>> getBeratBadanTerakhir(String nik) async {
+    var response = await http.get(
+        Uri.parse('$urlAKM/show_history_user_berat_badan')
+            .replace(queryParameters: {"nik": nik}));
     List<DataCheckup> dataCheckupList = [];
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       List<dynamic> list = jsonData["data_checkup"];
       dataCheckupList = list.map((data) => DataCheckup.fromJson(data)).toList();
       return dataCheckupList;
-    }
-    else{
+    } else {
       throw response.statusCode;
     }
   }
-  Future<List<DataCheckup>> getHistoryTensiTerakhir(String nik) async{
-    var response = await http.get(Uri.parse('$urlAKM/show_history_user_tensi').replace(queryParameters: {"nik":nik}));
+
+  Future<List<DataCheckup>> getTinggiBadanTerakhir(String nik) async {
+    var response = await http.get(
+        Uri.parse('$urlAKM/show_history_user_tinggi_badan')
+            .replace(queryParameters: {"nik": nik}));
     List<DataCheckup> dataCheckupList = [];
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       List<dynamic> list = jsonData["data_checkup"];
       dataCheckupList = list.map((data) => DataCheckup.fromJson(data)).toList();
       return dataCheckupList;
-    }
-    else{
+    } else {
       throw response.statusCode;
     }
   }
 
-
+  Future<List<DataCheckup>> getHistoryTensiTerakhir(String nik) async {
+    var response = await http.get(Uri.parse('$urlAKM/show_history_user_tensi')
+        .replace(queryParameters: {"nik": nik}));
+    List<DataCheckup> dataCheckupList = [];
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      List<dynamic> list = jsonData["data_checkup"];
+      dataCheckupList = list.map((data) => DataCheckup.fromJson(data)).toList();
+      return dataCheckupList;
+    } else {
+      throw response.statusCode;
+    }
+  }
 
   //get Berita Dinkes
-  Future<List<DinkesNewsResponse>>getListNews()async{
+  Future<List<DinkesNewsResponse>> getListNews() async {
     var response = await http.get(Uri.parse(urlDinkesNews));
     List<DinkesNewsResponse> news = [];
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       Iterable jsonData = jsonDecode(response.body);
-      news = jsonData.map((data)=> DinkesNewsResponse.fromJson(data)).toList();
+      news = jsonData.map((data) => DinkesNewsResponse.fromJson(data)).toList();
       return news;
-    }
-    else{
+    } else {
       return throw response.statusCode;
     }
   }
