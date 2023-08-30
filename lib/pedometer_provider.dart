@@ -157,7 +157,8 @@ class PedometerProvider with ChangeNotifier {
         '0', // channel Id
         'general',
         ongoing: true,
-        autoCancel: false
+        autoCancel: false,
+        enableVibration: false,
         // channel Name
         );
     const notificationDetails =
