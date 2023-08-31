@@ -7,6 +7,7 @@ import 'package:my_darling_app/page/home/edispo/edispo_page.dart';
 import 'package:my_darling_app/page/home/user_profile.dart';
 import 'package:my_darling_app/page/home_banner_chart.dart';
 import 'package:my_darling_app/page/home_banner_walking.dart';
+import 'package:my_darling_app/page/home_berita_detail.dart';
 import 'package:my_darling_app/page/pekunden_page.dart';
 import 'package:my_darling_app/repository/model/Dinkes_news_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
@@ -280,25 +281,36 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(height: 8),
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(16.0),
-                                child: Image.network(
-                                  snapshot.data![index].fav!,
+                                child: CachedNetworkImage(
+                                  imageUrl: snapshot.data![index].fav!,
                                   width: 200,
                                   height: 150,
                                   fit: BoxFit.fill,
-                                  errorBuilder: (BuildContext context,
-                                      Object exception,
-                                      StackTrace? stackTrace) {
-                                    return Image.asset('assets/image/no-image.png', width: 200, height: 150, fit: BoxFit.fill,);
+                                  placeholder: (context, url) => Image.asset('assets/image/no-image.png', width: 200, height: 150, fit: BoxFit.cover),
+                                  errorWidget: (context, url, error) {
+                                    return Image.asset('assets/image/no-image.png', width: 200, height: 150, fit: BoxFit.cover);
                                   },
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 "${snapshot.data![index].titel}",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                                 style: title.copyWith(
                                     color: primaryBlueBlack, fontSize: 14),
                               ),
                               const SizedBox(height: 8),
+                              TextButton(onPressed: (){
+                                final url_berita = "https://semarangkota.go.id/p/${snapshot.data![index].id}/${snapshot.data![index].url}";
+                                final judulBerita = snapshot.data![index].titel;
+                                setState(() {
+                                  Navigator.push(context, MaterialPageRoute(builder:(context)=>HomeBeritaDetailPage(url: url_berita, title: judulBerita!)));
+                                });
+                              }, style: TextButton.styleFrom(
+                                foregroundColor: primaryRed,
+                                padding: EdgeInsets.zero
+                              ), child: Text("Selengkapnya", style: regular.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),))
                             ],
                           ),
                         ),
