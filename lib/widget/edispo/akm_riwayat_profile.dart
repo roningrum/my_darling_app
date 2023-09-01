@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
+import 'package:my_darling_app/model/data_chekup.dart';
+import 'package:my_darling_app/repository/model/data_checkup_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class AkmRiwayatWidget extends StatefulWidget {
   final String nik;
@@ -18,9 +21,11 @@ class AkmRiwayatWidget extends StatefulWidget {
 class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
   final networkRepo = NetworkRepo();
   bool isLoading = false;
+  List<CheckUpKesehatan> dataRiwayat = [];
+  List<DataCheckup> dataCheckup = [];
 
-  void startTimer(){
-    Timer.periodic(const Duration(seconds: 5), (t){
+  void startTimer() {
+    Timer.periodic(const Duration(seconds: 5), (t) {
       setState(() {
         isLoading = false;
       });
@@ -87,157 +92,239 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                       children: [
                         Column(
                           children: [
-                            Text("Berat Badan", style: regular.copyWith(fontSize: 14.0)),
+                            Text("Berat Badan",
+                                style: regular.copyWith(fontSize: 14.0)),
                             const SizedBox(height: 8.0),
                             SvgPicture.asset("assets/icons/weight.svg",
                                 width: 60, height: 60),
                             const SizedBox(height: 8.0),
-                            Text("${snapshot.data![0].berat}Kg", style: regular.copyWith(fontSize: 14.0)),
-                            Text(dateFormat(snapshot.data![0].tglCekBerat!), style: regular.copyWith(fontSize: 12.0)),
-                            TextButton(onPressed: (){
-                              showModalBottomSheet(context: context, builder: (context){
-                                return Column(
-                                  children: [
-                                    const SizedBox(height: 16.0),
-                                    Text('Riwayat Berat Badan', style: title.copyWith(fontSize: 16.0)),
-                                    const SizedBox(height: 18.0),
-                                    Container(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text("Tanggal Periksa", style: regular.copyWith(fontSize: 14)),
-                                          const SizedBox(width: 8.0),
-                                          Text("Berat Badan", style: regular.copyWith(fontSize: 14)),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    daftarRiwayatBeratBadan()
-                                  ],
-                                );
-
-                              });
-                            }, child:Text("Riwayat", style: regular.copyWith(fontSize: 14.0, color: primaryRed, fontWeight: FontWeight.w600)))
+                            Text("${snapshot.data![0].berat}Kg",
+                                style: regular.copyWith(fontSize: 14.0)),
+                            Text(dateFormat(snapshot.data![0].tglCekBerat!),
+                                style: regular.copyWith(fontSize: 12.0)),
+                            TextButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) {
+                                        return Column(
+                                          children: [
+                                            const SizedBox(height: 16.0),
+                                            Text('Riwayat Berat Badan',
+                                                style: title.copyWith(
+                                                    fontSize: 16.0)),
+                                            const SizedBox(height: 18.0),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Text("Tanggal Periksa",
+                                                      style: regular.copyWith(
+                                                          fontSize: 14)),
+                                                  const SizedBox(width: 8.0),
+                                                  Text("Berat Badan",
+                                                      style: regular.copyWith(
+                                                          fontSize: 14)),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8.0),
+                                            daftarRiwayatBeratBadan()
+                                          ],
+                                        );
+                                      });
+                                },
+                                child: Text("Riwayat",
+                                    style: regular.copyWith(
+                                        fontSize: 14.0,
+                                        color: primaryRed,
+                                        fontWeight: FontWeight.w600)))
                           ],
                         ),
                         Column(
                           children: [
-                            Text("Tinggi Badan", style: regular.copyWith(fontSize: 14.0)),
+                            Text("Tinggi Badan",
+                                style: regular.copyWith(fontSize: 14.0)),
                             const SizedBox(height: 8.0),
                             SvgPicture.asset("assets/icons/body.svg",
                                 width: 60, height: 60),
                             const SizedBox(height: 8.0),
-                            Text("${snapshot.data![0].tinggi}cm", style: regular.copyWith(fontSize: 14.0)),
-                            Text(dateFormat(snapshot.data![0].tglCekTinggi!), style: regular.copyWith(fontSize: 12.0)),
-                            TextButton(onPressed: (){
-                              showModalBottomSheet(context: context, builder: (context){
-                                return Column(
-                                  children: [
-                                    const SizedBox(height: 16.0),
-                                    Text('Riwayat Tinggi Badan', style: title.copyWith(fontSize: 16.0)),
-                                    const SizedBox(height: 18.0),
-                                    Container(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text("Tanggal Periksa", style: regular.copyWith(fontSize: 14)),
-                                          const SizedBox(width: 8.0),
-                                          Text("Tinggi Badan", style: regular.copyWith(fontSize: 14)),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    daftarRiwayatTinggiBadan()
-                                  ],
-                                );
-
-                              });
-                            }, child:Text("Riwayat", style: regular.copyWith(fontSize: 14.0, color: primaryRed, fontWeight: FontWeight.w600))),
+                            Text("${snapshot.data![0].tinggi}cm",
+                                style: regular.copyWith(fontSize: 14.0)),
+                            Text(dateFormat(snapshot.data![0].tglCekTinggi!),
+                                style: regular.copyWith(fontSize: 12.0)),
+                            TextButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) {
+                                        return Column(
+                                          children: [
+                                            const SizedBox(height: 16.0),
+                                            Text('Riwayat Tinggi Badan',
+                                                style: title.copyWith(
+                                                    fontSize: 16.0)),
+                                            const SizedBox(height: 18.0),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Text("Tanggal Periksa",
+                                                      style: regular.copyWith(
+                                                          fontSize: 14)),
+                                                  const SizedBox(width: 8.0),
+                                                  Text("Tinggi Badan",
+                                                      style: regular.copyWith(
+                                                          fontSize: 14)),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8.0),
+                                            daftarRiwayatTinggiBadan()
+                                          ],
+                                        );
+                                      });
+                                },
+                                child: Text("Riwayat",
+                                    style: regular.copyWith(
+                                        fontSize: 14.0,
+                                        color: primaryRed,
+                                        fontWeight: FontWeight.w600))),
                           ],
                         ),
                         Column(
                           children: [
-                            Text("Hasil Tensi", style: regular.copyWith(fontSize: 14.0)),
+                            Text("Hasil Tensi",
+                                style: regular.copyWith(fontSize: 14.0)),
                             const SizedBox(height: 8.0),
                             SvgPicture.asset("assets/icons/blood_pressure.svg",
                                 width: 60, height: 60),
                             const SizedBox(height: 8.0),
-                            Text("${snapshot.data![0].sistol}mm/${snapshot.data![0].diastol}Hg", style: regular.copyWith(fontSize: 14.0)),
-                            Text(dateFormat(snapshot.data![0].tglCekTensi!), style: regular.copyWith(fontSize: 12.0)),
-                            TextButton(onPressed: (){
-                              showModalBottomSheet(context: context, builder: (context){
-                                return Column(
-                                  children: [
-                                    const SizedBox(height: 16.0),
-                                    Text('Riwayat Tensi', style: title.copyWith(fontSize: 16.0)),
-                                    const SizedBox(height: 18.0),
-                                    Container(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text("Tanggal Periksa", style: regular.copyWith(fontSize: 14)),
-                                          const SizedBox(width: 8.0),
-                                          Text("Hasil Tensi", style: regular.copyWith(fontSize: 14)),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                   daftarRiwayatTensi()
-                                  ],
-                                );
-
-                              });
-                            }, child:Text("Riwayat", style: regular.copyWith(fontSize: 14.0, color: primaryRed, fontWeight: FontWeight.w600)) )
+                            Text(
+                                "${snapshot.data![0].sistol}mm/${snapshot.data![0].diastol}Hg",
+                                style: regular.copyWith(fontSize: 14.0)),
+                            Text(dateFormat(snapshot.data![0].tglCekTensi!),
+                                style: regular.copyWith(fontSize: 12.0)),
+                            TextButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) {
+                                        return Column(
+                                          children: [
+                                            const SizedBox(height: 16.0),
+                                            Text('Riwayat Tensi',
+                                                style: title.copyWith(
+                                                    fontSize: 16.0)),
+                                            const SizedBox(height: 18.0),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Text("Tanggal Periksa",
+                                                      style: regular.copyWith(
+                                                          fontSize: 14)),
+                                                  const SizedBox(width: 8.0),
+                                                  Text("Hasil Tensi",
+                                                      style: regular.copyWith(
+                                                          fontSize: 14)),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8.0),
+                                            daftarRiwayatTensi()
+                                          ],
+                                        );
+                                      });
+                                },
+                                child: Text("Riwayat",
+                                    style: regular.copyWith(
+                                        fontSize: 14.0,
+                                        color: primaryRed,
+                                        fontWeight: FontWeight.w600)))
                           ],
                         ),
                       ],
                     );
-                  }
-                  else{
+                  } else {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Column(
                           children: [
-                            Text("Berat Badan", style: regular.copyWith(fontSize: 14.0)),
+                            Text("Berat Badan",
+                                style: regular.copyWith(fontSize: 14.0)),
                             const SizedBox(height: 8.0),
                             SvgPicture.asset("assets/icons/weight.svg",
                                 width: 60, height: 60),
                             const SizedBox(height: 8.0),
-                            Text("Belum Periksa", style: regular.copyWith(fontSize: 14.0)),
-                            TextButton(onPressed: (){}, child:Text("Riwayat", style: regular.copyWith(fontSize: 14.0, color: primaryRed, fontWeight: FontWeight.w600)))
+                            Text("Belum Periksa",
+                                style: regular.copyWith(fontSize: 14.0)),
+                            TextButton(
+                                onPressed: () {},
+                                child: Text("Riwayat",
+                                    style: regular.copyWith(
+                                        fontSize: 14.0,
+                                        color: primaryRed,
+                                        fontWeight: FontWeight.w600)))
                           ],
                         ),
                         Column(
                           children: [
-                            Text("Tinggi Badan", style: regular.copyWith(fontSize: 14.0)),
+                            Text("Tinggi Badan",
+                                style: regular.copyWith(fontSize: 14.0)),
                             const SizedBox(height: 8.0),
                             SvgPicture.asset("assets/icons/body.svg",
                                 width: 60, height: 60),
                             const SizedBox(height: 8.0),
-                            Text("Belum Periksa", style: regular.copyWith(fontSize: 14.0)),
-                            TextButton(onPressed: (){}, child:Text("Riwayat", style: regular.copyWith(fontSize: 14.0, color: primaryRed, fontWeight: FontWeight.w600)) )
+                            Text("Belum Periksa",
+                                style: regular.copyWith(fontSize: 14.0)),
+                            TextButton(
+                                onPressed: () {},
+                                child: Text("Riwayat",
+                                    style: regular.copyWith(
+                                        fontSize: 14.0,
+                                        color: primaryRed,
+                                        fontWeight: FontWeight.w600)))
                           ],
                         ),
                         Column(
                           children: [
-                            Text("Hasil Tensi", style: regular.copyWith(fontSize: 14.0)),
+                            Text("Hasil Tensi",
+                                style: regular.copyWith(fontSize: 14.0)),
                             const SizedBox(height: 8.0),
                             SvgPicture.asset("assets/icons/blood_pressure.svg",
                                 width: 60, height: 60),
                             const SizedBox(height: 8.0),
-                            Text("${snapshot.data![0].sistol}mm/${snapshot.data![0].diastol}Hg", style: regular.copyWith(fontSize: 14.0)),
-                            TextButton(onPressed: (){}, child:Text("Riwayat", style: regular.copyWith(fontSize: 14.0, color: primaryRed, fontWeight: FontWeight.w600)) )
+                            Text(
+                                "${snapshot.data![0].sistol}mm/${snapshot.data![0].diastol}Hg",
+                                style: regular.copyWith(fontSize: 14.0)),
+                            TextButton(
+                                onPressed: () {},
+                                child: Text("Riwayat",
+                                    style: regular.copyWith(
+                                        fontSize: 14.0,
+                                        color: primaryRed,
+                                        fontWeight: FontWeight.w600)))
                           ],
                         ),
                       ],
                     );
                   }
-                }
-                else if(snapshot.hasError && snapshot.connectionState == ConnectionState.none){
+                } else if (snapshot.hasError &&
+                    snapshot.connectionState == ConnectionState.none) {
                   return Container(
                     alignment: Alignment.center,
                     child: Center(
@@ -246,8 +333,7 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                               fontSize: 14.0, color: secondaryBlueBlack)),
                     ),
                   );
-                }
-                else{
+                } else {
                   return Container(
                       alignment: Alignment.center,
                       child: CircularProgressIndicator(color: primaryRed));
@@ -261,7 +347,7 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
   Widget daftarRiwayatBeratBadan() {
     return FutureBuilder(
         future: networkRepo.getBeratBadanTerakhir(widget.nik),
-        builder:(context, snapshot){
+        builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.isEmpty) {
               return Container(
@@ -272,34 +358,40 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                   children: [
                     const SizedBox(height: 16.0),
                     Center(
-                      child: Text(
-                          "Saat ini belum ada catatan terekam",
+                      child: Text("Saat ini belum ada catatan terekam",
                           style: regular.copyWith(
-                              fontSize: 14.0,
-                              color: secondaryBlueBlack)),
+                              fontSize: 14.0, color: secondaryBlueBlack)),
                     ),
                   ],
                 ),
               );
             } else {
-              return ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(dateFormat(snapshot.data![index].tglCekBerat), style: regular.copyWith(fontSize: 14)),
-                          const SizedBox(width: 8.0),
-                          Text("${snapshot.data![index].berat} kg", style: regular.copyWith(fontSize: 14)),
-                        ]
-                      ),
-                    );
-                  });
+              return Column(
+                children: [
+                  ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                    dateFormat(
+                                        snapshot.data![index].tglCekBerat),
+                                    style: regular.copyWith(fontSize: 14)),
+                                const SizedBox(width: 8.0),
+                                Text("${snapshot.data![index].berat} kg",
+                                    style: regular.copyWith(fontSize: 14)),
+                              ]),
+                        );
+                      }),
+                ],
+              );
             }
           } else if (snapshot.hasError) {
             return Container(
@@ -307,7 +399,11 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
               child: Column(
                 children: [
                   const SizedBox(height: 16.0),
-                  SvgPicture.asset("assets/icons/no_data.svg", width: 120, height: 120,),
+                  SvgPicture.asset(
+                    "assets/icons/no_data.svg",
+                    width: 120,
+                    height: 120,
+                  ),
                   const SizedBox(height: 8.0),
                   Text("Tidak ada Riwayat yg terekam",
                       style: regular.copyWith(
@@ -320,13 +416,13 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                 alignment: Alignment.center,
                 child: CircularProgressIndicator(color: primaryRed));
           }
-        }
-    );
+        });
   }
+
   Widget daftarRiwayatTinggiBadan() {
     return FutureBuilder(
         future: networkRepo.getTinggiBadanTerakhir(widget.nik),
-        builder:(context, snapshot){
+        builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.isEmpty) {
               return Container(
@@ -337,11 +433,9 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                   children: [
                     const SizedBox(height: 16.0),
                     Center(
-                      child: Text(
-                          "Saat ini belum ada catatan terekam",
+                      child: Text("Saat ini belum ada catatan terekam",
                           style: regular.copyWith(
-                              fontSize: 14.0,
-                              color: secondaryBlueBlack)),
+                              fontSize: 14.0, color: secondaryBlueBlack)),
                     ),
                   ],
                 ),
@@ -358,11 +452,12 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(dateFormat(snapshot.data![index].tglCekTinggi), style: regular.copyWith(fontSize: 14)),
+                            Text(dateFormat(snapshot.data![index].tglCekTinggi),
+                                style: regular.copyWith(fontSize: 14)),
                             const SizedBox(width: 8.0),
-                            Text("${snapshot.data![index].tinggi} cm", style: regular.copyWith(fontSize: 14)),
-                          ]
-                      ),
+                            Text("${snapshot.data![index].tinggi} cm",
+                                style: regular.copyWith(fontSize: 14)),
+                          ]),
                     );
                   });
             }
@@ -372,7 +467,11 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
               child: Column(
                 children: [
                   const SizedBox(height: 16.0),
-                  SvgPicture.asset("assets/icons/no_data.svg", width: 120, height: 120,),
+                  SvgPicture.asset(
+                    "assets/icons/no_data.svg",
+                    width: 120,
+                    height: 120,
+                  ),
                   const SizedBox(height: 8.0),
                   Text("Tidak ada Riwayat yg terekam",
                       style: regular.copyWith(
@@ -385,13 +484,13 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                 alignment: Alignment.center,
                 child: CircularProgressIndicator(color: primaryRed));
           }
-        }
-    );
+        });
   }
+
   Widget daftarRiwayatTensi() {
     return FutureBuilder(
         future: networkRepo.getHistoryTensiTerakhir(widget.nik),
-        builder:(context, snapshot){
+        builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.isEmpty) {
               return Container(
@@ -402,11 +501,9 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                   children: [
                     const SizedBox(height: 16.0),
                     Center(
-                      child: Text(
-                          "Saat ini belum ada catatan terekam",
+                      child: Text("Saat ini belum ada catatan terekam",
                           style: regular.copyWith(
-                              fontSize: 14.0,
-                              color: secondaryBlueBlack)),
+                              fontSize: 14.0, color: secondaryBlueBlack)),
                     ),
                   ],
                 ),
@@ -423,11 +520,13 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(dateFormat(snapshot.data![index].tglCekTensi), style: regular.copyWith(fontSize: 14)),
+                            Text(dateFormat(snapshot.data![index].tglCekTensi),
+                                style: regular.copyWith(fontSize: 14)),
                             const SizedBox(width: 8.0),
-                            Text("${snapshot.data![index].sistol} mm / ${snapshot.data![index].diastol} Hg", style: regular.copyWith(fontSize: 14)),
-                          ]
-                      ),
+                            Text(
+                                "${snapshot.data![index].sistol} mm / ${snapshot.data![index].diastol} Hg",
+                                style: regular.copyWith(fontSize: 14)),
+                          ]),
                     );
                   });
             }
@@ -437,7 +536,11 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
               child: Column(
                 children: [
                   const SizedBox(height: 16.0),
-                  SvgPicture.asset("assets/icons/no_data.svg", width: 120, height: 120,),
+                  SvgPicture.asset(
+                    "assets/icons/no_data.svg",
+                    width: 120,
+                    height: 120,
+                  ),
                   const SizedBox(height: 8.0),
                   Text("Tidak ada Riwayat yg terekam",
                       style: regular.copyWith(
@@ -450,7 +553,6 @@ class _AkmRiwayatWidgetState extends State<AkmRiwayatWidget> {
                 alignment: Alignment.center,
                 child: CircularProgressIndicator(color: primaryRed));
           }
-        }
-    );
+        });
   }
 }

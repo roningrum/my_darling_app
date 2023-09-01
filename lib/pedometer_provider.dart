@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:my_darling_app/helper/date_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -95,39 +96,61 @@ class PedometerProvider with ChangeNotifier {
   }
 
   void onStepCount(StepCount event) async {
-    int savedStepCountKey = 999999;
-    int savedStepsCount = stepBox.get(savedStepCountKey, defaultValue: 0)!;
-    int todayDayNo = Jiffy.now().dayOfYear;
+    int lastStepsDaily = 0;
+    int newSteps = 0;
 
-    int lastSavedDayKey = 888888;
-    int lastSavedDay = stepBox.get(lastSavedDayKey, defaultValue: 0)!;
+    DateTime lastStepTimestamp = DateTime.now();
 
-    if (event.steps < savedStepsCount) {
-      savedStepsCount = 0;
-      stepBox.put(savedStepCountKey, savedStepsCount);
+    if(event.steps < lastStepsDaily){
+      newSteps = event.steps;
+    }
+    else if(lastStepsDaily > 0){
+      newSteps = event.steps - lastStepsDaily;
     }
 
-    if (lastSavedDay < todayDayNo) {
-      lastSavedDay = todayDayNo;
-      savedStepsCount = event.steps;
-      _totalStepCount = savedStepsCount;
-
-      stepBox
-        ..put(lastSavedDayKey, lastSavedDay)
-        ..put(savedStepCountKey, savedStepsCount);
+    //masih bingung ini apaan???
+    if(lastStepTimestamp.isToday){
+      lastStepsDaily += newSteps;
     }
-    _stepCountToday = event.steps - savedStepsCount;
+    else{
 
-    if (kDebugMode) {
-      print('Last Day $lastSavedDay');
-      print('Saved Steps $savedStepsCount');
     }
-    _totalStepCount = _stepCountToday;
-    stepBox.put('today steps', _stepCountToday);
 
-    getCalorieTerbakar(_stepCountToday);
-    getDistance(_stepCountToday);
-    showLocalNotification("MyDarling", _stepCountToday);
+    lastStepsDaily = event.steps;
+
+    // int savedStepCountKey = 999999;
+    // int savedStepsCount = stepBox.get(savedStepCountKey, defaultValue: 0)!;
+    // int todayDayNo = Jiffy.now().dayOfYear;
+    //
+    // int lastSavedDayKey = 888888;
+    // int lastSavedDay = stepBox.get(lastSavedDayKey, defaultValue: 0)!;
+    //
+    // if (event.steps < savedStepsCount) {
+    //   savedStepsCount = 0;
+    //   stepBox.put(savedStepCountKey, savedStepsCount);
+    // }
+    //
+    // if (lastSavedDay < todayDayNo) {
+    //   lastSavedDay = todayDayNo;
+    //   savedStepsCount = event.steps;
+    //   _totalStepCount = savedStepsCount;
+    //
+    //   stepBox
+    //     ..put(lastSavedDayKey, lastSavedDay)
+    //     ..put(savedStepCountKey, savedStepsCount);
+    // }
+    // _stepCountToday = event.steps - savedStepsCount;
+    //
+    // if (kDebugMode) {
+    //   print('Last Day $lastSavedDay');
+    //   print('Saved Steps $savedStepsCount');
+    // }
+    // _totalStepCount = _stepCountToday;
+    // stepBox.put('today steps', _stepCountToday);
+    //
+    // getCalorieTerbakar(_stepCountToday);
+    // getDistance(_stepCountToday);
+    // showLocalNotification("MyDarling", _stepCountToday);
 
     // sendResponse(_stepCountToday);
 

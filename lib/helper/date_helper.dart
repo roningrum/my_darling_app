@@ -91,3 +91,11 @@ String dateParameter(){
   var todayDay = dateFormat.format(date);
   return todayDay;
 }
+
+extension DateUtils on DateTime{
+  bool get isToday{
+    final now = DateTime.now();
+    return now.day == day && now.month == month && now.year == year;
+  }
+}
+
