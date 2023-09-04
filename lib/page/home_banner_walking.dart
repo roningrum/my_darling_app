@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,15 +17,16 @@ class HomeBannerWalking extends StatefulWidget {
   State<HomeBannerWalking> createState() => _HomeBannerWalkingState();
 }
 
-class _HomeBannerWalkingState extends State<HomeBannerWalking> {
+class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindingObserver{
   String todaySteps = "0";
   String calorie = "0";
   String distanceKm = "0";
   String nik ="";
 
+  late PedometerProvider pedometerProvider;
+
   final networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
-  final pedometerProvider = Provider.of<PedometerProvider>;
 
   final _networkRepo = NetworkRepo();
   String status = '';
@@ -36,30 +38,33 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      var pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
-      pedometerProvider.initialize();
-    });
-    // _networkHelper.initialize();
+    WidgetsBinding.instance.addObserver(this);
+    pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
+    pedometerProvider.initialize();
     getNIK();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch(state){
+      case AppLifecycleState.resumed:
+        pedometerProvider.startListening();
+        break;
+      case AppLifecycleState.paused:
+        pedometerProvider.stop();
+        break;
+      default:
+        break;
+
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<PedometerProvider>(
         builder: (context, pedometerProvider, child) {
-          calorie = pedometerProvider.calorieNow;
-          todaySteps = pedometerProvider.pedestrianStepCount;
-
-          if (kDebugMode) {
-            print('Steps Today $todaySteps');
-          }
-
-          sendResponse(todaySteps, calorie);
-
-
           return Container(
             width: MediaQuery.of(context).size.width - 16,
             margin: const EdgeInsets.only(top: 20),
@@ -168,5 +173,12 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> {
         timer.cancel();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }
