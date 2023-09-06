@@ -286,9 +286,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   width: 200,
                                   height: 150,
                                   fit: BoxFit.fill,
-                                  placeholder: (context, url) => Image.asset('assets/image/no-image.png', width: 200, height: 150, fit: BoxFit.cover),
+                                  placeholder: (context, url) => Image.asset(
+                                      'assets/image/no-image.png',
+                                      width: 200,
+                                      height: 150,
+                                      fit: BoxFit.cover),
                                   errorWidget: (context, url, error) {
-                                    return Image.asset('assets/image/no-image.png', width: 200, height: 150, fit: BoxFit.cover);
+                                    return Image.asset(
+                                        'assets/image/no-image.png',
+                                        width: 200,
+                                        height: 150,
+                                        fit: BoxFit.cover);
                                   },
                                 ),
                               ),
@@ -301,16 +309,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: primaryBlueBlack, fontSize: 14),
                               ),
                               const SizedBox(height: 8),
-                              TextButton(onPressed: (){
-                                final url_berita = "https://semarangkota.go.id/p/${snapshot.data![index].id}/${snapshot.data![index].url}";
-                                final judulBerita = snapshot.data![index].titel;
-                                setState(() {
-                                  Navigator.push(context, MaterialPageRoute(builder:(context)=>HomeBeritaDetailPage(url: url_berita, title: judulBerita!)));
-                                });
-                              }, style: TextButton.styleFrom(
-                                foregroundColor: primaryRed,
-                                padding: EdgeInsets.zero
-                              ), child: Text("Selengkapnya", style: regular.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),))
+                              TextButton(
+                                  onPressed: () {
+                                    final url_berita =
+                                        "https://semarangkota.go.id/p/${snapshot.data![index].id}/${snapshot.data![index].url}";
+                                    final judulBerita =
+                                        snapshot.data![index].titel;
+                                    setState(() {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomeBeritaDetailPage(
+                                                      url: url_berita,
+                                                      title: judulBerita!)));
+                                    });
+                                  },
+                                  style: TextButton.styleFrom(
+                                      foregroundColor: primaryRed,
+                                      padding: EdgeInsets.zero),
+                                  child: Text(
+                                    "Selengkapnya",
+                                    style: regular.copyWith(
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.w500),
+                                  ))
                             ],
                           ),
                         ),
@@ -383,4 +406,5 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> launchDinkesApp() async {
     await launch('https://dinkes.semarangkota.go.id/aplikasi/');
   }
+
 }

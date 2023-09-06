@@ -1,22 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:my_darling_app/helper/date_helper.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'helper/session_manager.dart';
-
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-AndroidInitializationSettings initializationSettingsAndroid =
-    const AndroidInitializationSettings('@mipmap/ic_launcher');
-InitializationSettings initializationSettings =
-    InitializationSettings(android: initializationSettingsAndroid);
 
 class PedometerProvider with ChangeNotifier {
   int _stepCountToday = 0;
@@ -37,8 +27,6 @@ class PedometerProvider with ChangeNotifier {
       Pedometer.pedestrianStatusStream;
 
   initialize() async {
-    final appDocumentDirectory = await getApplicationDocumentsDirectory();
-    Hive.init(appDocumentDirectory.path);
     stepBox = await Hive.openBox('steps');
     checkPermission();
     notifyListeners();
@@ -79,7 +67,6 @@ class PedometerProvider with ChangeNotifier {
 
   void onPedestrianStatusError(error) {
     print('onPedestrianStatusError: $error');
-
     _status = 'Cannot get status.';
     notifyListeners();
   }
@@ -96,27 +83,6 @@ class PedometerProvider with ChangeNotifier {
   }
 
   void onStepCount(StepCount event) async {
-    // int lastStepsDaily = 0;
-    // int newSteps = 0;
-    //
-    // DateTime lastStepTimestamp = DateTime.now();
-    //
-    // if(event.steps < lastStepsDaily){
-    //   newSteps = event.steps;
-    // }
-    // else if(lastStepsDaily > 0){
-    //   newSteps = event.steps - lastStepsDaily;
-    // }
-    //
-    // //masih bingung ini apaan???
-    // if(lastStepTimestamp.isToday){
-    //   lastStepsDaily += newSteps;
-    // }
-    // else{
-    //
-    // }
-    //
-    // lastStepsDaily = event.steps;
 
     int savedStepCountKey = 999999;
     int savedStepsCount = stepBox.get(savedStepCountKey, defaultValue: 0)!;
@@ -148,9 +114,11 @@ class PedometerProvider with ChangeNotifier {
     _totalStepCount = _stepCountToday;
     stepBox.put('today steps', _stepCountToday);
 
+    
+
     getCalorieTerbakar(_stepCountToday);
     getDistance(_stepCountToday);
-    showLocalNotification("MyDarling", _stepCountToday);
+    // showLocalNotification("MyDarling", _stepCountToday);
 
     // sendResponse(_stepCountToday);
 
@@ -172,22 +140,6 @@ class PedometerProvider with ChangeNotifier {
         _dailyResetTimer.cancel();
       }
     });
-    notifyListeners();
-  }
-
-  void showLocalNotification(String title, int body) {
-    const androidNotificationDetail = AndroidNotificationDetails(
-        '0', // channel Id
-        'general',
-        ongoing: true,
-        autoCancel: false,
-        enableVibration: false,
-        // channel Name
-        );
-    const notificationDetails =
-        NotificationDetails(android: androidNotificationDetail);
-    flutterLocalNotificationsPlugin.show(
-        0, "MyDarling", _stepCountToday.toString(), notificationDetails);
     notifyListeners();
   }
 

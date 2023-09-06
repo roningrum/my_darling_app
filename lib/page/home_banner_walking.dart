@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -40,6 +41,13 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      } else {
+        triggerNotification();
+      }
+    });
     pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
     pedometerProvider.initialize();
     getNIK();
@@ -180,5 +188,26 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
     // TODO: implement dispose
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void triggerNotification() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: 1,
+            channelKey: 'basic',
+            title: 'simpleNotification',
+            body: 'Simple Button'),
+        actionButtons: [
+          NotificationActionButton(
+            key: 'play',
+            label: 'play',
+          ),
+          NotificationActionButton(
+            key: 'pause',
+            label: 'pause',
+          ),
+        ]
+
+    );
   }
 }
