@@ -4,18 +4,23 @@ part 'step_record_data.g.dart';
 
 @HiveType(typeId: 0)
 class StepRecordData extends HiveObject{
-  static const boxName = 'stepData';
+  // static const boxName = 'stepData';
 
   @HiveField(1)
-  int steps = 0;
+  final int steps;
 
   @HiveField(2)
-  double cal = 0.0;
+  final double cal;
 
   @HiveField(3)
   DateTime timeStamp = DateTime.now();
 
-  bool compareTo(StepRecordData otherData){
-    return steps == otherData.steps && cal == otherData.cal && timeStamp == otherData.timeStamp;
-  }
+
+  StepRecordData({required this.steps, required this.cal});
+
+  // bool compareTo(StepRecordData otherData){
+  //   return steps == otherData.steps && cal == otherData.cal && timeStamp == otherData.timeStamp;
+  // }
+
+
 }

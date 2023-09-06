@@ -142,9 +142,8 @@ class _UserProfileState extends State<UserProfile> {
   void logout(){
     var sessionManager = SessionManager();
     sessionManager.clear();
-    Hive.deleteBoxFromDisk('steps');
+    Hive.deleteFromDisk();
     Navigator.of(context).pop();
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
-    // Hive.close();
   }
 }

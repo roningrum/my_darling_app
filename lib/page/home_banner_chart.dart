@@ -1,8 +1,10 @@
-import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:my_darling_app/model/step_record_data.dart';
+import 'package:my_darling_app/repository/local/local_database_repo.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -22,10 +24,16 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
   List<_RecordCalorie> recordCal = [];
   List<int> listOfDates =[];
   String month = "";
+  
+  final localDatabase = LocalDatabaseRepo();
+
+  late final Box<StepRecordData>recordBox;
 
   @override
   void initState() {
     initializeDateFormatting();
+    recordBox = Hive.box<StepRecordData>("recordLangkahBox");
+    print("data langkah : ${recordBox.getAt(0)}");
     super.initState();
 
   }
@@ -47,57 +55,86 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
-              Row(
-                  children: [
-                    Text(
-                        "Pilih Bulan :",
-                        style: title.copyWith(fontSize: 14, color: primaryBlueBlack)),
-                    const SizedBox(width: 8.0),
-                    SizedBox(
-                      width: 150,
-                      height: 64,
-                      child: DropdownDatePicker(
-                          textStyle: title.copyWith(
-                              fontSize: 14.0, fontWeight: FontWeight.w400),
-                          inputDecoration: InputDecoration(
-                              enabledBorder: const OutlineInputBorder(
-                                borderSide:
-                                BorderSide(color: Colors.grey, width: 1.0),
-                              ),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10))),
-                          isFormValidator: true,
-                          showDay: false,
-                          showYear: false,
-                          startYear: 2000,
-                          endYear: DateTime.now().year,
-                          width: 8,
-                          selectedMonth:DateTime.now().month,
-                          // optional
-                          onChangedMonth: (value) {
-                            setState(() {
-                              value != null
-                                  ? month = value
-                                  : month = DateFormat("M").format(DateTime.now());
-                            });
-                          }
-                        // print(month);
-                      ),
-                    ),
-                  ]
-              ),
-              const SizedBox(height: 16.0),
-              Text(
-                  "Record Aktivitas ${month!=""?getMonths(month): getMonths(DateFormat("M").format(DateTime.now()))}",
-                  style: title.copyWith(fontSize: 16, color: primaryBlueBlack)),
-              const SizedBox(height: 16.0),
-              getDataLangkah(month, DateFormat('yyyy').format(DateTime.now())),
-              const SizedBox(height: 16.0),
-              Text(
-                  "Record Kalori ${month!=""?getMonths(month): getMonths(DateFormat("M").format(DateTime.now()))}",
-                  style: title.copyWith(fontSize: 16, color: primaryBlueBlack)),
-              const SizedBox(height: 16.0),
-              getDataKalori(month, DateFormat('yyyy').format(DateTime.now()))
+              ValueListenableBuilder(valueListenable: recordBox.listenable(),
+                  builder:(context, Box box, widget){
+                     if(box.isEmpty){
+                       return const Center(
+                         child: Text('empty'),
+                       );
+                     }
+                     else{
+                       return ListView.builder(
+                           itemCount: box.length,
+                           shrinkWrap: true,
+                           physics: const NeverScrollableScrollPhysics(),
+                           itemBuilder: (context, index){
+                             var currentBox = box;
+                             var stepData = currentBox.getAt(index);
+                             // currentBox.deleteAt(index);
+                             if(index == 0){
+                               return Container();
+                             }
+                             else{
+                               print("data ${stepData.steps}");
+                               return ListTile(
+                                 title: Text("${stepData.steps}"),
+                               );
+
+                             }
+                           });
+                     }
+                  })
+              // Row(
+              //     children: [
+              //       Text(
+              //           "Pilih Bulan :",
+              //           style: title.copyWith(fontSize: 14, color: primaryBlueBlack)),
+              //       const SizedBox(width: 8.0),
+              //       SizedBox(
+              //         width: 150,
+              //         height: 64,
+              //         child: DropdownDatePicker(
+              //             textStyle: title.copyWith(
+              //                 fontSize: 14.0, fontWeight: FontWeight.w400),
+              //             inputDecoration: InputDecoration(
+              //                 enabledBorder: const OutlineInputBorder(
+              //                   borderSide:
+              //                   BorderSide(color: Colors.grey, width: 1.0),
+              //                 ),
+              //                 border: OutlineInputBorder(
+              //                     borderRadius: BorderRadius.circular(10))),
+              //             isFormValidator: true,
+              //             showDay: false,
+              //             showYear: false,
+              //             startYear: 2000,
+              //             endYear: DateTime.now().year,
+              //             width: 8,
+              //             selectedMonth:DateTime.now().month,
+              //             // optional
+              //             onChangedMonth: (value) {
+              //               setState(() {
+              //                 value != null
+              //                     ? month = value
+              //                     : month = DateFormat("M").format(DateTime.now());
+              //               });
+              //             }
+              //           // print(month);
+              //         ),
+              //       ),
+              //     ]
+              // ),
+              // const SizedBox(height: 16.0),
+              // Text(
+              //     "Record Aktivitas ${month!=""?getMonths(month): getMonths(DateFormat("M").format(DateTime.now()))}",
+              //     style: title.copyWith(fontSize: 16, color: primaryBlueBlack)),
+              // const SizedBox(height: 16.0),
+              // getDataLangkah(month, DateFormat('yyyy').format(DateTime.now())),
+              // const SizedBox(height: 16.0),
+              // Text(
+              //     "Record Kalori ${month!=""?getMonths(month): getMonths(DateFormat("M").format(DateTime.now()))}",
+              //     style: title.copyWith(fontSize: 16, color: primaryBlueBlack)),
+              // const SizedBox(height: 16.0),
+              // getDataKalori(month, DateFormat('yyyy').format(DateTime.now()))
             ],
           ),
         ),

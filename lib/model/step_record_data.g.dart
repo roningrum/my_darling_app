@@ -16,10 +16,10 @@ class StepRecordDataAdapter extends TypeAdapter<StepRecordData> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return StepRecordData()
-      ..steps = fields[1] as int
-      ..cal = fields[2] as double
-      ..timeStamp = fields[3] as DateTime;
+    return StepRecordData(
+      steps: fields[1] as int,
+      cal: fields[2] as double,
+    )..timeStamp = fields[3] as DateTime;
   }
 
   @override

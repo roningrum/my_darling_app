@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:ui';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
+import 'package:my_darling_app/model/step_record_data.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
+import 'package:my_darling_app/repository/local/local_database_repo.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +28,9 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
   final networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
 
+
+  final localDatabase = LocalDatabaseRepo();
+
   final _networkRepo = NetworkRepo();
   String status = '';
 
@@ -41,15 +43,9 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications();
-      } else {
-        triggerNotification();
-      }
-    });
     pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
     pedometerProvider.initialize();
+    // sendData();
     getNIK();
   }
 
@@ -73,8 +69,17 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
   Widget build(BuildContext context) {
     return Consumer<PedometerProvider>(
         builder: (context, pedometerProvider, child) {
+
+          final langkah = int.parse(pedometerProvider.pedestrianStepCount);
+          final kalori = double.parse(pedometerProvider.calorieNow);
+          final stepData = StepRecordData(steps: langkah, cal: kalori);
+          localDatabase.addLangkahBaru(stepData: stepData);
+
           return Container(
-            width: MediaQuery.of(context).size.width - 16,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 16,
             margin: const EdgeInsets.only(top: 20),
             padding: const EdgeInsets.only(
                 left: 16.0, top: 20.0, bottom: 20.0, right: 20.0),
@@ -98,7 +103,8 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
                             width: 24.0, height: 24.0),
                         const SizedBox(width: 6.0),
                         Text('Langkah Hari Ini',
-                            style: regular.copyWith(fontSize: 12.0, color: white))
+                            style: regular.copyWith(
+                                fontSize: 12.0, color: white))
                       ],
                     ),
                     const SizedBox(height: 12.0),
@@ -157,57 +163,14 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
     );
   }
 
-  void sendResponse(String steps, String cal) {
-    final step = int.parse(steps);
-    final calorie = double.parse(cal);
 
-    // print('Steps $step');
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
-
-      DateTime now = DateTime.now();
-      DateTime tomorrow = DateTime(now.year, now.month, now.day + 1);
-      Duration timeUntilReset = tomorrow.difference(now);
-      if (timeUntilReset.inSeconds > 0) {
-          timeUntilReset -= const Duration(seconds: 1);
-        // getConnection(step.toString(), calorie.toString());
-      } else{
-        // timeUntilReset = tomorrow.difference(DateTime.now());
-        _networkRepo.sendRecordLangkah(nik, step.toString(), calorie.toString());
-        final snackBar = SnackBar(
-            content: Text('Berhasil kirim $steps')
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        print('Steps $step');
-        timer.cancel();
-      }
-    });
-  }
 
   @override
   void dispose() {
     // TODO: implement dispose
     WidgetsBinding.instance.removeObserver(this);
+    // Hive.box('recordLangkahBox');
+    // Hive.close();
     super.dispose();
-  }
-
-  void triggerNotification() {
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 1,
-            channelKey: 'basic',
-            title: 'simpleNotification',
-            body: 'Simple Button'),
-        actionButtons: [
-          NotificationActionButton(
-            key: 'play',
-            label: 'play',
-          ),
-          NotificationActionButton(
-            key: 'pause',
-            label: 'pause',
-          ),
-        ]
-
-    );
   }
 }

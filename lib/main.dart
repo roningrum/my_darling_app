@@ -2,6 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:my_darling_app/model/step_record_data.dart';
 import 'package:my_darling_app/page/splash_screen.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
 import 'package:path_provider/path_provider.dart';
@@ -34,6 +35,8 @@ void main() async{
 
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDirectory.path);
+  Hive.registerAdapter(StepRecordDataAdapter());
+  await Hive.openBox<StepRecordData>("recordLangkahBox");
   runApp(const MyApp());
 }
 
