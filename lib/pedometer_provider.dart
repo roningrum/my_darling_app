@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:my_darling_app/repository/local/local_database_repo.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'helper/session_manager.dart';
+import 'model/step_record_data.dart';
 
 class PedometerProvider with ChangeNotifier {
   int _stepCountToday = 0;
@@ -18,6 +20,7 @@ class PedometerProvider with ChangeNotifier {
 
   final Stream<StepCount> _stepCountStream = Pedometer.stepCountStream;
   final sessionManager = SessionManager();
+  final localDatabase = LocalDatabaseRepo();
 
   String _status = 'Standing';
 
@@ -38,8 +41,8 @@ class PedometerProvider with ChangeNotifier {
         .request();
     status.forEach((permission, status) {
       if (status.isGranted) {
-        startListening();
         startDailyStepReset();
+        startListening();
       } else if (status.isDenied) {
         openAppSettings();
       } else {
@@ -83,7 +86,6 @@ class PedometerProvider with ChangeNotifier {
   }
 
   void onStepCount(StepCount event) async {
-
     int savedStepCountKey = 999999;
     int savedStepsCount = stepBox.get(savedStepCountKey, defaultValue: 0)!;
     int todayDayNo = Jiffy.now().dayOfYear;
@@ -97,13 +99,14 @@ class PedometerProvider with ChangeNotifier {
     }
 
     if (lastSavedDay < todayDayNo) {
-      lastSavedDay = todayDayNo;
-      savedStepsCount = event.steps;
-      _totalStepCount = savedStepsCount;
+        lastSavedDay = todayDayNo;
+        savedStepsCount = event.steps;
+        _totalStepCount = savedStepsCount;
 
       stepBox
         ..put(lastSavedDayKey, lastSavedDay)
         ..put(savedStepCountKey, savedStepsCount);
+      
     }
     _stepCountToday = event.steps - savedStepsCount;
 
@@ -114,14 +117,8 @@ class PedometerProvider with ChangeNotifier {
     _totalStepCount = _stepCountToday;
     stepBox.put('today steps', _stepCountToday);
 
-    
-
     getCalorieTerbakar(_stepCountToday);
     getDistance(_stepCountToday);
-    // showLocalNotification("MyDarling", _stepCountToday);
-
-    // sendResponse(_stepCountToday);
-
     notifyListeners();
   }
 
@@ -143,17 +140,13 @@ class PedometerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  //logout
-  void closeBox() {
-    stepBox.clear();
-    _stepCountToday = 0;
-    notifyListeners();
-  }
-
   String getCalorieTerbakar(int steps) {
     num cal = steps * 0.04;
     cal = num.parse(cal.toStringAsFixed(2));
     _calorie = "$cal";
+    
+    sendLocal(steps, double.parse(_calorie));
+    
     return _calorie;
   }
 
@@ -174,6 +167,15 @@ class PedometerProvider with ChangeNotifier {
   String get distance => _distance;
 
   String get totalStepCount => _totalStepCount.toString();
+
+  void sendLocal(int steps, double cal) {
+    
+    final langkah = steps;
+    final kalori = cal;
+    final stepData = StepRecordData(steps: langkah, cal: kalori);
+    localDatabase.addLangkahBaru(stepData: stepData);
+    notifyListeners();
+  }
 
 
 

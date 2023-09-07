@@ -1,43 +1,46 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:my_darling_app/model/step_record_data.dart';
 import 'package:my_darling_app/page/splash_screen.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light));
-
-  AwesomeNotifications().initialize(
-     null,
-      [            // notification icon
-        NotificationChannel(
-          channelGroupKey: 'basic_test',
-          channelKey: 'basic',
-          channelName: 'Basic notifications',
-          channelDescription: 'Notification channel for basic tests',
-          channelShowBadge: true,
-          onlyAlertOnce: false,
-          locked: true,
-          importance: NotificationImportance.High,
-          enableVibration: true,
-        ),
-      ],
-    debug: true
-  );
-
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
+  initializeNotification();
+
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(StepRecordDataAdapter());
   await Hive.openBox<StepRecordData>("recordLangkahBox");
   runApp(const MyApp());
+}
+
+void initializeNotification() {
+  var initializationSettingAndroid = const AndroidInitializationSettings("@mipmap/ic_launcher");
+  var initializationSettings = InitializationSettings(android: initializationSettingAndroid);
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  scheduleNotification();
+}
+
+void scheduleNotification() async {
+  const AndroidNotificationDetails androidNotificationDetails =
+  AndroidNotificationDetails(
+      'repeating channel id', 'repeating channel name',
+      channelDescription: 'repeating description');
+  const NotificationDetails notificationDetails =
+  NotificationDetails(android: androidNotificationDetails);
+  await flutterLocalNotificationsPlugin.periodicallyShow(1, "MyDarling", "Jangan Lupa Masuk Aplikasi", RepeatInterval.everyMinute, notificationDetails ,androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
 }
 
 class MyApp extends StatelessWidget {

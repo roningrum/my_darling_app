@@ -15,12 +15,6 @@ class StepRecordData extends HiveObject{
   @HiveField(3)
   DateTime timeStamp = DateTime.now();
 
-
   StepRecordData({required this.steps, required this.cal});
-
-  // bool compareTo(StepRecordData otherData){
-  //   return steps == otherData.steps && cal == otherData.cal && timeStamp == otherData.timeStamp;
-  // }
-
 
 }

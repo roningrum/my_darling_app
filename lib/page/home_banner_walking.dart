@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
+import 'package:my_darling_app/main.dart';
 import 'package:my_darling_app/model/step_record_data.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
 import 'package:my_darling_app/repository/local/local_database_repo.dart';
@@ -27,11 +29,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
 
   final networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
-
-
   final localDatabase = LocalDatabaseRepo();
-
-  final _networkRepo = NetworkRepo();
   String status = '';
 
   Future<String> getNIK() async{
@@ -45,7 +43,6 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
     WidgetsBinding.instance.addObserver(this);
     pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
     pedometerProvider.initialize();
-    // sendData();
     getNIK();
   }
 
@@ -54,13 +51,13 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
     switch(state){
       case AppLifecycleState.resumed:
         pedometerProvider.startListening();
+        setupNotification();
         break;
       case AppLifecycleState.paused:
         pedometerProvider.stop();
         break;
       default:
         break;
-
     }
     super.didChangeAppLifecycleState(state);
   }
@@ -69,12 +66,10 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
   Widget build(BuildContext context) {
     return Consumer<PedometerProvider>(
         builder: (context, pedometerProvider, child) {
-
-          final langkah = int.parse(pedometerProvider.pedestrianStepCount);
-          final kalori = double.parse(pedometerProvider.calorieNow);
-          final stepData = StepRecordData(steps: langkah, cal: kalori);
-          localDatabase.addLangkahBaru(stepData: stepData);
-
+          // final langkah = int.parse(pedometerProvider.pedestrianStepCount);
+          // final kalori = double.parse(pedometerProvider.calorieNow);
+          // final stepData = StepRecordData(steps: langkah, cal: kalori);
+          // localDatabase.addLangkahBaru(stepData: stepData);
           return Container(
             width: MediaQuery
                 .of(context)
@@ -163,14 +158,26 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
     );
   }
 
+  void setupNotification() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails('your channel id', 'your channel name',
+        channelDescription: 'your channel description',
+        importance: Importance.max,
+        priority: Priority.high,
+        ongoing: true,
+        autoCancel: false);
+    const NotificationDetails notificationDetails =
+    NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(1, "MyDarling", "Walking ${pedometerProvider.pedestrianStepCount}", notificationDetails);
+  }
+
 
 
   @override
   void dispose() {
-    // TODO: implement dispose
     WidgetsBinding.instance.removeObserver(this);
-    // Hive.box('recordLangkahBox');
-    // Hive.close();
     super.dispose();
   }
+
+
 }
