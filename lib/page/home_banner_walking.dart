@@ -51,7 +51,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
     switch(state){
       case AppLifecycleState.resumed:
         pedometerProvider.startListening();
-        setupNotification();
+        // setupNotification();
         break;
       case AppLifecycleState.paused:
         pedometerProvider.stop();
@@ -157,20 +157,6 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking> with WidgetsBindi
         }
     );
   }
-
-  void setupNotification() async {
-    const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails('your channel id', 'your channel name',
-        channelDescription: 'your channel description',
-        importance: Importance.max,
-        priority: Priority.high,
-        ongoing: true,
-        autoCancel: false);
-    const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(1, "MyDarling", "Walking ${pedometerProvider.pedestrianStepCount}", notificationDetails);
-  }
-
 
 
   @override

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -7,10 +8,23 @@ import 'package:my_darling_app/page/splash_screen.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
+import 'package:workmanager/workmanager.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+const _workmanagerId = "notificationId";
+const _workmanagerTime = Duration(minutes: 15);
+
+@pragma('vm:entry-point')
+Future<void> callbackDispatcher() async {
+  Workmanager().executeTask((task, inputData) async{
+    if (kDebugMode) {
+      print("task workmanager $task");
+    }
+    initializeNotification();
+    return Future.value(true);
+  });
+}
+
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +32,9 @@ void main() async{
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light));
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
-  initializeNotification();
+
+  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  await Workmanager().registerPeriodicTask(_workmanagerId, 'periodic', frequency: _workmanagerTime);
 
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(StepRecordDataAdapter());
@@ -40,7 +56,7 @@ void scheduleNotification() async {
       channelDescription: 'repeating description');
   const NotificationDetails notificationDetails =
   NotificationDetails(android: androidNotificationDetails);
-  await flutterLocalNotificationsPlugin.periodicallyShow(1, "MyDarling", "Jangan Lupa Masuk Aplikasi", RepeatInterval.everyMinute, notificationDetails ,androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
+  await flutterLocalNotificationsPlugin.show(1, "MyDarling", "Jangan Lupa Masuk Aplikasi",notificationDetails);
 }
 
 class MyApp extends StatelessWidget {
