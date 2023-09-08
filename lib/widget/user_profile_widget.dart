@@ -98,7 +98,7 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                       ],
                     ),
                     const SizedBox(height: 8.0),
-                    Text('${data[0].nik}',
+                    Text(data[0].nik!.replaceRange(2, 16, "************"),
                         style: regular.copyWith(
                             fontSize: 14, color: secondaryBlueBlack)),
                     const SizedBox(height: 16.0),
@@ -147,7 +147,7 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                       ],
                     ),
                     const SizedBox(height: 8.0),
-                    Text("${data[0].telp}",
+                    Text(data[0].telp!.replaceRange(2, 12, "************"),
                         style: regular.copyWith(
                             fontSize: 14, color: secondaryBlueBlack)),
                     const SizedBox(height: 16.0),
