@@ -33,7 +33,7 @@ void main() async{
       statusBarIconBrightness: Brightness.light));
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
 
-  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  await Workmanager().initialize(callbackDispatcher);
   await Workmanager().registerPeriodicTask(_workmanagerId, 'periodic', frequency: _workmanagerTime);
 
   Hive.init(appDocumentDirectory.path);
