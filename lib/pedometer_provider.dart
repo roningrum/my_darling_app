@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:my_darling_app/repository/local/local_database_repo.dart';
+import 'package:my_darling_app/main.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'helper/session_manager.dart';
-import 'model/step_record_data.dart';
 
 class PedometerProvider with ChangeNotifier {
   int _stepCountToday = 0;
@@ -20,7 +20,6 @@ class PedometerProvider with ChangeNotifier {
 
   final Stream<StepCount> _stepCountStream = Pedometer.stepCountStream;
   final sessionManager = SessionManager();
-  final localDatabase = LocalDatabaseRepo();
 
   String _status = 'Standing';
 
@@ -57,6 +56,7 @@ class PedometerProvider with ChangeNotifier {
         .listen(onPedestrianStatusChanged)
         .onError(onPedestrianStatusError);
     _stepCountStream.listen(onStepCount).onError(onStepCountError);
+    initializeNotification();
     notifyListeners();
   }
 
@@ -116,9 +116,23 @@ class PedometerProvider with ChangeNotifier {
     }
     _totalStepCount = _stepCountToday;
     stepBox.put('today steps', _stepCountToday);
+    stepCountNotification(_totalStepCount);
 
     getCalorieTerbakar(_stepCountToday);
     getDistance(_stepCountToday);
+    notifyListeners();
+  }
+
+
+  Future<void> stepCountNotification(int step) async{
+    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+        'repeating channel id', 'repeating channel name',
+        channelDescription: 'repeating description', importance: Importance.high, autoCancel: false, playSound: false);
+    const NotificationDetails notificationDetails =
+    NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(1, "MyDarling", "Langkah $step", notificationDetails);
+
     notifyListeners();
   }
 
@@ -144,9 +158,6 @@ class PedometerProvider with ChangeNotifier {
     num cal = steps * 0.04;
     cal = num.parse(cal.toStringAsFixed(2));
     _calorie = "$cal";
-    
-    sendLocal(steps, double.parse(_calorie));
-    
     return _calorie;
   }
 
@@ -168,14 +179,6 @@ class PedometerProvider with ChangeNotifier {
 
   String get totalStepCount => _totalStepCount.toString();
 
-  void sendLocal(int steps, double cal) {
-    
-    final langkah = steps;
-    final kalori = cal;
-    final stepData = StepRecordData(steps: langkah, cal: kalori);
-    localDatabase.addLangkahBaru(stepData: stepData);
-    notifyListeners();
-  }
 
 
 

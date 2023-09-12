@@ -72,6 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 const HomeScreen()),
                 (Route<dynamic> route) => false);
       }
+      startService();
       return checkLogin;
     }
     else{
@@ -84,6 +85,10 @@ class _SplashScreenState extends State<SplashScreen> {
               (Route<dynamic> route) => false);
     }
     return false;
+  }
+
+  void startService() async{
+
   }
 }
 

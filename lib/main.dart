@@ -12,7 +12,7 @@ import 'package:workmanager/workmanager.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 const _workmanagerId = "notificationId";
-const _workmanagerTime = Duration(minutes: 15);
+const _workmanagerTime = Duration(hours: 1);
 
 @pragma('vm:entry-point')
 Future<void> callbackDispatcher() async {
@@ -53,7 +53,7 @@ void scheduleNotification() async {
   const AndroidNotificationDetails androidNotificationDetails =
   AndroidNotificationDetails(
       'repeating channel id', 'repeating channel name',
-      channelDescription: 'repeating description');
+      channelDescription: 'repeating description', importance: Importance.low);
   const NotificationDetails notificationDetails =
   NotificationDetails(android: androidNotificationDetails);
   await flutterLocalNotificationsPlugin.show(1, "MyDarling", "Jangan Lupa Masuk Aplikasi",notificationDetails);
