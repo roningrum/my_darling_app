@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:my_darling_app/helper/static_class.dart';
-import 'package:my_darling_app/main.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -117,7 +115,7 @@ class PedometerProvider with ChangeNotifier {
     }
     _totalStepCount = _stepCountToday;
     stepBox.put('today steps', _stepCountToday);
-    stepCountNotification(_totalStepCount);
+    // stepCountNotification(_totalStepCount);
 
     getCalorieTerbakar(_stepCountToday);
     getDistance(_stepCountToday);
@@ -125,17 +123,17 @@ class PedometerProvider with ChangeNotifier {
   }
 
 
-  Future<void> stepCountNotification(int step) async{
-    const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(
-        'repeating channel id', 'repeating channel name',
-        channelDescription: 'repeating description', importance: Importance.high, autoCancel: false, playSound: false);
-    const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(1, "MyDarling", "Langkah $step", notificationDetails);
-
-    notifyListeners();
-  }
+  // Future<void> stepCountNotification(int step) async{
+  //   const AndroidNotificationDetails androidNotificationDetails =
+  //   AndroidNotificationDetails(
+  //       'repeating channel id', 'repeating channel name',
+  //       channelDescription: 'repeating description', importance: Importance.high, autoCancel: false, playSound: false);
+  //   const NotificationDetails notificationDetails =
+  //   NotificationDetails(android: androidNotificationDetails);
+  //   await flutterLocalNotificationsPlugin.show(1, "MyDarling", "Langkah $step", notificationDetails);
+  //
+  //   notifyListeners();
+  // }
 
   void startDailyStepReset() {
     _dailyResetTimer = Timer.periodic(const Duration(seconds: 1), (timer) {

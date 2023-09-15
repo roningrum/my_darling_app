@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:my_darling_app/page/home_walk_setting.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -40,11 +39,6 @@ class _HomeBannerChartState extends State<HomeBannerChart> {
           'Aktivitas Harian',
           style: title.copyWith(color: white),
         ),
-        actions: [
-          IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeWalkSetting()));
-          }, icon: const Icon(Icons.settings))
-        ],
       ),
       body: SingleChildScrollView(
         child: Container(

@@ -39,20 +39,25 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking>
     WidgetsBinding.instance.addObserver(this);
     pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
     pedometerProvider.initialize();
-    // BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
     getNIK();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
+      case AppLifecycleState.inactive:
+      // startBackgroundService();
+        pedometerProvider.stop();
+        break;
       case AppLifecycleState.resumed:
         // startBackgroundService();
         pedometerProvider.startListening();
-        setupNotification();
+        break;
+      case AppLifecycleState.paused:
+        pedometerProvider.startListening();
+        // stopService();
         break;
       case AppLifecycleState.detached:
-      case AppLifecycleState.paused:
         pedometerProvider.stop();
         // stopService();
         break;
@@ -154,6 +159,4 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking>
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-
-  void setupNotification() {}
 }
