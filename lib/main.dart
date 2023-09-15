@@ -1,4 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'dart:isolate';
+import 'dart:ui';
+
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -8,23 +11,11 @@ import 'package:my_darling_app/page/splash_screen.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:workmanager/workmanager.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-const _workmanagerId = "notificationId";
-const _workmanagerTime = Duration(hours: 1);
 
-@pragma('vm:entry-point')
-Future<void> callbackDispatcher() async {
-  Workmanager().executeTask((task, inputData) async{
-    if (kDebugMode) {
-      print("task workmanager $task");
-    }
-    initializeNotification();
-    return Future.value(true);
-  });
-}
-
+const String isolateName = 'isolate';
+final ReceivePort port = ReceivePort();
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,32 +24,15 @@ void main() async{
       statusBarIconBrightness: Brightness.light));
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
 
-  await Workmanager().initialize(callbackDispatcher);
-  await Workmanager().registerPeriodicTask(_workmanagerId, 'periodic', frequency: _workmanagerTime);
+  IsolateNameServer.registerPortWithName(port.sendPort,isolateName);
+
+  AndroidAlarmManager.initialize();
 
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(StepRecordDataAdapter());
   await Hive.openBox<StepRecordData>("recordLangkahBox");
   runApp(const MyApp());
 }
-
-void initializeNotification() {
-  var initializationSettingAndroid = const AndroidInitializationSettings("@mipmap/ic_launcher");
-  var initializationSettings = InitializationSettings(android: initializationSettingAndroid);
-  flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  scheduleNotification();
-}
-
-void scheduleNotification() async {
-  const AndroidNotificationDetails androidNotificationDetails =
-  AndroidNotificationDetails(
-      'repeating channel id', 'repeating channel name',
-      channelDescription: 'repeating description', importance: Importance.low);
-  const NotificationDetails notificationDetails =
-  NotificationDetails(android: androidNotificationDetails);
-  await flutterLocalNotificationsPlugin.show(1, "MyDarling", "Jangan Lupa Masuk Aplikasi",notificationDetails);
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

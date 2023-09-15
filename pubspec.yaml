@@ -49,9 +49,8 @@ dependencies:
   path_provider: ^2.0.15
   provider: ^6.0.0
   permission_handler: ^10.2.0
-  flutter_custom_tabs: ^1.0.4
   cached_network_image: ^3.2.3
-  whatsapp_share: ^2.0.1
+  whatsapp_share: ^2.0.2
   url_launcher: ^6.1.11
   flutter_cached_pdfview: ^0.4.1
   flutter_local_notifications: ^15.0.1
@@ -61,7 +60,7 @@ dependencies:
   syncfusion_flutter_charts: ^22.1.39
   connectivity_plus: ^4.0.1
   datepicker_dropdown: ^0.0.7+5
-  workmanager: ^0.5.1
+#  workmanager: ^0.5.1
   webview_flutter: ^4.2.4
   hive_flutter: ^1.1.0
   flutter_foreground_task: ^6.1.1

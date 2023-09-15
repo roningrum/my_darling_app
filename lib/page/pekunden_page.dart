@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:my_darling_app/widget/pekunden_menu_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../theme/theme.dart';
 
@@ -39,6 +39,6 @@ class _PekundenPageState extends State<PekundenPage> {
   }
 
   Future<void> whatsAppKepegawaian() async{
-    await launch('https://wa.me/62895640500605');
+    await launchUrl(Uri.parse('https://wa.me/62895640500605'));
   }
 }

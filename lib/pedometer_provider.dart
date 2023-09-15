@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:my_darling_app/helper/static_class.dart';
 import 'package:my_darling_app/main.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -56,7 +57,7 @@ class PedometerProvider with ChangeNotifier {
         .listen(onPedestrianStatusChanged)
         .onError(onPedestrianStatusError);
     _stepCountStream.listen(onStepCount).onError(onStepCountError);
-    initializeNotification();
+   initialNotification();
     notifyListeners();
   }
 

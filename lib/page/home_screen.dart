@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:my_darling_app/helper/session_manager.dart';
 import 'package:my_darling_app/page/cek_kesehatan.dart';
 import 'package:my_darling_app/page/home/edispo/edispo_page.dart';
@@ -13,6 +12,7 @@ import 'package:my_darling_app/repository/model/Dinkes_news_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/home_menu_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -369,19 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //launch Navara
   Future<void> launchNavara() async {
     try {
-      await launch('http://119.2.50.170:9094/navara/',
-          customTabsOption: CustomTabsOption(
-              toolbarColor: white,
-              enableDefaultShare: true,
-              enableUrlBarHiding: true,
-              showPageTitle: true,
-              animation: CustomTabsSystemAnimation.slideIn(),
-              extraCustomTabs: const <String>[
-                // ref. https://play.google.com/store/apps/details?id=org.mozilla.firefox
-                'org.mozilla.firefox',
-                // ref. https://play.google.com/store/apps/details?id=com.microsoft.emmx
-                'com.microsoft.emmx',
-              ]));
+      await launchUrl(Uri.parse('http://119.2.50.170:9094/navara/'));
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -389,22 +377,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //launch whatsapp kepegawaian
   Future<void> whatsAppKepegawaian() async {
-    await launch('https://wa.me/62895640500605');
+    await launchUrl(Uri.parse('https://wa.me/62895640500605'));
   }
 
   //launch whatsapp kepegawaian
   Future<void> whatsAppAmbulance() async {
-    await launch('https://wa.me/6282139753077');
+    await launchUrl(Uri.parse('https://wa.me/6282139753077'));
   }
 
   //launch SIMPATIK
   Future<void> launchSIMPATIK() async {
-    await launch('https://simpatik.semarangkota.go.id/login');
+    await launchUrl(Uri.parse('https://simpatik.semarangkota.go.id/login'));
   }
 
   //launch dinkesapp
   Future<void> launchDinkesApp() async {
-    await launch('https://dinkes.semarangkota.go.id/aplikasi/');
+    await launchUrl(Uri.parse('https://dinkes.semarangkota.go.id/aplikasi/'));
   }
 
 }

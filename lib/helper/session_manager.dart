@@ -38,6 +38,8 @@ class SessionManager{
     prefs.setString(key, rule);
   }
 
+  // save state swi
+
 
   Future<String?>getUserId(String key) async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();

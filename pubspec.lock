@@ -342,30 +342,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.2"
-  flutter_custom_tabs:
-    dependency: "direct main"
-    description:
-      name: flutter_custom_tabs
-      sha256: d39a788d2496aeda88398f805d2ce92f08f7ac2ebfe526c240ad42d13bf801e6
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
-  flutter_custom_tabs_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_custom_tabs_platform_interface
-      sha256: "96c65223f36563cbc0c6ce1089c4d143ed419b07fd5c8fb4ae0f2cd69aed517d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
-  flutter_custom_tabs_web:
-    dependency: transitive
-    description:
-      name: flutter_custom_tabs_web
-      sha256: dbb5689a97c2398aa5dbcfc9cd59cffea5518ec815e9d23def448dc143cb02be
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   flutter_foreground_task:
     dependency: "direct main"
     description:
@@ -1217,10 +1193,10 @@ packages:
     dependency: "direct main"
     description:
       name: whatsapp_share
-      sha256: aa1c51d4f024aefde0a7f2c451c88f7f69d1f923addd1acfe53ec75f5ad7667e
+      sha256: d1884f302a52d9f400bc3d7d4274b77aad83424e08f425351cea8d13b4cb8649
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   win32:
     dependency: transitive
     description:
@@ -1237,14 +1213,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
-  workmanager:
-    dependency: "direct main"
-    description:
-      name: workmanager
-      sha256: e0be7e35d644643f164ee45d2ce14414f0e0fdde19456aa66065f35a0b1d2ea1
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.1"
   xdg_directories:
     dependency: transitive
     description:
