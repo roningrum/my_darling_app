@@ -10,6 +10,7 @@ class SuratDispoDiproses extends StatefulWidget {
   final String bidang;
   final String userId;
   final String seksi;
+  final int totalMasuk;
 
   const SuratDispoDiproses({Key? key,
     required this.keteranganProses,
@@ -17,7 +18,7 @@ class SuratDispoDiproses extends StatefulWidget {
     required this.rule,
     required this.bidang,
     required this.userId,
-    required this.seksi})
+    required this.seksi, this.totalMasuk = 0})
       : super(key: key);
 
   @override

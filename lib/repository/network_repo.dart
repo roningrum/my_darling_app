@@ -10,10 +10,10 @@ import 'package:my_darling_app/repository/model/agenda_surat_response.dart';
 import 'package:my_darling_app/repository/model/catatan_kesehatan_response.dart';
 import 'package:my_darling_app/repository/model/data_checkup_response.dart';
 import 'package:my_darling_app/repository/model/item_dispoisisi_response.dart';
+import 'package:my_darling_app/repository/model/jumlah_surat_response.dart';
 import 'package:my_darling_app/repository/model/send_record_langkah.dart';
 import 'package:my_darling_app/repository/model/token_response.dart';
 import 'package:my_darling_app/repository/model/user_response.dart';
-import 'package:path/path.dart';
 
 import 'model/Kegiatan_pppk_response.dart';
 import 'model/bidang_response.dart';
@@ -59,6 +59,33 @@ class NetworkRepo {
       List<dynamic> data = jsonData['user'];
       userDetailList = data.map((data) => User.fromJson(data)).toList();
       return userDetailList;
+    } else {
+      throw response.statusCode;
+    }
+  }
+
+  //get Jumlah Surat
+
+  Future<List<JumlahSuratBelum>> getJumlahSurat(String rule, String bidang,
+      String seksi, String userId) async{
+    final queryParameters = {
+      'rule': rule,
+      'bidang': bidang,
+      'seksi': seksi,
+      'user_id': userId,
+    };
+    var response = await http.get(Uri.parse('$urlDispo/jumlah_surat_belum').replace(queryParameters: queryParameters));
+    List<JumlahSuratBelum> jumlahSurat =[];
+    if (kDebugMode) {
+      print('response url ${response.request}');
+      print('Data Response ${response.body}');
+    }
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      List<dynamic> data = jsonData['jumlah_surat_belum'];
+      jumlahSurat = data.map((data) => JumlahSuratBelum.fromJson(data)).toList();
+      print("list $jumlahSurat");
+      return jumlahSurat;
     } else {
       throw response.statusCode;
     }

@@ -752,6 +752,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
               style: regular.copyWith(fontSize: 14)),
         );
         if (!mounted) return;
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
       else{
@@ -794,6 +795,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
               style: regular.copyWith(fontSize: 14)),
         );
         if (!mounted) return;
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
       else{
@@ -803,6 +805,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
               style: regular.copyWith(fontSize: 14)),
         );
         if (!mounted) return;
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
@@ -815,6 +818,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
               style: regular.copyWith(fontSize: 14)),
         );
         if (!mounted) return;
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
       else{
@@ -824,6 +828,7 @@ class _SuratDetailPageState extends State<SuratDetailPage> {
               style: regular.copyWith(fontSize: 14)),
         );
         if (!mounted) return;
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }

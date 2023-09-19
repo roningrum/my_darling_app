@@ -122,19 +122,6 @@ class PedometerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
-  // Future<void> stepCountNotification(int step) async{
-  //   const AndroidNotificationDetails androidNotificationDetails =
-  //   AndroidNotificationDetails(
-  //       'repeating channel id', 'repeating channel name',
-  //       channelDescription: 'repeating description', importance: Importance.high, autoCancel: false, playSound: false);
-  //   const NotificationDetails notificationDetails =
-  //   NotificationDetails(android: androidNotificationDetails);
-  //   await flutterLocalNotificationsPlugin.show(1, "MyDarling", "Langkah $step", notificationDetails);
-  //
-  //   notifyListeners();
-  // }
-
   void startDailyStepReset() {
     _dailyResetTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       DateTime now = DateTime.now();
@@ -150,6 +137,11 @@ class PedometerProvider with ChangeNotifier {
         _dailyResetTimer.cancel();
       }
     });
+    notifyListeners();
+  }
+
+  void resetPedometer(){
+    _stepCountToday = 0;
     notifyListeners();
   }
 
@@ -177,9 +169,5 @@ class PedometerProvider with ChangeNotifier {
   String get distance => _distance;
 
   String get totalStepCount => _totalStepCount.toString();
-
-
-
-
 
 }

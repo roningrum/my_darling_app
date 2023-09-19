@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_darling_app/helper/date_helper.dart';
 import 'package:my_darling_app/theme/theme.dart';
 
 import '../../repository/model/Kegiatan_pppk_response.dart';
@@ -62,7 +63,23 @@ class KegiatanPPPKItem extends StatelessWidget {
                               child: SizedBox(width: 10)),
                           TextSpan(
                               text:
-                              "${kegiatanPppk.tglKegiatan1}-${kegiatanPppk.tglKegiatan2}(${kegiatanPppk.jam})",
+                              "${dateFormat(kegiatanPppk.tglKegiatan1)} s/d ${dateFormat(kegiatanPppk.tglKegiatan2)}",
+                              style: regular.copyWith(
+                                  color: primaryBlueBlack, fontSize: 14.0))
+                        ]),
+                      ),
+                      RichText(
+                        text: TextSpan(children: [
+                          WidgetSpan(
+                              child: Icon(Icons.watch_later_rounded,
+                                  color: primaryRed, size: 16.0)),
+                          const WidgetSpan(
+                              alignment: PlaceholderAlignment.baseline,
+                              baseline: TextBaseline.alphabetic,
+                              child: SizedBox(width: 10)),
+                          TextSpan(
+                              text:
+                              "${kegiatanPppk.jam} WIB",
                               style: regular.copyWith(
                                   color: primaryBlueBlack, fontSize: 14.0))
                         ]),
@@ -76,7 +93,7 @@ class KegiatanPPPKItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 64,
+                width: 100,
                 child: Text('Penanggung Jawab',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
@@ -96,7 +113,7 @@ class KegiatanPPPKItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 64,
+                width: 100,
                 child: Text('Pelaksana',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),
@@ -116,7 +133,7 @@ class KegiatanPPPKItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 64,
+                width: 100,
                 child: Text('Keterangan',
                     style: title.copyWith(
                         fontSize: 14.0, fontWeight: FontWeight.w500)),

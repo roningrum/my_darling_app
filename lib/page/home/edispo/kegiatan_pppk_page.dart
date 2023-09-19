@@ -58,7 +58,7 @@ class _KegiatanPPPKPageState extends State<KegiatanPPPKPage> {
               fontSize: 14.0, fontWeight: FontWeight.w500), textAlign: TextAlign.center,),
         const SizedBox(height: 16.0),
         FutureBuilder<List<KegiatanPppk>>(
-            future: _networkRepo.getKegiatanPPPK("2020-03-14", dateParameter()),
+            future: _networkRepo.getKegiatanPPPK(getTodayDate(), dateParameter()),
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.data!=null) {

@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:my_darling_app/helper/date_helper.dart';
-import 'package:my_darling_app/page/home/edispo/surat_detail_page.dart';
 import 'package:my_darling_app/repository/model/surat_response.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
@@ -27,7 +26,6 @@ class _SuratBelumDiprosesState extends State<SuratBelumDiproses> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

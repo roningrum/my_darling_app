@@ -45,21 +45,17 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
-      case AppLifecycleState.inactive:
-      // startBackgroundService();
-        pedometerProvider.stop();
-        break;
       case AppLifecycleState.resumed:
-        // startBackgroundService();
         pedometerProvider.startListening();
         break;
       case AppLifecycleState.paused:
         pedometerProvider.startListening();
-        // stopService();
+        break;
+      case AppLifecycleState.inactive:
+        pedometerProvider.stop();
         break;
       case AppLifecycleState.detached:
         pedometerProvider.stop();
-        // stopService();
         break;
       default:
         break;
