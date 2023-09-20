@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_darling_app/page/home/edispo/surat_dispo_diproses_page.dart';
+import 'package:badges/badges.dart' as badges;
 
 import '../../../theme/theme.dart';
 
@@ -27,8 +28,11 @@ class SuratDispo extends StatefulWidget {
 }
 
 class _SuratDispoState extends State<SuratDispo> {
+  late bool _showBadge;
+
   @override
   Widget build(BuildContext context) {
+    _showBadge = widget.totalSuratMasuk > 1 ? true : false;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -42,13 +46,26 @@ class _SuratDispoState extends State<SuratDispo> {
             indicatorWeight: 2,
             labelPadding: const EdgeInsets.symmetric(horizontal: 20.0),
             tabs: [
-              Tab(child: Row(
-                children: [
-                  const Text('Belum Diproses'),
-                  Badge(
-                    label: Text('${widget.totalSuratMasuk}'),
-                  )
-                ],)),
+              _showBadge
+                  ? Tab(
+                      child: Row(
+                      children: [
+                        const Text('Belum Diproses'),
+                        badges.Badge(
+                          position: badges.BadgePosition.topEnd(top: 0, end: 3),
+                          badgeAnimation: const badges.BadgeAnimation.fade(
+                              disappearanceFadeAnimationDuration:
+                                  Duration(seconds: 2)),
+                          badgeContent: Text(
+                            "${widget.totalSuratMasuk}",
+                            style: regular.copyWith(
+                                color: Colors.white, fontSize: 11),
+                          ),
+                          showBadge: _showBadge,
+                        )
+                      ],
+                    ))
+                  : const Tab(text: "Belum Diproses"),
               const Tab(text: "Sudah Diproses"),
             ],
           ),

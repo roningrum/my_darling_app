@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:my_darling_app/helper/static_class.dart';
+import 'package:my_darling_app/notification_service.dart';
+import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -19,6 +20,7 @@ class PedometerProvider with ChangeNotifier {
 
   final Stream<StepCount> _stepCountStream = Pedometer.stepCountStream;
   final sessionManager = SessionManager();
+  final _networkRepo = NetworkRepo();
 
   String _status = 'Standing';
 
@@ -55,7 +57,6 @@ class PedometerProvider with ChangeNotifier {
         .listen(onPedestrianStatusChanged)
         .onError(onPedestrianStatusError);
     _stepCountStream.listen(onStepCount).onError(onStepCountError);
-   initialNotification();
     notifyListeners();
   }
 
@@ -115,8 +116,9 @@ class PedometerProvider with ChangeNotifier {
     }
     _totalStepCount = _stepCountToday;
     stepBox.put('today steps', _stepCountToday);
+    NotificationService.displayNotification(_totalStepCount.toString());
+    sendData(_totalStepCount);
     // stepCountNotification(_totalStepCount);
-
     getCalorieTerbakar(_stepCountToday);
     getDistance(_stepCountToday);
     notifyListeners();
@@ -132,6 +134,7 @@ class PedometerProvider with ChangeNotifier {
         timeUntilReset -= const Duration(seconds: 1);
       } else if (timeUntilReset.inSeconds == 0) {
         _totalStepCount += _stepCountToday;
+        sendData(_totalStepCount);
         _stepCountToday = 0;
         timeUntilReset = tomorrow.difference(DateTime.now());
         _dailyResetTimer.cancel();
@@ -159,6 +162,26 @@ class PedometerProvider with ChangeNotifier {
     return _distance;
   }
 
+  void sendData(int totalStepCount) async {
+    var nik = await sessionManager.getNikUser('nik');
+    var langkah = _totalStepCount;
+    var cal = getCalorieTerbakar(totalStepCount);
+
+    _dailyResetTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      DateTime now = DateTime.now();
+      DateTime tomorrow = DateTime(now.year, now.month, now.day + 1);
+      Duration timeUntilReset = tomorrow.difference(now);
+      if (timeUntilReset.inSeconds > 0) {
+        timeUntilReset -= const Duration(seconds: 1);
+      } else if (timeUntilReset.inSeconds == 0) {
+        _networkRepo.sendRecordLangkah(nik!, langkah.toString(), cal);
+        timeUntilReset = tomorrow.difference(DateTime.now());
+        _dailyResetTimer.cancel();
+      }
+    });
+    notifyListeners();
+  }
+
 
   String get pedestrianStatus => _status;
 
@@ -169,5 +192,7 @@ class PedometerProvider with ChangeNotifier {
   String get distance => _distance;
 
   String get totalStepCount => _totalStepCount.toString();
+
+
 
 }

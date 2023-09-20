@@ -20,7 +20,7 @@ class _EdispoMenuWidgetState extends State<EdispoMenuWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _showBadge = widget.totalSurat >= 1 ? true : false;
+    _showBadge = widget.totalSurat >1 ? true : false;
 
     return SizedBox(
       width: 105,

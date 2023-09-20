@@ -1,12 +1,12 @@
 import 'dart:isolate';
 import 'dart:ui';
 
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:my_darling_app/model/step_record_data.dart';
+import 'package:my_darling_app/notification_service.dart';
 import 'package:my_darling_app/page/splash_screen.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,7 +26,8 @@ void main() async{
 
   IsolateNameServer.registerPortWithName(port.sendPort,isolateName);
 
-  AndroidAlarmManager.initialize();
+  // AndroidAlarmManager.initialize();
+  NotificationService.initialize();
 
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(StepRecordDataAdapter());

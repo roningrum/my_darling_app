@@ -147,7 +147,7 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                       ],
                     ),
                     const SizedBox(height: 8.0),
-                    Text(data[0].telp!.replaceRange(2, 12, "************"),
+                    Text(data[0].telp!.replaceRange(2, 10, "************"),
                         style: regular.copyWith(
                             fontSize: 14, color: secondaryBlueBlack)),
                     const SizedBox(height: 16.0),

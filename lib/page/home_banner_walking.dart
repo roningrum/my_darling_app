@@ -39,6 +39,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking>
     WidgetsBinding.instance.addObserver(this);
     pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
     pedometerProvider.initialize();
+    // NotificationService.displayNotification(pedometerProvider.pedestrianStepCount);
     getNIK();
   }
 
