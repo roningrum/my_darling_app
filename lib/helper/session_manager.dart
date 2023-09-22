@@ -38,7 +38,11 @@ class SessionManager{
     prefs.setString(key, rule);
   }
 
-  // save state swi
+  // save last Step
+  Future<void> saveUpdateStep(String key, int step) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(key, step);
+  }
 
 
   Future<String?>getUserId(String key) async{
@@ -84,6 +88,11 @@ class SessionManager{
   Future<bool?>isLogin() async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool("login_status");
+  }
+
+  Future<int?> readStep(String key) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(key);
   }
 
   //Hapus Semua Shared Pref

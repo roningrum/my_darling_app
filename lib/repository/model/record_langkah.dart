@@ -18,7 +18,7 @@ class RecordLangkah {
   int? id;
   String? nik;
   int? langkah;
-  // double? cal;
+  double? cal;
   String? createdAt;
   String? updatedAt;
 

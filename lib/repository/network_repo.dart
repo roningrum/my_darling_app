@@ -3,6 +3,7 @@ import 'dart:core';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_darling_app/helper/date_helper.dart';
 import 'package:my_darling_app/repository/model/Dinkes_news_response.dart';
 import 'package:my_darling_app/repository/model/Item_notulen_response.dart';
 import 'package:my_darling_app/repository/model/Walking_data_response.dart';
@@ -412,23 +413,23 @@ class NetworkRepo {
 
 
   //post Record Langkah
-  Future<SendRecordLangkah?> sendRecordLangkah(
-      String nik, String langkah, String cal) async {
+  Future<List<RecordLangkah>?> sendRecordLangkah(
+      String nik, int langkah, double cal) async {
+    print("input $nik, $langkah, $cal");
     try {
       http.Response response = await http.post(
-          Uri.parse(
-              'http://119.2.50.170:9094/mydarling/api/create_record_langkah'),
-          body: {"nik": nik, "langkah": langkah, "cal": cal});
+          Uri.parse('http://119.2.50.170:9094/mydarling/api/create_record_langkah'),
+          body: {"nik": nik, "langkah": langkah, "cal": cal, "created_at": dateParameter()});
       if (response.statusCode == 200) {
         if (kDebugMode) {
           print("Response URL ${response.request}");
           var jsonData = json.decode(response.body);
-          var data = SendRecordLangkah.fromJson(jsonData);
-          SendRecordLangkah recordResponse = data;
+          List<RecordLangkah> recordList = [];
+          recordList = jsonData.map((data) => SendRecordLangkah.fromJson(data)).toList();
           if (kDebugMode) {
-            print('Response ${recordResponse.langkah}');
+            print('Response $recordList');
           }
-          return recordResponse;
+          return recordList;
         }
       } else {
         print("Response error: ${response.body}");
