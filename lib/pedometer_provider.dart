@@ -16,9 +16,11 @@ class PedometerProvider with ChangeNotifier {
   String _calorie = "0";
   String _distance = "0";
 
-  bool isActivate = false;
+  bool isInitialized = false;
 
   final Stream<StepCount> _stepCountStream = Pedometer.stepCountStream;
+  final String storageyKey = "pedometer";
+
   final sessionManager = SessionManager();
   final _networkRepo = NetworkRepo();
 
@@ -31,6 +33,7 @@ class PedometerProvider with ChangeNotifier {
 
   initialize() async {
     stepBox = await Hive.openBox('steps');
+
     checkPermission();
     notifyListeners();
   }

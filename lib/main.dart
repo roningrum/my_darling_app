@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
-import 'package:my_darling_app/model/step_record_data.dart';
 import 'package:my_darling_app/notification_service.dart';
 import 'package:my_darling_app/page/splash_screen.dart';
 import 'package:my_darling_app/pedometer_provider.dart';
@@ -30,8 +29,6 @@ void main() async{
   NotificationService.initialize();
 
   Hive.init(appDocumentDirectory.path);
-  Hive.registerAdapter(StepRecordDataAdapter());
-  await Hive.openBox<StepRecordData>("recordLangkahBox");
   runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {
