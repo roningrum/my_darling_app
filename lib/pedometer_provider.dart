@@ -28,9 +28,8 @@ class PedometerProvider with ChangeNotifier {
 
   String _status = 'Standing';
 
-  var _data= RecordData();
-
   final String storageKey = "pedometer";
+  final int savedData = 1;
 
   late Timer _dailyResetTimer;
   late Box<int> stepBox;
@@ -40,7 +39,7 @@ class PedometerProvider with ChangeNotifier {
   initialize() async {
     stepBox = await Hive.openBox('steps');
     // await sessionManager.readStep(storageKey);
-    updateStep();
+    // updateStep();
     checkPermission();
     notifyListeners();
   }
@@ -103,6 +102,8 @@ class PedometerProvider with ChangeNotifier {
     int lastSavedDayKey = 888888;
     int lastSavedDay = stepBox.get(lastSavedDayKey, defaultValue: 0)!;
 
+    int updateStep = stepBox.get(savedStepsCount, defaultValue: 0)!;
+
     if (event.steps < savedStepsCount) {
       savedStepsCount = 0;
       stepBox.put(savedStepCountKey, savedStepsCount);
@@ -120,6 +121,8 @@ class PedometerProvider with ChangeNotifier {
     }
 
     _stepCountToday = event.steps - savedStepsCount;
+    updateStep = _stepCountToday;
+    stepBox.put(savedData, updateStep);
 
     if (kDebugMode) {
       print('Last Day $lastSavedDay');
@@ -129,9 +132,7 @@ class PedometerProvider with ChangeNotifier {
 
     await sessionManager.saveUpdateStep(storageKey, _stepCountToday);
 
-    NotificationService.displayNotification(_totalStepCount.toString());
-    // sendData(_totalStepCount);
-    // stepCountNotification(_totalStepCo unt);
+    NotificationService.displayNotification(_stepCountToday.toString(), _status);
     getCalorieTerbakar(_stepCountToday);
     getDistance(_stepCountToday);
     notifyListeners();
@@ -155,11 +156,6 @@ class PedometerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void resetPedometer(){
-    _stepCountToday = 0;
-    notifyListeners();
-  }
-
   String getCalorieTerbakar(int steps) {
     num cal = steps * 0.04;
     cal = num.parse(cal.toStringAsFixed(2));
@@ -180,11 +176,11 @@ class PedometerProvider with ChangeNotifier {
   }
 
   void updateStep() async{
-    var lastStep = await sessionManager.readStep(storageKey);
+    var lastStep = stepBox.get(savedData) ;
     var nik = await sessionManager.getNikUser("nik");
-    var cal = getCalorieTerbakar(lastStep?? 0);
-    print("Langkah Terakhir $lastStep");
-    _networkRepo.sendRecordLangkah(nik ?? "empty", lastStep ?? 0, double.parse(cal));
+    var cal = getCalorieTerbakar(lastStep ?? 0);
+    print("Langkah Terakhir $lastStep oleh $nik dengan $cal");
+    _networkRepo.sendRecordLangkah(nik.toString(), lastStep.toString(), cal);
 
     notifyListeners();
   }

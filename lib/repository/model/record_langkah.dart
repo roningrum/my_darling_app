@@ -16,7 +16,7 @@ class RecordLangkah {
     updatedAt = json['updated_at'];
   }
   int? id;
-  String? nik;
+  int? nik;
   int? langkah;
   double? cal;
   String? createdAt;

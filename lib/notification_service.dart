@@ -10,7 +10,7 @@ class NotificationService{
     _notificationPlugin.initialize(initializationSettings);
   }
 
-  static void displayNotification(String langkah) async{
+  static void displayNotification(String langkah, String status) async{
     try{
       NotificationDetails notificationDetails = const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -21,11 +21,13 @@ class NotificationService{
           priority: Priority.high,
           playSound: false,
           autoCancel: false,
-          onlyAlertOnce: false,
+          onlyAlertOnce: true,
+
           ongoing: true,
+          channelShowBadge: false
         )
       );
-      await _notificationPlugin.show(1, "MyDarling", "Langkah $langkah", notificationDetails);
+      await _notificationPlugin.show(1, "MyDarling", "Langkah $langkah, Status $status", notificationDetails);
 
     } catch(e){
       rethrow;

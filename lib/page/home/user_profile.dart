@@ -6,6 +6,9 @@ import 'package:my_darling_app/page/login_screen.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:my_darling_app/widget/user_profile_widget.dart';
+import 'package:provider/provider.dart';
+
+import '../../pedometer_provider.dart';
 
 class UserProfile extends StatefulWidget {
   final String userId;
@@ -19,6 +22,15 @@ class _UserProfileState extends State<UserProfile> {
   final _networkRepo = NetworkRepo();
   late String token;
   late String urlPhoto;
+
+  late PedometerProvider pedometerProvider;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    pedometerProvider = Provider.of<PedometerProvider>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +154,8 @@ class _UserProfileState extends State<UserProfile> {
   void logout(){
     var sessionManager = SessionManager();
     sessionManager.clear();
-    Hive.deleteFromDisk();
+    pedometerProvider.stop();
+    Hive.close();
     Navigator.of(context).pop();
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
   }

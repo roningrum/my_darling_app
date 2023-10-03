@@ -61,9 +61,9 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<bool> checkLoginSession() async{
     var checkLogin = await _sessionManager.isLogin();
     if(checkLogin!=null && checkLogin == true){
-      if(mounted){
-        Provider.of<PedometerProvider>(context, listen: false).initialize();
-      }
+      // if(mounted){
+      //   Provider.of<PedometerProvider>(context, listen: false).initialize();
+      // }
       if(mounted){
         Navigator.pushAndRemoveUntil(
             context,

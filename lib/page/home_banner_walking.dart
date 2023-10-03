@@ -53,9 +53,11 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking>
         pedometerProvider.startListening();
         break;
       case AppLifecycleState.inactive:
+        pedometerProvider.updateStep();
         pedometerProvider.stop();
         break;
       case AppLifecycleState.detached:
+        // pedometerProvider.updateStep();
         pedometerProvider.stop();
         break;
       default:

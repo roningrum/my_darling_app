@@ -67,16 +67,17 @@ class NetworkRepo {
 
   //get Jumlah Surat
 
-  Future<List<JumlahSuratBelum>> getJumlahSurat(String rule, String bidang,
-      String seksi, String userId) async{
+  Future<List<JumlahSuratBelum>> getJumlahSurat(
+      String rule, String bidang, String seksi, String userId) async {
     final queryParameters = {
       'rule': rule,
       'bidang': bidang,
       'seksi': seksi,
       'user_id': userId,
     };
-    var response = await http.get(Uri.parse('$urlDispo/jumlah_surat_belum').replace(queryParameters: queryParameters));
-    List<JumlahSuratBelum> jumlahSurat =[];
+    var response = await http.get(Uri.parse('$urlDispo/jumlah_surat_belum')
+        .replace(queryParameters: queryParameters));
+    List<JumlahSuratBelum> jumlahSurat = [];
     if (kDebugMode) {
       print('response url ${response.request}');
       print('Data Response ${response.body}');
@@ -84,7 +85,8 @@ class NetworkRepo {
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       List<dynamic> data = jsonData['jumlah_surat_belum'];
-      jumlahSurat = data.map((data) => JumlahSuratBelum.fromJson(data)).toList();
+      jumlahSurat =
+          data.map((data) => JumlahSuratBelum.fromJson(data)).toList();
       print("list $jumlahSurat");
       return jumlahSurat;
     } else {
@@ -352,7 +354,7 @@ class NetworkRepo {
 
   Future<List<ItemDisposisi>> getItemEditDisposisi(
       String idSurat, String rule) async {
-    final request = {"id_surat":idSurat, "rule": rule};
+    final request = {"id_surat": idSurat, "rule": rule};
     var response = await http.get(Uri.parse('$urlDispo/get_item_edit_disposisi')
         .replace(queryParameters: request));
 
@@ -367,8 +369,6 @@ class NetworkRepo {
     }
   }
 
-
-
   /// Dispo Balik
   /// Fungsi buat Dispo Balik
   Future<SuccessMessageResponse> getDispoBalikResponse(
@@ -378,8 +378,14 @@ class NetworkRepo {
       String idBidang,
       String idSeksi,
       String userId) async {
-    var response = await http.post(Uri.parse('$urlDispo/dispo_balik'),
-        body: {'id_surat': idSurat, "isi_dp": isiDp, "rule": rule, "id_bidang":idBidang, 'id_seksi':idSeksi, 'user_id': userId});
+    var response = await http.post(Uri.parse('$urlDispo/dispo_balik'), body: {
+      'id_surat': idSurat,
+      "isi_dp": isiDp,
+      "rule": rule,
+      "id_bidang": idBidang,
+      'id_seksi': idSeksi,
+      'user_id': userId
+    });
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = SuccessMessageResponse.fromJson(jsonData);
@@ -388,7 +394,6 @@ class NetworkRepo {
       throw response.statusCode;
     }
   }
-
 
   /// Disposisi & Edit Disposisi
 
@@ -400,8 +405,17 @@ class NetworkRepo {
       String idBidang,
       String idSeksi,
       String userId) async {
-    var response = await http.post(Uri.parse('$urlDispo/post_disposisi'),
-        body: {'id_surat': idSurat,"disposisi": disposisi, "isi_dp": isiDp, "rule": rule, "id_bidang":idBidang, 'id_seksi':idSeksi, 'user_id': userId, 'if': ""});
+    var response =
+        await http.post(Uri.parse('$urlDispo/post_disposisi'), body: {
+      'id_surat': idSurat,
+      "disposisi": disposisi,
+      "isi_dp": isiDp,
+      "rule": rule,
+      "id_bidang": idBidang,
+      'id_seksi': idSeksi,
+      'user_id': userId,
+      'if': ""
+    });
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = SuccessMessageResponse.fromJson(jsonData);
@@ -411,33 +425,23 @@ class NetworkRepo {
     }
   }
 
-
   //post Record Langkah
-  Future<List<RecordLangkah>?> sendRecordLangkah(
-      String nik, int langkah, double cal) async {
+  Future<List<SendRecordLangkah>?> sendRecordLangkah(
+      String nik, String langkah, String cal) async {
     print("input $nik, $langkah, $cal");
-    try {
-      http.Response response = await http.post(
-          Uri.parse('http://119.2.50.170:9094/mydarling/api/create_record_langkah'),
-          body: {"nik": nik, "langkah": langkah, "cal": cal, "created_at": dateParameter()});
-      if (response.statusCode == 200) {
-        if (kDebugMode) {
-          print("Response URL ${response.request}");
-          var jsonData = json.decode(response.body);
-          List<RecordLangkah> recordList = [];
-          recordList = jsonData.map((data) => SendRecordLangkah.fromJson(data)).toList();
-          if (kDebugMode) {
-            print('Response $recordList');
-          }
-          return recordList;
-        }
-      } else {
-        print("Response error: ${response.body}");
-      }
-    } catch (e) {
-      print("Response error: ${e.toString()}");
+    http.Response response = await http.post(
+        Uri.parse(
+            'http://119.2.50.170:9094/mydarling/api/create_record_langkah'),
+        body: {"nik": nik, "langkah": langkah, "cal": cal, "created_at": dateParameter()});
+    var jsonData = json.decode(response.body);
+    List<SendRecordLangkah> recordList = [];
+    List<dynamic> data = jsonData;
+    recordList = data.map((data) => SendRecordLangkah.fromJson(data)).toList();
+    if (kDebugMode) {
+      print('Response $recordList');
+      print('Response data : $jsonData');
     }
-    return null;
+    return recordList;
   }
 
   //getSemua Langkah
