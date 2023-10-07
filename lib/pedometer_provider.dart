@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:my_darling_app/helper/date_helper.dart';
-import 'package:my_darling_app/local/record_data.dart';
 import 'package:my_darling_app/notification_service.dart';
 import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:pedometer/pedometer.dart';
@@ -121,16 +119,11 @@ class PedometerProvider with ChangeNotifier {
     }
 
     _stepCountToday = event.steps - savedStepsCount;
-    updateStep = _stepCountToday;
-    stepBox.put(savedData, updateStep);
 
     if (kDebugMode) {
       print('Last Day $lastSavedDay');
       print('Saved Steps $savedStepsCount');
     }
-    stepBox.put('today steps', _stepCountToday);
-
-    await sessionManager.saveUpdateStep(storageKey, _stepCountToday);
 
     NotificationService.displayNotification(_stepCountToday.toString(), _status);
     getCalorieTerbakar(_stepCountToday);
@@ -158,8 +151,8 @@ class PedometerProvider with ChangeNotifier {
 
   String getCalorieTerbakar(int steps) {
     num cal = steps * 0.04;
-    cal = num.parse(cal.toStringAsFixed(2));
-    _calorie = "$cal";
+    cal.round();
+    _calorie = "${cal.round()}";
     return _calorie;
   }
 
@@ -175,8 +168,9 @@ class PedometerProvider with ChangeNotifier {
     return _distance;
   }
 
-  void updateStep() async{
-    var lastStep = stepBox.get(savedData) ;
+
+  Future<void> updateStep() async{
+    var lastStep = await sessionManager.readStep(storageKey) ;
     var nik = await sessionManager.getNikUser("nik");
     var cal = getCalorieTerbakar(lastStep ?? 0);
     print("Langkah Terakhir $lastStep oleh $nik dengan $cal");

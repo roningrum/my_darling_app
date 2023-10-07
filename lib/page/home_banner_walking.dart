@@ -8,6 +8,8 @@ import 'package:my_darling_app/repository/network_repo.dart';
 import 'package:my_darling_app/theme/theme.dart';
 import 'package:provider/provider.dart';
 
+import '../notification_service.dart';
+
 class HomeBannerWalking extends StatefulWidget {
   const HomeBannerWalking({Key? key}) : super(key: key);
 
@@ -27,6 +29,8 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking>
   final networkRepo = NetworkRepo();
   final sessionManager = SessionManager();
   String status = '';
+
+  final String storageKey = "pedometer";
 
   Future<String> getNIK() async {
     nik = (await sessionManager.getUserId('nik'))!;
@@ -57,7 +61,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking>
         pedometerProvider.stop();
         break;
       case AppLifecycleState.detached:
-        // pedometerProvider.updateStep();
+        pedometerProvider.updateStep();
         pedometerProvider.stop();
         break;
       default:
@@ -70,6 +74,7 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking>
   Widget build(BuildContext context) {
     return Consumer<PedometerProvider>(
         builder: (context, pedometerProvider, child) {
+          saveStepCount(storageKey, pedometerProvider.pedestrianStepCount);
       return Container(
         width: MediaQuery.of(context).size.width - 16,
         margin: const EdgeInsets.only(top: 20),
@@ -157,5 +162,9 @@ class _HomeBannerWalkingState extends State<HomeBannerWalking>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void saveStepCount(String storageKey, String pedestrianStepCount) async {
+    await sessionManager.saveUpdateStep(storageKey, int.parse(pedestrianStepCount));
   }
 }

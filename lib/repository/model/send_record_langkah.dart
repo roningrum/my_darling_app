@@ -10,7 +10,7 @@ class SendRecordLangkah {
       int? id, 
       String? nik, 
       int? langkah, 
-      double? cal,
+      int? cal,
       String? createdAt, 
       String? updatedAt,}){
     _id = id;
@@ -32,13 +32,13 @@ class SendRecordLangkah {
   int? _id;
   String? _nik;
   int? _langkah;
-  double? _cal;
+  int? _cal;
   String? _createdAt;
   String? _updatedAt;
 SendRecordLangkah copyWith({  int? id,
   String? nik,
   int? langkah,
-  double? cal,
+  int? cal,
   String? createdAt,
   String? updatedAt,
 }) => SendRecordLangkah(  id: id ?? _id,
@@ -51,7 +51,7 @@ SendRecordLangkah copyWith({  int? id,
   int? get id => _id;
   String? get nik => _nik;
   int? get langkah => _langkah;
-  double? get cal => _cal;
+  int? get cal => _cal;
   String? get createdAt => _createdAt;
   String? get updatedAt => _updatedAt;
 
